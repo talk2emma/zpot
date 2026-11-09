@@ -5,7 +5,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "types": ["jest", "geojson"]
+    "types": ["jest", "geojson", "node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods", "android", "ios"]

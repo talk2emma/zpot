@@ -9,4 +9,6 @@ brew install maestro          # or: curl -fsSL https://get.maestro.mobile.dev | 
 maestro test mobile/e2e/part1-core-journey.yaml
 ```
 
-Status: the flow is authored against the RN `testID`s. It has **not** been executed in this environment because the Maestro CLI isn't installed (see `docs/PART_1_COMPLETION_REPORT.md`). The same journey is covered at component level in `__tests__/parking.test.tsx` and at the API level by the contract suite.
+Status (9 Nov 2026): the flow **passed** with Maestro 2.11.0 on the iOS 27 simulator (iPhone 18 Pro) and the Android emulator (Pixel_10_Pro, API 37), against the real seeded API. It includes the real hand-off to Apple Maps or Google Maps and the return to Zpot. Step screenshots are in `docs/screenshots/{ios,android}/`.
+
+Tip: the first Android launch waits for Metro to build the bundle. Pre-warm it with `curl "localhost:8081/index.bundle?platform=android"`.

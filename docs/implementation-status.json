@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-09 18:11 UTC",
+  "generated_at": "2026-11-09 19:02 UTC",
   "part": 1,
   "git": {
     "branch": "main",
-    "commit": "36c009e9e1b6720559960780e630fc9f21ca21c9",
+    "commit": "a8b8c65580685ed59b7c89713663ae1fc1308037",
     "uncommitted_changes": true
   },
   "status_vocabulary": [
@@ -1454,5 +1454,61 @@
       "name": "Scouts",
       "status": "not-started"
     }
-  ]
+  ],
+  "tests": {
+    "backend": {
+      "command": "pytest",
+      "passed": 77,
+      "failed": 0,
+      "suites": {
+        "test_engine.py": 24,
+        "test_auth.py": 18,
+        "test_parking_api.py": 35
+      }
+    },
+    "backend_lint": "ruff: clean",
+    "migrations_check": "clean",
+    "openapi": "0 errors, 2 enum-naming warnings",
+    "mobile_typecheck": "tsc strict: 0 errors",
+    "mobile_lint": "eslint: 0 errors, 30 warnings",
+    "mobile_unit_component": {
+      "command": "jest",
+      "passed": 49,
+      "failed": 0
+    },
+    "api_contract": {
+      "command": "npm run test:contract",
+      "passed": 5,
+      "failed": 0
+    },
+    "e2e": {
+      "flow": "mobile/e2e/part1-core-journey.yaml",
+      "ios_simulator": "passed (iPhone 18 Pro, iOS 27.0)",
+      "android_emulator": "passed (Pixel_10_Pro, API 37)",
+      "tool": "Maestro 2.11.0",
+      "real_api": true
+    }
+  },
+  "builds": {
+    "android": {
+      "status": "built-and-run",
+      "command": "./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a",
+      "artifact": "mobile/android/app/build/outputs/apk/debug/app-debug.apk"
+    },
+    "ios": {
+      "status": "built-and-run",
+      "command": "xcodebuild -workspace Zpot.xcworkspace -scheme Zpot -sdk iphonesimulator",
+      "notes": "UIScene lifecycle adopted for iOS 27"
+    },
+    "backend": {
+      "status": "running",
+      "services": [
+        "postgis 17-3.5",
+        "redis 7.4",
+        "mailpit",
+        "api",
+        "celery worker"
+      ]
+    }
+  }
 }

@@ -14,6 +14,7 @@ import { ParkingMapMarker } from '../../parking/ParkingMapMarker';
 import type { ZpotMapHandle, ZpotMapProps } from '../types';
 
 const MARKER_MIN_ZOOM = 14;
+const CLUSTER_FONT = 'Noto Sans Bold';
 
 /** MapLibre Native implementation (open-source, no access token required). */
 export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function MapLibreMapView(props, ref) {
@@ -95,7 +96,9 @@ export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function 
             paint={{ 'circle-color': palette.navy900, 'circle-radius': ['step', ['get', 'point_count'], 16, 10, 20, 25, 26],
               'circle-stroke-color': palette.white, 'circle-stroke-width': 2 }} />
           <Layer type="symbol" id="zpot-cluster-count" filter={['has', 'point_count']} maxzoom={MARKER_MIN_ZOOM}
-            layout={{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13, 'text-allow-overlap': true }}
+            layout={{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13, 'text-allow-overlap': true,
+              // must be a font the style's glyph server hosts (OpenFreeMap: Noto Sans)
+              'text-font': [CLUSTER_FONT] }}
             paint={{ 'text-color': palette.white }} />
         </GeoJSONSource>
 

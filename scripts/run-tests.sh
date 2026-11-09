@@ -17,5 +17,8 @@ if api_up; then (cd "$MOBILE" && npm run -s test:contract -- --silent) && ok "co
 else warn "SKIPPED contract — API not running"; fi
 
 head1 "E2E (Maestro)"
-if command -v maestro >/dev/null; then warn "run manually with a booted simulator: maestro test mobile/e2e"; else warn "SKIPPED — Maestro CLI not installed"; fi
+MAESTRO="${MAESTRO:-$(command -v maestro || true)}"
+if [ -n "$MAESTRO" ] && [ -n "${E2E_DEVICE:-}" ]; then
+  (cd "$ROOT" && "$MAESTRO" --device "$E2E_DEVICE" test mobile/e2e/part1-core-journey.yaml) && ok "E2E passed on $E2E_DEVICE" || { fail "E2E failed"; FAIL=1; }
+else warn "SKIPPED — set MAESTRO=/path/to/maestro and E2E_DEVICE=<simulator UDID|emulator-5554> (app installed, API + Metro running)"; fi
 exit $FAIL
