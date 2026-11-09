@@ -1,0 +1,906 @@
+{
+  "generated_at": "2026-11-09 18:11 UTC",
+  "part": 1,
+  "git": {
+    "branch": "main",
+    "commit": "36c009e9e1b6720559960780e630fc9f21ca21c9",
+    "uncommitted_changes": true
+  },
+  "status_vocabulary": [
+    "implemented",
+    "partial",
+    "routed-placeholder",
+    "not-started",
+    "dev-only"
+  ],
+  "screens": [
+    {
+      "id": "SCR-001",
+      "key": "splash",
+      "name": "Splash",
+      "module": "onboarding",
+      "rn": "screens/onboarding/SplashScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "splash"
+    },
+    {
+      "id": "SCR-002",
+      "key": "language",
+      "name": "Choose your language",
+      "module": "onboarding",
+      "rn": "screens/onboarding/LanguageScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "PATCH /users/me/preferences/ (signed in)"
+      ],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "language"
+    },
+    {
+      "id": "SCR-003",
+      "key": "welcome",
+      "name": "Welcome",
+      "module": "onboarding",
+      "rn": "screens/onboarding/WelcomeScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "manual",
+      "prototype_key": "welcome"
+    },
+    {
+      "id": "SCR-004",
+      "key": "onboard",
+      "name": "How Zpot works (3 steps)",
+      "module": "onboarding",
+      "rn": "screens/onboarding/OnboardingScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "onboard"
+    },
+    {
+      "id": "SCR-005",
+      "key": "locPerm",
+      "name": "Location permission primer",
+      "module": "onboarding",
+      "rn": "screens/onboarding/LocationPermissionScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "device: location permission"
+      ],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "locPerm"
+    },
+    {
+      "id": "SCR-006",
+      "key": "locOutcome",
+      "name": "Location outcome",
+      "module": "onboarding",
+      "rn": "screens/onboarding/LocationOutcomeScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "device: settings deep link"
+      ],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "locOutcome"
+    },
+    {
+      "id": "SCR-007",
+      "key": "account",
+      "name": "Account choice",
+      "module": "onboarding",
+      "rn": "screens/onboarding/AccountChoiceScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "unit:__tests__/onboarding.test.tsx",
+      "prototype_key": "account"
+    },
+    {
+      "id": "SCR-009",
+      "key": "register",
+      "name": "Create account",
+      "module": "auth",
+      "rn": "screens/auth/RegisterScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "POST /auth/register/"
+      ],
+      "tests": "unit:__tests__/auth.test.tsx; api:tests/test_auth.py",
+      "prototype_key": "register"
+    },
+    {
+      "id": "SCR-010",
+      "key": "verify",
+      "name": "Verify email",
+      "module": "auth",
+      "rn": "screens/auth/VerifyEmailScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "POST /auth/verify-email/",
+        "POST /auth/resend-verification/",
+        "GET /users/me/"
+      ],
+      "tests": "unit:__tests__/auth.test.tsx; api",
+      "prototype_key": "verify"
+    },
+    {
+      "id": "SCR-008",
+      "key": "signin",
+      "name": "Sign in",
+      "module": "auth",
+      "rn": "screens/auth/SignInScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "POST /auth/login/"
+      ],
+      "tests": "unit:__tests__/auth.test.tsx; api",
+      "prototype_key": "signin"
+    },
+    {
+      "id": "SCR-011",
+      "key": "forgot",
+      "name": "Reset password",
+      "module": "auth",
+      "rn": "screens/auth/ForgotPasswordScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "POST /auth/password-reset/",
+        "POST /auth/password-reset/confirm/"
+      ],
+      "tests": "api:tests/test_auth.py; manual",
+      "prototype_key": "forgot"
+    },
+    {
+      "id": "SCR-012",
+      "key": "legal",
+      "name": "Legal & data sources",
+      "module": "support",
+      "rn": "screens/profile/SettingsScreens.tsx#LegalScreen",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "manual",
+      "prototype_key": "legal"
+    },
+    {
+      "id": "SCR-013",
+      "key": "explore",
+      "name": "Explore (map + results sheet)",
+      "module": "parking",
+      "rn": "screens/explore/ExploreScreen.tsx (+ExploreSheet, ResultsPanel, SelectedSpotPanel)",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET /parking/options/",
+        "GET /parking/map-layers/",
+        "GET /parking/areas/{id}/",
+        "GET /places/reverse-geocode/"
+      ],
+      "tests": "unit:__tests__/parking.test.tsx; contract",
+      "prototype_key": "explore"
+    },
+    {
+      "id": "SCR-014",
+      "key": "search",
+      "name": "Destination search",
+      "module": "parking",
+      "rn": "screens/explore/SearchScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET /places/autocomplete/"
+      ],
+      "tests": "unit:__tests__/parking.test.tsx; contract",
+      "prototype_key": "search"
+    },
+    {
+      "id": "SCR-015",
+      "key": "plan",
+      "name": "When are you parking?",
+      "module": "parking",
+      "rn": "screens/explore/PlanScreen.tsx (+forms/DateTimeSelector)",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "(feeds GET /parking/options/ params)"
+      ],
+      "tests": "unit:__tests__/searchParams.test.tsx",
+      "prototype_key": "plan"
+    },
+    {
+      "id": "SCR-016",
+      "key": "filters",
+      "name": "Filters",
+      "module": "parking",
+      "rn": "screens/explore/FiltersScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET /parking/options/ (live count)"
+      ],
+      "tests": "unit:__tests__/parking.test.tsx",
+      "prototype_key": "filters"
+    },
+    {
+      "id": "SCR-017",
+      "key": "details",
+      "name": "Parking details",
+      "module": "parking",
+      "rn": "screens/parking/ParkingDetailsScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET /parking/areas/{id}/"
+      ],
+      "tests": "unit:__tests__/parking.test.tsx; api",
+      "prototype_key": "details"
+    },
+    {
+      "id": "SCR-018",
+      "key": "navPick",
+      "name": "Navigate with",
+      "module": "navigation",
+      "rn": "screens/parking/NavigationPickerScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "device: Linking.canOpenURL/openURL"
+      ],
+      "tests": "unit:__tests__/parking.test.tsx",
+      "prototype_key": "navPick"
+    },
+    {
+      "id": "SCR-019",
+      "key": "handoff",
+      "name": "Simulated hand-off",
+      "module": "navigation",
+      "rn": "(real external app)",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "manual",
+      "prototype_key": "handoff"
+    },
+    {
+      "id": "SCR-020",
+      "key": "navReturn",
+      "name": "Welcome back",
+      "module": "navigation",
+      "rn": "screens/parking/NavigationReturnScreen.tsx",
+      "phase": "P1",
+      "status": "partial",
+      "apis": [
+        "GET /parking/areas/{id}/"
+      ],
+      "tests": "manual",
+      "prototype_key": "navReturn"
+    },
+    {
+      "id": "SCR-021",
+      "key": "partner",
+      "name": "Partner reservation",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(future) partner API"
+      ],
+      "tests": "none",
+      "prototype_key": "partner"
+    },
+    {
+      "id": "SCR-022",
+      "key": "startSession",
+      "name": "Start parking session",
+      "module": "sessions",
+      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "phase": "P2",
+      "status": "routed-placeholder",
+      "apis": [
+        "POST/GET/PATCH /sessions/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "startSession"
+    },
+    {
+      "id": "SCR-023",
+      "key": "session",
+      "name": "Active session",
+      "module": "sessions",
+      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST/GET/PATCH /sessions/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "session"
+    },
+    {
+      "id": "SCR-024",
+      "key": "editSession",
+      "name": "Edit session",
+      "module": "sessions",
+      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST/GET/PATCH /sessions/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "editSession"
+    },
+    {
+      "id": "SCR-025",
+      "key": "endSession",
+      "name": "End session",
+      "module": "sessions",
+      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST/GET/PATCH /sessions/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "endSession"
+    },
+    {
+      "id": "SCR-026",
+      "key": "summary",
+      "name": "Session summary",
+      "module": "sessions",
+      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST/GET/PATCH /sessions/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "summary"
+    },
+    {
+      "id": "SCR-027",
+      "key": "rType",
+      "name": "Report type",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "routed-placeholder",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "rType"
+    },
+    {
+      "id": "SCR-028",
+      "key": "rLoc",
+      "name": "Report location",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "rLoc"
+    },
+    {
+      "id": "SCR-029",
+      "key": "rDetails",
+      "name": "Report details",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "rDetails"
+    },
+    {
+      "id": "SCR-030",
+      "key": "rReview",
+      "name": "Report review",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "rReview"
+    },
+    {
+      "id": "SCR-031",
+      "key": "rSuccess",
+      "name": "Report submitted",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "rSuccess"
+    },
+    {
+      "id": "SCR-032",
+      "key": "myReports",
+      "name": "My reports",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "myReports"
+    },
+    {
+      "id": "SCR-033",
+      "key": "reportDetail",
+      "name": "Report detail & appeal",
+      "module": "community",
+      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /reports/, GET /reports/mine/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "reportDetail"
+    },
+    {
+      "id": "SCR-034",
+      "key": "saved",
+      "name": "Saved",
+      "module": "saved",
+      "rn": "screens/profile/TabScreens.tsx#SavedScreen",
+      "phase": "P2",
+      "status": "partial",
+      "apis": [
+        "(Part 2) /saved/"
+      ],
+      "tests": "manual",
+      "prototype_key": "saved"
+    },
+    {
+      "id": "SCR-035",
+      "key": "activity",
+      "name": "Activity",
+      "module": "sessions",
+      "rn": "screens/profile/TabScreens.tsx#ActivityScreen",
+      "phase": "P2",
+      "status": "partial",
+      "apis": [
+        "(Part 2)"
+      ],
+      "tests": "manual",
+      "prototype_key": "activity"
+    },
+    {
+      "id": "SCR-036",
+      "key": "notifs",
+      "name": "Notifications inbox",
+      "module": "notifications",
+      "rn": "Part2Screen(feature=notifs)",
+      "phase": "P2",
+      "status": "routed-placeholder",
+      "apis": [
+        "(Part 2) /notifications/"
+      ],
+      "tests": "none",
+      "prototype_key": "notifs"
+    },
+    {
+      "id": "SCR-037",
+      "key": "nprefs",
+      "name": "Notification preferences",
+      "module": "notifications",
+      "rn": "screens/onboarding/NotificationsIntroScreen.tsx (explanation only)",
+      "phase": "P2",
+      "status": "partial",
+      "apis": [
+        "(Part 2)"
+      ],
+      "tests": "manual",
+      "prototype_key": "nprefs"
+    },
+    {
+      "id": "SCR-038",
+      "key": "profile",
+      "name": "Profile",
+      "module": "profile",
+      "rn": "screens/profile/ProfileScreen.tsx",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET /users/me/",
+        "POST /auth/logout/",
+        "GET /health/"
+      ],
+      "tests": "manual",
+      "prototype_key": "profile"
+    },
+    {
+      "id": "SCR-039",
+      "key": "acctMgmt",
+      "name": "Account",
+      "module": "profile",
+      "rn": "screens/profile/SettingsScreens.tsx#AccountSettingsScreen",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "PATCH /users/me/"
+      ],
+      "tests": "api:tests/test_auth.py",
+      "prototype_key": "acctMgmt"
+    },
+    {
+      "id": "SCR-040",
+      "key": "pprefs",
+      "name": "Parking preferences",
+      "module": "profile",
+      "rn": "screens/profile/SettingsScreens.tsx#ParkingPreferencesScreen",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "GET/PATCH /users/me/preferences/"
+      ],
+      "tests": "api:tests/test_auth.py",
+      "prototype_key": "pprefs"
+    },
+    {
+      "id": "SCR-041",
+      "key": "privacy",
+      "name": "Privacy & permissions",
+      "module": "privacy",
+      "rn": "screens/profile/SettingsScreens.tsx#PrivacyScreen",
+      "phase": "P1",
+      "status": "partial",
+      "apis": [
+        "GET/PATCH /users/me/preferences/"
+      ],
+      "tests": "manual",
+      "prototype_key": "privacy"
+    },
+    {
+      "id": "SCR-042",
+      "key": "help",
+      "name": "Help",
+      "module": "support",
+      "rn": "screens/profile/SettingsScreens.tsx#HelpScreen",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [],
+      "tests": "manual",
+      "prototype_key": "help"
+    },
+    {
+      "id": "SCR-043",
+      "key": "support",
+      "name": "Contact support / guidance problem",
+      "module": "support",
+      "rn": "—",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "POST /support/tickets/ (Part 2)"
+      ],
+      "tests": "none",
+      "prototype_key": "support"
+    },
+    {
+      "id": "SCR-044",
+      "key": "deleteAcct",
+      "name": "Delete account",
+      "module": "privacy",
+      "rn": "screens/profile/SettingsScreens.tsx#DeleteAccountScreen",
+      "phase": "P1",
+      "status": "implemented",
+      "apis": [
+        "DELETE /users/me/"
+      ],
+      "tests": "api:tests/test_auth.py",
+      "prototype_key": "deleteAcct"
+    },
+    {
+      "id": "SCR-046",
+      "key": "zIntro",
+      "name": "Z-Trigger intro",
+      "module": "z-trigger",
+      "rn": "—",
+      "phase": "experimental",
+      "status": "not-started",
+      "apis": [
+        "(experimental)"
+      ],
+      "tests": "none",
+      "prototype_key": "zIntro"
+    },
+    {
+      "id": "SCR-047",
+      "key": "zConsent",
+      "name": "Z-Trigger consent",
+      "module": "z-trigger",
+      "rn": "—",
+      "phase": "experimental",
+      "status": "not-started",
+      "apis": [
+        "(experimental)"
+      ],
+      "tests": "none",
+      "prototype_key": "zConsent"
+    },
+    {
+      "id": "SCR-048",
+      "key": "zSetup",
+      "name": "Z-Trigger setup",
+      "module": "z-trigger",
+      "rn": "—",
+      "phase": "experimental",
+      "status": "not-started",
+      "apis": [
+        "(experimental)"
+      ],
+      "tests": "none",
+      "prototype_key": "zSetup"
+    },
+    {
+      "id": "SCR-049",
+      "key": "zHome",
+      "name": "Z-Trigger home",
+      "module": "z-trigger",
+      "rn": "—",
+      "phase": "experimental",
+      "status": "not-started",
+      "apis": [
+        "(experimental)"
+      ],
+      "tests": "none",
+      "prototype_key": "zHome"
+    },
+    {
+      "id": "SCR-050",
+      "key": "zEvent",
+      "name": "Z-Trigger event",
+      "module": "z-trigger",
+      "rn": "—",
+      "phase": "experimental",
+      "status": "not-started",
+      "apis": [
+        "(experimental)"
+      ],
+      "tests": "none",
+      "prototype_key": "zEvent"
+    },
+    {
+      "id": "SCR-051",
+      "key": "scoutList",
+      "name": "Scout tasks",
+      "module": "scouts",
+      "rn": "—",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "(Part 2) /scouts/assignments/"
+      ],
+      "tests": "none",
+      "prototype_key": "scoutList"
+    },
+    {
+      "id": "SCR-052",
+      "key": "scoutTask",
+      "name": "Scout task",
+      "module": "scouts",
+      "rn": "—",
+      "phase": "P2",
+      "status": "not-started",
+      "apis": [
+        "(Part 2) /scouts/assignments/"
+      ],
+      "tests": "none",
+      "prototype_key": "scoutTask"
+    },
+    {
+      "id": "SCR-053",
+      "key": "pro",
+      "name": "Zpot Pro paywall",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "pro"
+    },
+    {
+      "id": "SCR-054",
+      "key": "proWelcome",
+      "name": "Pro welcome",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "proWelcome"
+    },
+    {
+      "id": "SCR-055",
+      "key": "manageSub",
+      "name": "Manage subscription",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "manageSub"
+    },
+    {
+      "id": "SCR-056",
+      "key": "cancelSub",
+      "name": "Cancel subscription",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "cancelSub"
+    },
+    {
+      "id": "SCR-057",
+      "key": "commute",
+      "name": "Commute planner",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "commute"
+    },
+    {
+      "id": "SCR-058",
+      "key": "vehicles",
+      "name": "Vehicles & permits",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "vehicles"
+    },
+    {
+      "id": "SCR-059",
+      "key": "insights",
+      "name": "Savings & history",
+      "module": "monetisation",
+      "rn": "—",
+      "phase": "post-MVP",
+      "status": "not-started",
+      "apis": [
+        "(post-MVP)"
+      ],
+      "tests": "none",
+      "prototype_key": "insights"
+    }
+  ],
+  "overlays": [
+    {
+      "id": "OVL-001",
+      "key": "osLoc",
+      "name": "Simulated OS location prompt",
+      "rn": "Replaced by the real OS permission dialog",
+      "status": "implemented"
+    },
+    {
+      "id": "OVL-002",
+      "key": "layers",
+      "name": "Map layers & legend",
+      "rn": "components/maps/LayersSheet.tsx",
+      "status": "implemented"
+    },
+    {
+      "id": "OVL-003",
+      "key": "adWhy",
+      "name": "Why this ad?",
+      "rn": "post-MVP (ads not shipped)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-004",
+      "key": "saveGuest",
+      "name": "Save as guest / create account",
+      "rn": "Part 2 (saving)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-005",
+      "key": "notifPrime",
+      "name": "Notification permission primer at session start",
+      "rn": "Part 2 (sessions)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-006",
+      "key": "cancelReport",
+      "name": "Discard report?",
+      "rn": "Part 2 (reports)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-007",
+      "key": "rename",
+      "name": "Rename saved place",
+      "rn": "Part 2 (saved)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-008",
+      "key": "removeConfirm",
+      "name": "Remove saved place",
+      "rn": "Part 2 (saved)",
+      "status": "not-started"
+    },
+    {
+      "id": "OVL-009",
+      "key": "signOut",
+      "name": "Sign out confirm",
+      "rn": "components/common/BottomSheet.tsx#ConfirmDialog (ProfileScreen)",
+      "status": "implemented"
+    },
+    {
+      "id": "OVL-010",
+      "key": "store",
+      "name": "App-store purchase sheet",
+      "rn": "post-MVP",
+      "status": "not-started"
+    }
+  ],
+  "interactions": {
+    "total_bindings": 390,
+    "by_status": {
+      "implemented": 199,
+      "routed-placeholder": 77,
+      "not-started": 92,
+      "partial": 5,
+      "dev-only": 17
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Testing strategy and Part 1 results
+
+| Layer | Tooling | Location | What it covers |
+|---|---|---|---|
+| Rule engine (pure) | pytest | `api/tests/test_engine.py` (24) | Weekday and weekend, free and paid windows, increments, max stay, resident permits, crossing midnight, closures (at arrival and mid-stay), overlapping rules and precedence, DST offset mapping, DST-end night, unknown (unverified and no record), permission gaps, future rules, badge bays, vehicle classes |
+| Auth API | pytest + PostGIS | `api/tests/test_auth.py` (18 incl. parametrised) | Register (valid, duplicate case-insensitive, invalid passwords, terms), login and invalid credentials, verification and expired token, resend, password reset and single use, enumeration safety, refresh rotation, logout revocation, unauthorized access, profile, preferences and consent ledger, deletion |
+| Parking/places API | pytest + real PostGIS + seeded fixtures | `api/tests/test_parking_api.py` (35 incl. parametrised) | Guest access, free-first ranking, paid hidden by default, restricted never listed, permit holders, unknown labelling and `verified_only`, free ≠ vacant, time windows, leave-by restrictions, `max_price`, max walk, PostGIS distance vs haversine, commercial neutrality, unsupported city, 9 validation cases, cursor pagination, `/spots/nearby` = canonical, detail, rules, evidence, observations, closures, future restriction, regulations evaluate, map layers, compare, cities and places, system endpoints, audit revisions, seed idempotency |
+| Mobile units | Jest | `mobile/__tests__/presentation`, `apiClient`, `searchParams` | Enum → copy (EN and PT), error envelope, bearer injection, GET retries and no POST retry, filters → query params |
+| Mobile components/screens | React Native Testing Library (v14) | `mobile/__tests__/onboarding`, `auth`, `parking` | Splash routing, language, onboarding, location-denied fallback, guest mode, sign-in and register validation, server errors, secure token storage, journey return, verification, results rendering, no-free fallback, error and retry, unsupported coverage, map marker selection, search, filters → API params, details, Part 2 routing honesty, navigation hand-off and missing Waze |
+| API contract | Jest (node env) + Zod | `mobile/__tests__/contract` | Live responses from the real API validated against the schemas the app relies on (`src/services/api/schemas.ts`). The OpenAPI schema validates with 0 errors. |
+| E2E | Maestro | `mobile/e2e/part1-core-journey.yaml` | The primary Part 1 journey against the real API (authored, not run here; see the completion report) |
+
+Run everything with `./scripts/run-tests.sh`. Exact counts and results are in `docs/PART_1_COMPLETION_REPORT.md`.

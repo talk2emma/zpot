@@ -19,6 +19,16 @@ from apps.regulations.serializers import (
 from apps.regulations.services.describe import restriction_line, rule_line, validity_suffix
 
 from .models import ParkingArea
+from .openapi import (
+    AreaEvidenceResponseSerializer,
+    AreaRulesResponseSerializer,
+    CompareResponseSerializer,
+    MapLayersResponseSerializer,
+    ObservationsResponseSerializer,
+    ParkingAreaDetailDocSerializer,
+    ParkingOptionsResponseSerializer,
+    SpotsNearbyResponseSerializer,
+)
 from .selectors import areas_with_regulations
 from .serializers import (
     CompareQuerySerializer,
@@ -72,7 +82,7 @@ class ParkingOptionsView(APIView):
 
     permission_classes = [AllowAny]
 
-    @extend_schema(parameters=[SearchQuerySerializer])
+    @extend_schema(parameters=[SearchQuerySerializer], responses=ParkingOptionsResponseSerializer)
     def get(self, request):
         s = SearchQuerySerializer(data=request.query_params)
         s.is_valid(raise_exception=True)
@@ -116,6 +126,7 @@ class SpotsNearbyCompatView(APIView):
             OpenApiParameter("radius", int, required=False),
         ],
         deprecated=True,
+        responses=SpotsNearbyResponseSerializer,
     )
     def get(self, request):
         q = request.query_params
@@ -234,7 +245,8 @@ class ParkingAreaDetailView(APIView):
             StayParamsSerializer,
             OpenApiParameter("latitude", float, required=False),
             OpenApiParameter("longitude", float, required=False),
-        ]
+        ],
+        responses=ParkingAreaDetailDocSerializer,
     )
     def get(self, request, pk):
         area = _get_area(pk)
@@ -266,6 +278,7 @@ class ParkingAreaDetailView(APIView):
 class ParkingAreaRulesView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(responses=AreaRulesResponseSerializer)
     def get(self, request, pk):
         area = _get_area(pk)
         upcoming = [c for c in area.closures.all() if c.ends_at > timezone.now()]
@@ -284,6 +297,7 @@ class ParkingAreaRulesView(APIView):
 class ParkingAreaEvidenceView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(responses=AreaEvidenceResponseSerializer)
     def get(self, request, pk):
         area = _get_area(pk)
         return Response(
@@ -302,6 +316,7 @@ class ParkingAreaObservationsView(APIView):
 
     permission_classes = [AllowAny]
 
+    @extend_schema(responses=ObservationsResponseSerializer)
     def get(self, request, pk):
         area = _get_area(pk)
         qs = ParkingObservation.objects.filter(area=area, expires_at__gt=timezone.now()).order_by("-observed_at")
@@ -319,7 +334,7 @@ class MapLayersView(APIView):
 
     permission_classes = [AllowAny]
 
-    @extend_schema(parameters=[MapLayersQuerySerializer])
+    @extend_schema(parameters=[MapLayersQuerySerializer], responses=MapLayersResponseSerializer)
     def get(self, request):
         s = MapLayersQuerySerializer(data=request.query_params)
         s.is_valid(raise_exception=True)
@@ -372,7 +387,7 @@ def _rate(area):
 class CompareView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(parameters=[CompareQuerySerializer])
+    @extend_schema(parameters=[CompareQuerySerializer], responses=CompareResponseSerializer)
     def get(self, request):
         s = CompareQuerySerializer(data=request.query_params)
         s.is_valid(raise_exception=True)

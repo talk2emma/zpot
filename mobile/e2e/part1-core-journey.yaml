@@ -1,0 +1,36 @@
+# Primary Part 1 journey (real API, no mocks):
+# Launch → Continue as guest → Search destination → Set time/duration → API results → legal free parking → details → Navigate
+# Run: maestro test mobile/e2e/part1-core-journey.yaml   (API running + seeded; app installed on a booted simulator/emulator)
+appId: pt.zpot.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: { id: "language-screen" }
+    timeout: 15000
+- tapOn: { id: "lang-en" }
+- tapOn: { id: "language-continue" }
+- tapOn: { id: "welcome-find" }
+- tapOn: { id: "location-manual" }          # declining location must not block
+- tapOn: { id: "continue-as-guest" }
+- assertVisible: { id: "explore-screen" }
+- tapOn: { id: "explore-search" }
+- inputText: "Saldanha"
+- extendedWaitUntil:
+    visible: { id: "suggestion-saldanha" }
+    timeout: 10000
+- tapOn: { id: "suggestion-saldanha" }
+- tapOn: { id: "chip-plan" }
+- tapOn: { id: "plan-day-tomorrow" }
+- tapOn: { id: "plan-hour-plus" }
+- tapOn: { id: "plan-duration-plus" }
+- tapOn: { id: "plan-apply" }
+- extendedWaitUntil:
+    visible: { id: "results-count" }
+    timeout: 15000
+- assertVisible: "Recommended"
+- tapOn: { text: "Recommended" }            # the recommended card is always legal free parking
+- assertVisible: { id: "details-name" }
+- assertVisible: "Check street signs before parking.*"
+- tapOn: { id: "details-navigate" }
+- assertVisible: { id: "nav-picker-screen" }
