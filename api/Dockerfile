@@ -17,7 +17,7 @@ RUN pip install -r requirements/${REQUIREMENTS}.txt
 
 COPY . /app
 
-RUN useradd --create-home --uid 1000 zpot && chown -R zpot:zpot /app
+RUN useradd --create-home --uid 1000 zpot && mkdir -p /data/media && chown -R zpot:zpot /app /data/media
 USER zpot
 
 EXPOSE 8000

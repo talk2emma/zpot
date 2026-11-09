@@ -51,3 +51,44 @@ def auth_api(api, user_factory):
     api.credentials(HTTP_AUTHORIZATION=f"Bearer {tokens['access']}")
     api.user, api.tokens = user, tokens
     return api
+
+
+@pytest.fixture
+def make_client(db):
+    """Authenticated APIClient for a fresh user, optionally with roles."""
+    from apps.accounts.models import UserRole
+    from apps.accounts.services import issue_tokens, register_user
+
+    counter = {"n": 0}
+
+    def make(roles=(), email=None):
+        counter["n"] += 1
+        u = register_user(email=email or f"user{counter['n']}@zpot.test", password="Str0ng-pass-123")
+        for r in roles:
+            UserRole.objects.get_or_create(user=u, role=r)
+        c = APIClient()
+        c.credentials(HTTP_AUTHORIZATION=f"Bearer {issue_tokens(u)['access']}")
+        c.user = u
+        return c
+
+    return make
+
+
+def area_id(ref):
+    from apps.parking.models import ParkingArea
+
+    return ParkingArea.objects.get(external_ref=f"dev-lisbon-{ref}").id
+
+
+def guest(token="guest-install-token-0001"):
+    c = APIClient()
+    c.credentials(HTTP_X_ZPOT_CLIENT=token)
+    return c
+
+
+def reauth(c):
+    """Issue a fresh access token (for tests that move the clock past the 15-minute lifetime)."""
+    from apps.accounts.services import issue_tokens
+
+    c.credentials(HTTP_AUTHORIZATION=f"Bearer {issue_tokens(c.user)['access']}")
+    return c

@@ -275,7 +275,7 @@ def test_system_endpoints(api, seeded):
     cfg = api.get("/api/v1/config/").json()
     assert cfg["map"]["style_url"].startswith("https://") and cfg["search_defaults"]["max_walk_minutes"] == 10
     feats = {f["key"]: f for f in api.get("/api/v1/features/").json()["features"]}
-    assert feats["parking_search"]["enabled"] and feats["parking_sessions"]["phase"] == "part2"
+    assert feats["parking_search"]["enabled"] and feats["parking_sessions"]["phase"] == "mvp"
     assert api.get("/api/v1/schema/").status_code == 200
     assert api.get("/api/v1/docs/").status_code == 200
 

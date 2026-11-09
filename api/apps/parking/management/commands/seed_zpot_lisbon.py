@@ -419,8 +419,10 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.WARNING("These are DEVELOPMENT FIXTURES — not confirmed live parking regulations.")
         )
+        self._help()
         if opts["with_users"]:
             self._users()
+            self._scout_tasks()
 
     # ------------------------------------------------------------------ cities & coverage
     def _cities(self):
@@ -672,6 +674,98 @@ class Command(BaseCommand):
                 )
                 counts["closures"] += 1
         return counts
+
+    # ------------------------------------------------------------------ help centre
+    def _help(self):
+        from apps.support.models import HelpArticle
+
+        rows = [
+            (
+                "how-zpot-finds-parking",
+                "parking",
+                "How does Zpot find parking?",
+                "Como é que o Zpot encontra estacionamento?",
+                "We combine official parking rules (where available) with checks by drivers and scouts, then work out what applies "
+                "for your arrival time and the whole of your stay. In this development build all rules are sample data.",
+                "Combinamos regras oficiais (quando existem) com verificações de condutores e batedores, e calculamos o que se "
+                "aplica à hora de chegada e a toda a estadia. Nesta versão de desenvolvimento todas as regras são dados de exemplo.",
+            ),
+            (
+                "what-free-means",
+                "parking",
+                "What does “free” mean?",
+                "O que significa “grátis”?",
+                "No payment is required for your selected time and no restriction applies, according to the rules we have. It does "
+                "not mean a space is empty — availability is not confirmed.",
+                "Não é preciso pagar no horário escolhido e nenhuma restrição se aplica, segundo as regras que temos. Não significa "
+                "que haja lugar livre — a disponibilidade não está confirmada.",
+            ),
+            (
+                "labels",
+                "parking",
+                "What do the labels mean?",
+                "O que significam as etiquetas?",
+                "Verified: matched to an official source on the date shown. Community-confirmed: confirmed by drivers with photos. "
+                "Rules unconfirmed: we don't know — check the signs.",
+                "Verificado: confirmado numa fonte oficial na data indicada. Confirmado pela comunidade: confirmado por condutores "
+                "com fotografias. Regras por confirmar: não sabemos — veja a sinalização.",
+            ),
+            (
+                "community-reports",
+                "reports",
+                "How does community reporting work?",
+                "Como funcionam os relatos da comunidade?",
+                "Spots you share as you leave are shown for about 10 minutes and fade out. Rule corrections are reviewed by the data "
+                "team before they change the map. Reports never override a verified legal restriction.",
+                "Os lugares que partilha ao sair aparecem cerca de 10 minutos. As correções de regras são revistas pela equipa de "
+                "dados antes de alterarem o mapa. Os relatos nunca se sobrepõem a uma restrição legal verificada.",
+            ),
+            (
+                "reminders-fines",
+                "sessions",
+                "Do reminders protect me from fines?",
+                "Os lembretes protegem-me de multas?",
+                "No. Reminders help you plan, but street signs and enforcement officers decide. Always check the signs.",
+                "Não. Os lembretes ajudam a planear, mas a sinalização e os agentes decidem. Confirme sempre a sinalização.",
+            ),
+            (
+                "location",
+                "privacy",
+                "Why does Zpot want my location?",
+                "Porque é que o Zpot quer a minha localização?",
+                "To show nearby parking and walking times, only while you use the app. You can search a destination instead.",
+                "Para mostrar estacionamento próximo e tempos a pé, apenas enquanto usa a app. Pode pesquisar um destino.",
+            ),
+            (
+                "account",
+                "account",
+                "Do I need an account?",
+                "Preciso de conta?",
+                "No. You can search, compare and navigate as a guest. An account syncs saved places, sessions and your reports.",
+                "Não. Pode pesquisar, comparar e navegar como convidado. Uma conta sincroniza locais, sessões e relatos.",
+            ),
+        ]
+        for i, (slug, cat, ten, tpt, ben, bpt) in enumerate(rows):
+            HelpArticle.objects.update_or_create(
+                slug=slug, defaults=dict(category=cat, title_en=ten, title_pt=tpt, body_en=ben, body_pt=bpt, order=i)
+            )
+
+    def _scout_tasks(self):
+        from apps.scouts.models import ScoutAssignment
+
+        scout = get_user_model().objects.filter(email="scout@zpot.dev").first()
+        for ref, reason in (
+            ("dev-lisbon-s5", "Unverified street with frequent searches"),
+            ("dev-lisbon-s7", "Conflicting community reports"),
+        ):
+            area = ParkingArea.objects.get(external_ref=ref)
+            ScoutAssignment.objects.get_or_create(
+                area=area, assigned_to=scout, report=None, defaults={"reason": reason}
+            )
+        # make admin a data reviewer too
+        admin = get_user_model().objects.filter(email="admin@zpot.dev").first()
+        if admin:
+            UserRole.objects.get_or_create(user=admin, role=Role.DATA_REVIEWER)
 
     # ------------------------------------------------------------------ users
     def _users(self):

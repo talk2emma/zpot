@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class PrivacyConfig(AppConfig):
     name = "apps.privacy"
     label = "zpot_privacy"
-    verbose_name = "privacy (Part 2)"
+    verbose_name = "privacy"

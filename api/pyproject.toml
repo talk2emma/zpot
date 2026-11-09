@@ -17,6 +17,7 @@ ignore = ["S101", "S105", "S106", "DJ001"]
 "tests/**" = ["S", "B"]
 "config/settings/*.py" = ["F405", "F403"]
 "apps/accounts/web.py" = ["E501"]  # inline HTML template
+"apps/parking/management/commands/seed_zpot_lisbon.py" = ["E501", "C408"]  # bilingual user-facing copy
 "apps/cities/geocoding/nominatim.py" = ["S310"]  # fixed https host constant
 
 [tool.pytest.ini_options]

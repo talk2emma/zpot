@@ -7,6 +7,7 @@ x-api-env: &api-env
   REDIS_URL: redis://redis:6379/0
   EMAIL_HOST: mailpit
   EMAIL_PORT: "1025"
+  MEDIA_ROOT: /data/media
 
 services:
   db:
@@ -46,6 +47,7 @@ services:
       retries: 10
 
   api:
+    image: zpot-api
     build:
       context: ./api
       args: { REQUIREMENTS: dev }
@@ -56,6 +58,7 @@ services:
     ports: ["8000:8000"]
     volumes:
       - ./api:/app
+      - media:/data/media
     depends_on:
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -68,9 +71,7 @@ services:
       retries: 10
 
   worker:
-    build:
-      context: ./api
-      args: { REQUIREMENTS: dev }
+    image: zpot-api   # same image as the API (one build, no drift)
     command: celery -A config worker --loglevel=INFO --concurrency=2
     env_file:
       - path: ./api/.env
@@ -78,9 +79,35 @@ services:
     environment: *api-env
     volumes:
       - ./api:/app
+      - media:/data/media
     depends_on:
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
+    healthcheck:   # the image's default HTTP check is for the API, not the worker
+      test: ["CMD-SHELL", "celery -A config inspect ping -d celery@$$HOSTNAME --timeout 5 | grep -q pong"]
+      interval: 30s
+      timeout: 15s
+      start_period: 30s
+      retries: 5
+
+  beat:
+    image: zpot-api
+    command: celery -A config beat --loglevel=INFO --schedule /tmp/celerybeat-schedule
+    env_file:
+      - path: ./api/.env
+        required: false
+    environment: *api-env
+    volumes:
+      - ./api:/app
+    depends_on:
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/celerybeat-schedule"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
 
 volumes:
   pgdata:
+  media:

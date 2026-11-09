@@ -1,27 +1,49 @@
 from django.conf import settings
+from django.core.cache import cache
 
-# Status per feature so the mobile app can route honestly (enabled / disabled / part2).
+# Status per feature so the mobile app can route honestly.
 FEATURE_PHASE = {
-    "guest_search": "part1",
-    "parking_search": "part1",
-    "external_navigation": "part1",
-    "community_reports": "part2",
-    "parking_sessions": "part2",
-    "saved_places_sync": "part2",
-    "notifications": "part2",
-    "monetisation_concepts": "part2",
+    "guest_search": "mvp",
+    "parking_search": "mvp",
+    "external_navigation": "mvp",
+    "community_reports": "mvp",
+    "parking_sessions": "mvp",
+    "saved_places_sync": "mvp",
+    "notifications": "mvp",
+    "support": "mvp",
+    "privacy_requests": "mvp",
+    "scouts": "mvp",
+    "monetisation_concepts": "post-mvp",
+    "pro": "post-mvp",
+    "partners": "post-mvp",
+    "advertising": "post-mvp",
     "z_trigger": "experimental",
-    "scouts": "part2",
 }
+_CACHE_KEY = "zpot:feature-flags"
+
+
+def _flags():
+    flags = dict(settings.ZPOT["FEATURES"])
+    cached = cache.get(_CACHE_KEY)
+    if cached is None:
+        from .models import FeatureFlag
+
+        try:
+            cached = {f.key: f.enabled for f in FeatureFlag.objects.all()}
+        except Exception:  # noqa: BLE001 - table may not exist during migrate
+            cached = {}
+        cache.set(_CACHE_KEY, cached, 30)
+    flags.update(cached)
+    return flags
+
+
+def invalidate():
+    cache.delete(_CACHE_KEY)
 
 
 def feature_flags():
-    flags = settings.ZPOT["FEATURES"]
-    return [
-        {"key": key, "enabled": bool(enabled), "phase": FEATURE_PHASE.get(key, "part2")}
-        for key, enabled in flags.items()
-    ]
+    return [{"key": k, "enabled": bool(v), "phase": FEATURE_PHASE.get(k, "mvp")} for k, v in _flags().items()]
 
 
 def is_enabled(key):
-    return bool(settings.ZPOT["FEATURES"].get(key))
+    return bool(_flags().get(key))

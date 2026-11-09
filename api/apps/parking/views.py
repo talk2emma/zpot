@@ -319,7 +319,13 @@ class ParkingAreaObservationsView(APIView):
     @extend_schema(responses=ObservationsResponseSerializer)
     def get(self, request, pk):
         area = _get_area(pk)
-        qs = ParkingObservation.objects.filter(area=area, expires_at__gt=timezone.now()).order_by("-observed_at")
+        from apps.availability.views import _live
+
+        qs = _live(
+            ParkingObservation.objects.filter(area=area, expires_at__gt=timezone.now())
+            .select_related("area", "report")
+            .order_by("-observed_at")
+        )
         return Response(
             {
                 "area_id": area.id,

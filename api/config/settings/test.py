@@ -7,9 +7,9 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_BROKER_URL = "memory://"
-REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {  # noqa: F405
-    "anon": "10000/min",
-    "user": "10000/min",
-    "auth": "10000/min",
-    "auth_email": "10000/min",
-}
+# every configured scope (incl. Part 2 scopes) gets a high limit in tests
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = dict.fromkeys(REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "10000/min")  # noqa: F405
+
+import tempfile  # noqa: E402
+
+MEDIA_ROOT = tempfile.mkdtemp(prefix="zpot-test-media-")

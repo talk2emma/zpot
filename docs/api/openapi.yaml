@@ -185,6 +185,100 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
           description: ''
+  /api/v1/availability/nearby/:
+    get:
+      operationId: availability_nearby_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: latitude
+        schema:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: longitude
+        schema:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        required: true
+      - in: query
+        name: radius_meters
+        schema:
+          type: integer
+          maximum: 2000
+          minimum: 50
+          default: 800
+      tags:
+      - availability
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedObservationList'
+          description: ''
+  /api/v1/availability/observations/:
+    get:
+      operationId: availability_observations_list
+      tags:
+      - availability
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Observation'
+          description: ''
+    post:
+      operationId: availability_observations_create
+      tags:
+      - availability
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateObservationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateObservationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateObservationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+          description: ''
   /api/v1/cities/:
     get:
       operationId: cities_list
@@ -261,6 +355,168 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicConfig'
           description: ''
+  /api/v1/detection/config/:
+    get:
+      operationId: detection_config_retrieve
+      tags:
+      - detection
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetectionConfig'
+          description: ''
+  /api/v1/devices/:
+    get:
+      operationId: devices_retrieve
+      tags:
+      - devices
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+    post:
+      operationId: devices_create
+      tags:
+      - devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: ''
+  /api/v1/devices/{id}/:
+    delete:
+      operationId: devices_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - devices
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/park/:
+    post:
+      operationId: events_park_create
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkEvent'
+          description: ''
+  /api/v1/events/park/{id}/confirm/:
+    post:
+      operationId: events_park_confirm_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkEvent'
+          description: ''
+  /api/v1/events/park/{id}/dismiss/:
+    post:
+      operationId: events_park_dismiss_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ParkEventRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkEvent'
+          description: ''
   /api/v1/features/:
     get:
       operationId: features_retrieve
@@ -290,6 +546,175 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/help/articles/:
+    get:
+      operationId: help_articles_list
+      tags:
+      - help
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpArticle'
+          description: ''
+  /api/v1/help/articles/{id}/:
+    get:
+      operationId: help_articles_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - help
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpArticle'
+          description: ''
+  /api/v1/notifications/:
+    get:
+      operationId: notifications_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/notifications/{id}/:
+    get:
+      operationId: notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/{id}/read/:
+    post:
+      operationId: notifications_read_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/preferences/:
+    get:
+      operationId: notifications_preferences_retrieve
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    patch:
+      operationId: notifications_preferences_partial_update
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreferenceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreferenceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreferenceRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+  /api/v1/notifications/read-all/:
+    post:
+      operationId: notifications_read_all_create
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadAll'
           description: ''
   /api/v1/parking/areas/:
     get:
@@ -880,6 +1305,122 @@ paths:
               schema:
                 $ref: '#/components/schemas/PlaceResult'
           description: ''
+  /api/v1/privacy/consents/:
+    get:
+      operationId: privacy_consents_retrieve
+      tags:
+      - privacy
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consents'
+          description: ''
+    patch:
+      operationId: privacy_consents_partial_update
+      tags:
+      - privacy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedConsentsPatchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedConsentsPatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedConsentsPatchRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consents'
+          description: ''
+  /api/v1/privacy/data-export/:
+    post:
+      operationId: privacy_data_export_create
+      tags:
+      - privacy
+      security:
+      - jwtAuth: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyRequest'
+          description: ''
+  /api/v1/privacy/deletion-request/:
+    post:
+      operationId: privacy_deletion_request_create
+      tags:
+      - privacy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletionInRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeletionInRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeletionInRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyRequest'
+          description: ''
+  /api/v1/privacy/requests/:
+    get:
+      operationId: privacy_requests_list
+      tags:
+      - privacy
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyRequest'
+          description: ''
+  /api/v1/privacy/requests/{id}/download/:
+    get:
+      operationId: privacy_requests_download_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - privacy
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+          description: ''
   /api/v1/ready/:
     get:
       operationId: ready_retrieve
@@ -1023,6 +1564,794 @@ paths:
               schema:
                 $ref: '#/components/schemas/Evaluation'
           description: ''
+  /api/v1/reports/:
+    get:
+      operationId: reports_list
+      description: 'GET: moderation queue (reviewers only). POST: submit a report
+        (guests may share vacancy signals).'
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReviewerReportList'
+          description: ''
+    post:
+      operationId: reports_create
+      description: 'GET: moderation queue (reviewers only). POST: submit a report
+        (guests may share vacancy signals).'
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateReportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateReportRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+  /api/v1/reports/{id}/:
+    get:
+      operationId: reports_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+    patch:
+      operationId: reports_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateReportRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+  /api/v1/reports/{id}/appeals/:
+    post:
+      operationId: reports_appeals_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppealRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AppealRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AppealRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+  /api/v1/reports/{id}/attachments/:
+    post:
+      operationId: reports_attachments_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PhotoUploadRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+          description: ''
+  /api/v1/reports/{id}/attachments/{attachment_id}/:
+    get:
+      operationId: reports_attachments_retrieve
+      parameters:
+      - in: path
+        name: attachment_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+          description: ''
+  /api/v1/reports/{id}/verifications/:
+    post:
+      operationId: reports_verifications_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResult'
+          description: ''
+  /api/v1/reports/mine/:
+    get:
+      operationId: reports_mine_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - reports
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReportList'
+          description: ''
+  /api/v1/saved/destinations/:
+    get:
+      operationId: saved_destinations_retrieve
+      tags:
+      - saved
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedDestination'
+          description: ''
+    post:
+      operationId: saved_destinations_create
+      tags:
+      - saved
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedDestinationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SavedDestinationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SavedDestinationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedDestination'
+          description: ''
+  /api/v1/saved/destinations/{id}/:
+    delete:
+      operationId: saved_destinations_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - saved
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/saved/locations/:
+    get:
+      operationId: saved_locations_retrieve
+      tags:
+      - saved
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+    post:
+      operationId: saved_locations_create
+      tags:
+      - saved
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSavedLocationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateSavedLocationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateSavedLocationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+  /api/v1/saved/locations/{id}/:
+    patch:
+      operationId: saved_locations_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - saved
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRenameRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRenameRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRenameRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+    delete:
+      operationId: saved_locations_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - saved
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/saved/locations/import/:
+    post:
+      operationId: saved_locations_import_create
+      description: Transfers guest (device-only) saved places into the account after
+        sign-up/sign-in. Idempotent.
+      tags:
+      - saved
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+          description: ''
+  /api/v1/scouts/assignments/:
+    get:
+      operationId: scouts_assignments_list
+      tags:
+      - scouts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/scouts/assignments/{id}/:
+    get:
+      operationId: scouts_assignments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - scouts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/scouts/assignments/{id}/submit/:
+    post:
+      operationId: scouts_assignments_submit_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - scouts
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScoutSubmitRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/searches/recent/:
+    get:
+      operationId: searches_recent_retrieve
+      tags:
+      - searches
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchHistory'
+          description: ''
+    post:
+      operationId: searches_recent_create
+      tags:
+      - searches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchHistoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SearchHistoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SearchHistoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchHistory'
+          description: ''
+    delete:
+      operationId: searches_recent_destroy
+      tags:
+      - searches
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/:
+    get:
+      operationId: sessions_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSessionList'
+          description: ''
+    post:
+      operationId: sessions_create
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartSessionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StartSessionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StartSessionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionWithWarnings'
+          description: ''
+  /api/v1/sessions/{id}/:
+    get:
+      operationId: sessions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDetail'
+          description: ''
+    patch:
+      operationId: sessions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateSessionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateSessionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateSessionRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionWithWarnings'
+          description: ''
+  /api/v1/sessions/{id}/end/:
+    post:
+      operationId: sessions_end_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndSessionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EndSessionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EndSessionRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndSessionResponse'
+          description: ''
+  /api/v1/sessions/{id}/reminders/:
+    get:
+      operationId: sessions_reminders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+          description: ''
+    post:
+      operationId: sessions_reminders_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddReminderRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddReminderRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddReminderRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+          description: ''
+  /api/v1/sessions/{id}/reminders/{reminder_id}/:
+    delete:
+      operationId: sessions_reminders_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: reminder_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/{id}/summary/:
+    get:
+      operationId: sessions_summary_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionSummary'
+          description: ''
+  /api/v1/sessions/active/:
+    get:
+      operationId: sessions_active_retrieve
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDetail'
+          description: ''
+        '204':
+          description: No response body
   /api/v1/spots/nearby/:
     get:
       operationId: spots_nearby_retrieve
@@ -1056,6 +2385,107 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpotsNearbyResponse'
+          description: ''
+  /api/v1/support/tickets/:
+    get:
+      operationId: support_tickets_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTicketList'
+          description: ''
+    post:
+      operationId: support_tickets_create
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/support/tickets/{id}/:
+    get:
+      operationId: support_tickets_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/support/tickets/{id}/attachments/:
+    post:
+      operationId: support_tickets_attachments_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportUploadRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportAttachmentOut'
           description: ''
   /api/v1/users/me/:
     get:
@@ -1142,8 +2572,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/Preference'
           description: ''
+  /api/v1/verify/:
+    post:
+      operationId: verify_create
+      description: TRD compatibility (`POST /verify`). Delegates to the canonical
+        verification service.
+      tags:
+      - verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyCompatRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyCompatRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyCompatRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      deprecated: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+          description: ''
 components:
   schemas:
+    AddReminderRequest:
+      type: object
+      properties:
+        minutes_before:
+          type: integer
+          maximum: 240
+          minimum: 1
+      required:
+      - minutes_before
+    AppealRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 1000
+      required:
+      - message
     AreaEvidenceResponse:
       type: object
       properties:
@@ -1201,6 +2679,92 @@ components:
       - rule_lines
       - rules
       - verification_status
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        area:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        reason:
+          type: string
+          maxLength: 200
+        status:
+          $ref: '#/components/schemas/AssignmentStatusEnum'
+        due_at:
+          type: string
+          format: date-time
+          nullable: true
+        current_rules:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        last_submission:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area
+      - created_at
+      - current_rules
+      - id
+      - last_submission
+      - reason
+    AssignmentStatusEnum:
+      enum:
+      - assigned
+      - submitted
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `assigned` - Assigned
+        * `submitted` - Submitted — pending review
+        * `approved` - Approved
+        * `rejected` - Rejected
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content_type:
+          type: string
+          maxLength: 40
+        size:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        width:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        height:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        metadata_stripped:
+          type: boolean
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content_type
+      - height
+      - id
+      - size
+      - uploaded_at
+      - width
     AuthResponse:
       type: object
       properties:
@@ -1223,7 +2787,10 @@ components:
         * `recently_reported_available` - recently_reported_available
         * `reported_occupied` - reported_occupied
         * `conflicting_reports` - conflicting_reports
-    CategoryEnum:
+    BlankEnum:
+      enum:
+      - ''
+    CategoryCa3Enum:
       enum:
       - free
       - free_time_limited
@@ -1306,11 +2873,35 @@ components:
         * `high` - high
         * `medium` - medium
         * `low` - low
+    Consents:
+      type: object
+      properties:
+        terms:
+          type: object
+          additionalProperties: {}
+        privacy:
+          type: object
+          additionalProperties: {}
+        analytics:
+          type: object
+          additionalProperties: {}
+        personalised_ads:
+          type: object
+          additionalProperties: {}
+        marketing:
+          type: object
+          additionalProperties: {}
+      required:
+      - analytics
+      - marketing
+      - personalised_ads
+      - privacy
+      - terms
     CoverageDoc:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/CoverageDocStatusEnum'
         city:
           type: string
           nullable: true
@@ -1325,6 +2916,20 @@ components:
       - city
       - note
       - status
+    CoverageDocStatusEnum:
+      enum:
+      - full
+      - partial
+      - mapping
+      - outside_mapped_areas
+      - unsupported
+      type: string
+      description: |-
+        * `full` - full
+        * `partial` - partial
+        * `mapping` - mapping
+        * `outside_mapped_areas` - outside_mapped_areas
+        * `unsupported` - unsupported
     CoverageEnum:
       enum:
       - full
@@ -1335,6 +2940,241 @@ components:
         * `full` - Verified coverage
         * `partial` - Partial coverage
         * `mapping` - Being mapped
+    CreateEventRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        accuracy_m:
+          type: number
+          format: double
+          maximum: 5000
+          minimum: 0
+        detected_at:
+          type: string
+          format: date-time
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          default: bluetooth_disconnect
+      required:
+      - detected_at
+      - latitude
+      - longitude
+    CreateObservationKindEnum:
+      enum:
+      - available
+      - leaving
+      - occupied
+      type: string
+      description: |-
+        * `available` - available
+        * `leaving` - leaving
+        * `occupied` - occupied
+    CreateObservationRequest:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/CreateObservationKindEnum'
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        area_id:
+          type: integer
+          nullable: true
+        device_latitude:
+          type: number
+          format: double
+        device_longitude:
+          type: number
+          format: double
+      required:
+      - kind
+      - latitude
+      - longitude
+    CreateReportRequest:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        area_id:
+          type: integer
+          nullable: true
+        scope:
+          allOf:
+          - $ref: '#/components/schemas/CreateReportScopeEnum'
+          default: spot
+        details:
+          type: object
+          additionalProperties: {}
+        description:
+          type: string
+          default: ''
+          maxLength: 1000
+        device_latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+          description: Used once for the trust score; not stored.
+        device_longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+      required:
+      - latitude
+      - longitude
+      - type
+    CreateReportScopeEnum:
+      enum:
+      - spot
+      - segment
+      type: string
+      description: |-
+        * `spot` - spot
+        * `segment` - segment
+    CreateSavedLocationRequest:
+      type: object
+      properties:
+        area_id:
+          type: integer
+        label:
+          type: string
+          maxLength: 80
+      required:
+      - area_id
+    CreateTicketRequest:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/TicketCategoryEnum'
+        description:
+          type: string
+          minLength: 15
+          maxLength: 3000
+        contact_email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        include_context:
+          type: boolean
+          default: false
+        context:
+          type: object
+          additionalProperties: {}
+      required:
+      - category
+      - description
+    DecisionEnum:
+      enum:
+      - start_review
+      - accept
+      - reject
+      - duplicate
+      - escalate_to_scout
+      type: string
+      description: |-
+        * `start_review` - start_review
+        * `accept` - accept
+        * `reject` - reject
+        * `duplicate` - duplicate
+        * `escalate_to_scout` - escalate_to_scout
+    DeletionInRequest:
+      type: object
+      properties:
+        confirm:
+          type: string
+          minLength: 1
+      required:
+      - confirm
+    DetectionConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        phase:
+          type: string
+        requirements:
+          type: array
+          items: {}
+        limitations:
+          type: array
+          items: {}
+      required:
+      - enabled
+      - limitations
+      - phase
+      - requirements
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        platform:
+          $ref: '#/components/schemas/PlatformEnum'
+        push_token:
+          type: string
+          maxLength: 512
+        app_version:
+          type: string
+          maxLength: 32
+        last_seen_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+      required:
+      - id
+      - is_active
+      - last_seen_at
+      - platform
+      - push_token
+    DeviceRequest:
+      type: object
+      properties:
+        platform:
+          $ref: '#/components/schemas/PlatformEnum'
+        push_token:
+          type: string
+          minLength: 1
+          maxLength: 512
+        app_version:
+          type: string
+          maxLength: 32
+      required:
+      - platform
+      - push_token
     EligibilityStatusEnum:
       enum:
       - eligible
@@ -1358,6 +3198,42 @@ components:
           minLength: 1
       required:
       - email
+    EndSessionOutcomeEnum:
+      enum:
+      - easy
+      - ok
+      - hard
+      type: string
+      description: "* `` - \n* `easy` - easy\n* `ok` - ok\n* `hard` - hard"
+    EndSessionRequest:
+      type: object
+      properties:
+        cost_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        outcome:
+          default: ''
+          oneOf:
+          - $ref: '#/components/schemas/EndSessionOutcomeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        share_departure:
+          type: boolean
+          default: false
+    EndSessionResponse:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/SessionDetail'
+        already_ended:
+          type: boolean
+        summary:
+          $ref: '#/components/schemas/SessionSummary'
+      required:
+      - already_ended
+      - session
+      - summary
     EvaluateRequestRequest:
       type: object
       properties:
@@ -1373,7 +3249,7 @@ components:
           default: 120
         vehicle_class:
           allOf:
-          - $ref: '#/components/schemas/EvaluateRequestVehicleClassEnum'
+          - $ref: '#/components/schemas/VehicleClass49fEnum'
           default: car
         permit_type:
           oneOf:
@@ -1386,18 +3262,6 @@ components:
           default: false
       required:
       - area_id
-    EvaluateRequestVehicleClassEnum:
-      enum:
-      - car
-      - motorcycle
-      - van
-      - ev
-      type: string
-      description: |-
-        * `car` - car
-        * `motorcycle` - motorcycle
-        * `van` - van
-        * `ev` - ev
     Evaluation:
       type: object
       properties:
@@ -1463,6 +3327,20 @@ components:
       - legal_status
       - paid_minutes
       - pricing_status
+    Event:
+      type: object
+      properties:
+        kind:
+          type: string
+          maxLength: 24
+        data: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - kind
     EvidenceStatusEnum:
       enum:
       - official_record_matched
@@ -1496,6 +3374,54 @@ components:
       - status
       - uptime_seconds
       - version
+    HelpArticle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        category:
+          type: string
+          maxLength: 32
+        title:
+          type: string
+          readOnly: true
+        body:
+          type: string
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - body
+      - id
+      - slug
+      - title
+      - updated_at
+    ImportRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSavedLocationRequest'
+      required:
+      - items
+    ImportResult:
+      type: object
+      properties:
+        imported:
+          type: integer
+        already_saved:
+          type: integer
+      required:
+      - already_saved
+      - imported
     Kind718Enum:
       enum:
       - on_street
@@ -1575,6 +3501,186 @@ components:
           description: GeoJSON features with category/layer
       required:
       - features
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        category:
+          $ref: '#/components/schemas/NotificationCategoryEnum'
+        template:
+          type: string
+          maxLength: 64
+        params: {}
+        title:
+          type: string
+          maxLength: 160
+        body:
+          type: string
+          maxLength: 500
+        target:
+          description: Deep-link target, e.g. {"route":"Session","id":"…"}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        is_read:
+          type: boolean
+          readOnly: true
+        push_status:
+          $ref: '#/components/schemas/PushStatusEnum'
+      required:
+      - body
+      - category
+      - created_at
+      - id
+      - is_read
+      - title
+    NotificationCategoryEnum:
+      enum:
+      - session_reminder
+      - restriction
+      - rule_change
+      - report_update
+      - saved_location
+      - service
+      - privacy
+      - support
+      type: string
+      description: |-
+        * `session_reminder` - Session reminder
+        * `restriction` - Restriction deadline
+        * `rule_change` - Rule change
+        * `report_update` - Report update
+        * `saved_location` - Saved location
+        * `service` - Announcement
+        * `privacy` - Privacy request
+        * `support` - Support
+    NotificationPreference:
+      type: object
+      properties:
+        session_reminders:
+          type: boolean
+        rule_changes:
+          type: boolean
+        report_updates:
+          type: boolean
+        saved_locations:
+          type: boolean
+        service_news:
+          type: boolean
+        push_enabled:
+          type: boolean
+        restriction_alerts:
+          type: boolean
+          readOnly: true
+          description: Essential legal alerts — always on.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - restriction_alerts
+      - updated_at
+    NotificationRequest:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/NotificationCategoryEnum'
+        template:
+          type: string
+          maxLength: 64
+        params: {}
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        body:
+          type: string
+          minLength: 1
+          maxLength: 500
+        target:
+          description: Deep-link target, e.g. {"route":"Session","id":"…"}
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        push_status:
+          $ref: '#/components/schemas/PushStatusEnum'
+      required:
+      - body
+      - category
+      - title
+    Observation:
+      type: object
+      description: 'Public view: no reporter identity.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/ObservationKindEnum'
+        state:
+          type: string
+          readOnly: true
+        area:
+          type: integer
+          nullable: true
+        area_name:
+          type: string
+          nullable: true
+          readOnly: true
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        observed_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        confirmations:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        contradictions:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        age_minutes:
+          type: integer
+          readOnly: true
+        report_id:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - age_minutes
+      - area_name
+      - expires_at
+      - id
+      - kind
+      - location
+      - observed_at
+      - report_id
+      - state
+    ObservationKindEnum:
+      enum:
+      - available
+      - leaving
+      - occupied
+      type: string
+      description: |-
+        * `available` - Reported available
+        * `leaving` - Driver leaving
+        * `occupied` - Reported occupied
     ObservationsResponse:
       type: object
       properties:
@@ -1591,6 +3697,54 @@ components:
       - area_id
       - note
       - observations
+    OutcomeB5dEnum:
+      enum:
+      - easy
+      - ok
+      - hard
+      type: string
+      description: |-
+        * `easy` - Easy
+        * `ok` - OK
+        * `hard` - Hard to find
+    PaginatedNotificationList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedObservationList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Observation'
     PaginatedParkingAreaListList:
       type: object
       required:
@@ -1629,6 +3783,151 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ParkingRule'
+    PaginatedReportList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+    PaginatedReviewerReportList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewerReport'
+    PaginatedSessionList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+    PaginatedTicketList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+    ParkEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        source:
+          type: string
+          maxLength: 24
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        accuracy_m:
+          type: number
+          format: double
+          nullable: true
+        detected_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ParkEventStatusEnum'
+        area:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        session:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - area
+      - detected_at
+      - id
+      - location
+    ParkEventRequest:
+      type: object
+      properties:
+        source:
+          type: string
+          minLength: 1
+          maxLength: 24
+        accuracy_m:
+          type: number
+          format: double
+          nullable: true
+        detected_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ParkEventStatusEnum'
+        session:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - detected_at
+    ParkEventStatusEnum:
+      enum:
+      - detected
+      - confirmed
+      - dismissed
+      type: string
+      description: |-
+        * `detected` - Possible parking event
+        * `confirmed` - Confirmed by user
+        * `dismissed` - Dismissed by user
     ParkingAreaDetailDoc:
       type: object
       properties:
@@ -1647,7 +3946,7 @@ components:
           additionalProperties: {}
           description: GeoJSON geometry (LineString street, Polygon car park, Point)
         category:
-          $ref: '#/components/schemas/CategoryEnum'
+          $ref: '#/components/schemas/CategoryCa3Enum'
         rank:
           type: integer
           description: 0 free · 1 free with time rules · 2 paid · 3 unknown · 4 restricted
@@ -1859,7 +4158,7 @@ components:
           additionalProperties: {}
           description: GeoJSON geometry (LineString street, Polygon car park, Point)
         category:
-          $ref: '#/components/schemas/CategoryEnum'
+          $ref: '#/components/schemas/CategoryCa3Enum'
         rank:
           type: integer
           description: 0 free · 1 free with time rules · 2 paid · 3 unknown · 4 restricted
@@ -2100,6 +4399,34 @@ components:
       required:
       - new_password
       - token
+    PatchedConsentsPatchRequest:
+      type: object
+      properties:
+        terms:
+          type: boolean
+        privacy:
+          type: boolean
+        analytics:
+          type: boolean
+        personalised_ads:
+          type: boolean
+        marketing:
+          type: boolean
+    PatchedNotificationPreferenceRequest:
+      type: object
+      properties:
+        session_reminders:
+          type: boolean
+        rule_changes:
+          type: boolean
+        report_updates:
+          type: boolean
+        saved_locations:
+          type: boolean
+        service_news:
+          type: boolean
+        push_enabled:
+          type: boolean
     PatchedPreferenceRequest:
       type: object
       properties:
@@ -2131,12 +4458,47 @@ components:
           type: boolean
         personalised_ads:
           type: boolean
+    PatchedRenameRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 80
+    PatchedUpdateReportRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 1000
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        reason:
+          type: string
+          default: ''
+          maxLength: 300
+    PatchedUpdateSessionRequest:
+      type: object
+      properties:
+        planned_end_at:
+          type: string
+          format: date-time
+        reminder_minutes:
+          $ref: '#/components/schemas/ReminderMinutesEnum'
     PatchedUserRequest:
       type: object
       properties:
         display_name:
           type: string
           maxLength: 80
+    PhotoUploadRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+      required:
+      - file
     PlaceResult:
       type: object
       properties:
@@ -2167,6 +4529,14 @@ components:
       - name
       - provider
       - subtitle
+    PlatformEnum:
+      enum:
+      - ios
+      - android
+      type: string
+      description: |-
+        * `ios` - iOS
+        * `android` - Android
     Preference:
       type: object
       properties:
@@ -2215,6 +4585,63 @@ components:
         * `paid` - paid
         * `unknown` - unknown
         * `not_applicable` - not_applicable
+    PrivacyKindEnum:
+      enum:
+      - export
+      - deletion
+      type: string
+      description: |-
+        * `export` - Data export
+        * `deletion` - Account deletion
+    PrivacyRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          maxLength: 16
+        kind:
+          $ref: '#/components/schemas/PrivacyKindEnum'
+        status:
+          $ref: '#/components/schemas/PrivacyStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        download_available:
+          type: boolean
+          readOnly: true
+      required:
+      - created_at
+      - download_available
+      - id
+      - kind
+      - reference
+    PrivacyStatusEnum:
+      enum:
+      - received
+      - processing
+      - completed
+      - failed
+      - expired
+      type: string
+      description: |-
+        * `received` - Received
+        * `processing` - Processing
+        * `completed` - Completed
+        * `failed` - Failed
+        * `expired` - Expired
     PublicConfig:
       type: object
       properties:
@@ -2243,6 +4670,27 @@ components:
       - map
       - min_supported_app_version
       - search_defaults
+    PushStatusEnum:
+      enum:
+      - not_configured
+      - no_device
+      - sent
+      - failed
+      - suppressed
+      type: string
+      description: |-
+        * `not_configured` - No push provider configured (inbox only)
+        * `no_device` - No registered device
+        * `sent` - Sent to provider
+        * `failed` - Provider error
+        * `suppressed` - Push disabled by user preference
+    ReadAll:
+      type: object
+      properties:
+        updated:
+          type: integer
+      required:
+      - updated
     Ready:
       type: object
       properties:
@@ -2304,6 +4752,689 @@ components:
       - accept_terms
       - email
       - password
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/ReminderKindEnum'
+        minutes_before:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        fire_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ReminderStatusEnum'
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - fire_at
+      - id
+      - kind
+      - minutes_before
+    ReminderKindEnum:
+      enum:
+      - planned_departure
+      - restriction_deadline
+      - custom
+      type: string
+      description: |-
+        * `planned_departure` - Before planned departure
+        * `restriction_deadline` - Before a legal restriction starts
+        * `custom` - Custom
+    ReminderMinutesEnum:
+      enum:
+      - 0
+      - 5
+      - 10
+      - 15
+      - 30
+      - 60
+      type: integer
+      description: |-
+        * `0` - 0
+        * `5` - 5
+        * `10` - 10
+        * `15` - 15
+        * `30` - 30
+        * `60` - 60
+    ReminderStatusEnum:
+      enum:
+      - scheduled
+      - sent
+      - cancelled
+      - failed
+      type: string
+      description: |-
+        * `scheduled` - Scheduled
+        * `sent` - Sent
+        * `cancelled` - Cancelled
+        * `failed` - Failed
+    Report:
+      type: object
+      description: Owner/reviewer view. Never includes the reporter's identity or
+        device location.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          maxLength: 16
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        type_label:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status0e1Enum'
+        area:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        scope:
+          $ref: '#/components/schemas/Scope774Enum'
+        details: {}
+        description:
+          type: string
+          maxLength: 1000
+        trust_score:
+          type: number
+          format: double
+        rejection_reason:
+          type: string
+          maxLength: 300
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          readOnly: true
+        observation:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        history:
+          type: array
+          items: {}
+          readOnly: true
+        appeal:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - appeal
+      - area
+      - attachments
+      - created_at
+      - history
+      - id
+      - location
+      - observation
+      - reference
+      - status
+      - type
+      - type_label
+      - updated_at
+    ReviewerReport:
+      type: object
+      description: Owner/reviewer view. Never includes the reporter's identity or
+        device location.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          maxLength: 16
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        type_label:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status0e1Enum'
+        area:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        scope:
+          $ref: '#/components/schemas/Scope774Enum'
+        details: {}
+        description:
+          type: string
+          maxLength: 1000
+        trust_score:
+          type: number
+          format: double
+        rejection_reason:
+          type: string
+          maxLength: 300
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          readOnly: true
+        observation:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        history:
+          type: array
+          items: {}
+          readOnly: true
+        appeal:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        trust_explanation:
+          readOnly: true
+      required:
+      - appeal
+      - area
+      - attachments
+      - created_at
+      - history
+      - id
+      - location
+      - observation
+      - reference
+      - status
+      - trust_explanation
+      - type
+      - type_label
+      - updated_at
+    SavedDestination:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        label:
+          type: string
+          maxLength: 80
+        place_ref:
+          type: string
+          maxLength: 80
+        name:
+          type: string
+          maxLength: 160
+        subtitle:
+          type: string
+          maxLength: 200
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - label
+      - location
+      - name
+    SavedDestinationRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 80
+        place_ref:
+          type: string
+          maxLength: 80
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        subtitle:
+          type: string
+          maxLength: 200
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+      required:
+      - label
+      - latitude
+      - longitude
+      - name
+    SavedLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        label:
+          type: string
+          maxLength: 80
+        area:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        category_at_save:
+          type: string
+          maxLength: 20
+        current:
+          type: object
+          additionalProperties: {}
+          description: Re-checked now for a 2 h stay so a rule change since saving
+            is visible.
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area
+      - created_at
+      - current
+      - id
+      - label
+      - updated_at
+    Scope774Enum:
+      enum:
+      - spot
+      - segment
+      type: string
+      description: |-
+        * `spot` - One parking position
+        * `segment` - Street section
+    ScoutSubmitOutcomeEnum:
+      enum:
+      - matches
+      - differs
+      - no_access
+      type: string
+      description: |-
+        * `matches` - matches
+        * `differs` - differs
+        * `no_access` - no_access
+    ScoutSubmitRequest:
+      type: object
+      properties:
+        outcome:
+          $ref: '#/components/schemas/ScoutSubmitOutcomeEnum'
+        observed_rules:
+          type: string
+          minLength: 1
+        notes:
+          type: string
+          minLength: 1
+        photos:
+          type: array
+          items:
+            type: string
+            format: binary
+      required:
+      - outcome
+    SearchHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        place_ref:
+          type: string
+          maxLength: 80
+        name:
+          type: string
+          maxLength: 160
+        subtitle:
+          type: string
+          maxLength: 200
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        searched_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - location
+      - name
+      - searched_at
+    SearchHistoryRequest:
+      type: object
+      properties:
+        place_ref:
+          type: string
+          maxLength: 80
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        subtitle:
+          type: string
+          maxLength: 200
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+      required:
+      - latitude
+      - longitude
+      - name
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status88dEnum'
+        area:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+        planned_end_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        reminder_minutes:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        category:
+          type: string
+          maxLength: 20
+        legal_status:
+          type: string
+          maxLength: 20
+        restriction_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        restriction_reason:
+          type: string
+          maxLength: 200
+        expected_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        evaluated_at:
+          type: string
+          format: date-time
+        evaluation: {}
+        remaining_minutes:
+          type: integer
+          nullable: true
+          readOnly: true
+        is_overdue:
+          type: boolean
+          readOnly: true
+        cost_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        outcome:
+          oneOf:
+          - $ref: '#/components/schemas/OutcomeB5dEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        shared_departure:
+          type: boolean
+        reminders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reminder'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area
+      - category
+      - created_at
+      - evaluated_at
+      - id
+      - is_overdue
+      - legal_status
+      - planned_end_at
+      - remaining_minutes
+      - reminders
+      - started_at
+      - updated_at
+    SessionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status88dEnum'
+        area:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+        planned_end_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        reminder_minutes:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        category:
+          type: string
+          maxLength: 20
+        legal_status:
+          type: string
+          maxLength: 20
+        restriction_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        restriction_reason:
+          type: string
+          maxLength: 200
+        expected_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        evaluated_at:
+          type: string
+          format: date-time
+        evaluation: {}
+        remaining_minutes:
+          type: integer
+          nullable: true
+          readOnly: true
+        is_overdue:
+          type: boolean
+          readOnly: true
+        cost_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        outcome:
+          oneOf:
+          - $ref: '#/components/schemas/OutcomeB5dEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        shared_departure:
+          type: boolean
+        reminders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reminder'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+          readOnly: true
+      required:
+      - area
+      - category
+      - created_at
+      - evaluated_at
+      - events
+      - id
+      - is_overdue
+      - legal_status
+      - planned_end_at
+      - remaining_minutes
+      - reminders
+      - started_at
+      - updated_at
+    SessionSummary:
+      type: object
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        area:
+          type: object
+          additionalProperties: {}
+        status:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        duration_minutes:
+          type: integer
+        verification_status:
+          type: string
+        expected_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        cost_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+        estimated_saving:
+          type: object
+          additionalProperties: {}
+          nullable: true
+        shared_departure:
+          type: boolean
+        outcome:
+          type: string
+      required:
+      - area
+      - cost_paid
+      - duration_minutes
+      - ended_at
+      - estimated_saving
+      - expected_cost
+      - outcome
+      - session_id
+      - shared_departure
+      - started_at
+      - status
+      - verification_status
+    SessionWithWarnings:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/SessionDetail'
+        warnings:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - session
+      - warnings
     SourceDoc:
       type: object
       properties:
@@ -2323,6 +5454,16 @@ components:
       - is_development_fixture
       - kind
       - name
+    SourceEnum:
+      enum:
+      - bluetooth_disconnect
+      - motion
+      - manual_test
+      type: string
+      description: |-
+        * `bluetooth_disconnect` - bluetooth_disconnect
+        * `motion` - motion
+        * `manual_test` - manual_test
     SourceMini:
       type: object
       properties:
@@ -2358,20 +5499,87 @@ components:
       - coverage
       - ranking
       - spots
-    StatusEnum:
+    StartSessionRequest:
+      type: object
+      properties:
+        area_id:
+          type: integer
+        planned_end_at:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          maximum: 1440
+          minimum: 15
+        reminder_minutes:
+          allOf:
+          - $ref: '#/components/schemas/ReminderMinutesEnum'
+          default: 15
+        vehicle_class:
+          allOf:
+          - $ref: '#/components/schemas/VehicleClass49fEnum'
+          default: car
+        permit_type:
+          oneOf:
+          - type: string
+            default: ''
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        has_disabled_badge:
+          type: boolean
+          default: false
+      required:
+      - area_id
+    Status0e1Enum:
       enum:
-      - full
-      - partial
-      - mapping
-      - outside_mapped_areas
-      - unsupported
+      - published
+      - pending_review
+      - under_review
+      - accepted
+      - rejected
+      - superseded
+      - expired
+      - appeal_review
+      - duplicate
       type: string
       description: |-
-        * `full` - full
-        * `partial` - partial
-        * `mapping` - mapping
-        * `outside_mapped_areas` - outside_mapped_areas
-        * `unsupported` - unsupported
+        * `published` - Published (temporary)
+        * `pending_review` - Pending review
+        * `under_review` - Under review
+        * `accepted` - Accepted
+        * `rejected` - Rejected
+        * `superseded` - Superseded
+        * `expired` - Expired
+        * `appeal_review` - Appeal in review
+        * `duplicate` - Duplicate
+    Status88dEnum:
+      enum:
+      - active
+      - ended
+      - expired
+      - cancelled
+      type: string
+      description: |-
+        * `active` - Active
+        * `ended` - Ended by user
+        * `expired` - Expired (not ended by user)
+        * `cancelled` - Cancelled
+    SupportAttachmentOut:
+      type: object
+      properties:
+        id:
+          type: integer
+      required:
+      - id
+    SupportUploadRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+      required:
+      - file
     SupportedArea:
       type: object
       properties:
@@ -2431,6 +5639,80 @@ components:
       - location
       - reason
       - starts_at
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          maxLength: 16
+        category:
+          $ref: '#/components/schemas/TicketCategoryEnum'
+        description:
+          type: string
+          maxLength: 3000
+        context:
+          description: Only what the user chose to include.
+        status:
+          $ref: '#/components/schemas/TicketStatusEnum'
+        staff_reply:
+          type: string
+        attachments_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments_count
+      - category
+      - created_at
+      - description
+      - id
+      - reference
+      - updated_at
+    TicketCategoryEnum:
+      enum:
+      - account
+      - map_search
+      - reports
+      - wrong_rule
+      - wrong_price
+      - got_fine
+      - privacy
+      - other
+      type: string
+      description: |-
+        * `account` - Account
+        * `map_search` - Map or search
+        * `reports` - Reports
+        * `wrong_rule` - Wrong rule (guidance problem)
+        * `wrong_price` - Wrong price (guidance problem)
+        * `got_fine` - Got a fine (guidance problem)
+        * `privacy` - Privacy
+        * `other` - Something else
+    TicketStatusEnum:
+      enum:
+      - open
+      - in_progress
+      - waiting_user
+      - resolved
+      - closed
+      type: string
+      description: |-
+        * `open` - Open
+        * `in_progress` - In progress
+        * `waiting_user` - Waiting for you
+        * `resolved` - Resolved
+        * `closed` - Closed
     TimeWindow:
       type: object
       properties:
@@ -2476,6 +5758,28 @@ components:
           maxLength: 2048
       required:
       - token
+    TypeEnum:
+      enum:
+      - leaving
+      - found
+      - occupied
+      - incorrect_rule
+      - new_sign
+      - closure
+      - obstruction
+      - wrong_location
+      - other
+      type: string
+      description: |-
+        * `leaving` - I'm leaving this parking spot
+        * `found` - I found an available spot
+        * `occupied` - This spot is occupied or unavailable
+        * `incorrect_rule` - Parking information is incorrect
+        * `new_sign` - A new sign or restriction exists
+        * `closure` - Temporary closure
+        * `obstruction` - Obstruction
+        * `wrong_location` - Incorrect map location
+        * `other` - Another parking issue
     User:
       type: object
       properties:
@@ -2508,6 +5812,18 @@ components:
       - id
       - is_email_verified
       - roles
+    VehicleClass49fEnum:
+      enum:
+      - car
+      - motorcycle
+      - van
+      - ev
+      type: string
+      description: |-
+        * `car` - car
+        * `motorcycle` - motorcycle
+        * `van` - van
+        * `ev` - ev
     VehicleClassEnum:
       enum:
       - car
@@ -2520,6 +5836,43 @@ components:
         * `motorcycle` - Motorcycle
         * `van` - Van
         * `ev` - Electric vehicle
+    VerificationAnswerEnum:
+      enum:
+      - still_available
+      - taken
+      - unsure
+      type: string
+      description: |-
+        * `still_available` - still_available
+        * `taken` - taken
+        * `unsure` - unsure
+    VerificationRequest:
+      type: object
+      properties:
+        answer:
+          $ref: '#/components/schemas/VerificationAnswerEnum'
+      required:
+      - answer
+    VerificationResult:
+      type: object
+      properties:
+        observation_id:
+          type: integer
+        state:
+          type: string
+        confirmations:
+          type: integer
+        contradictions:
+          type: integer
+        expires_at:
+          type: string
+          format: date-time
+      required:
+      - confirmations
+      - contradictions
+      - expires_at
+      - observation_id
+      - state
     VerificationStatusC97Enum:
       enum:
       - verified
@@ -2530,6 +5883,30 @@ components:
         * `verified` - verified
         * `community` - community
         * `unverified` - unverified
+    VerifyCompatAnswerEnum:
+      enum:
+      - still_available
+      - taken
+      - unsure
+      - 'yes'
+      - 'no'
+      type: string
+      description: |-
+        * `still_available` - still_available
+        * `taken` - taken
+        * `unsure` - unsure
+        * `yes` - yes
+        * `no` - no
+    VerifyCompatRequest:
+      type: object
+      properties:
+        observation_id:
+          type: integer
+        answer:
+          $ref: '#/components/schemas/VerifyCompatAnswerEnum'
+      required:
+      - answer
+      - observation_id
   securitySchemes:
     jwtAuth:
       type: http

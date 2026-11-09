@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "apps.parking",
     "apps.regulations",
     "apps.availability",
-    # Zpot (Part 2 — app shells registered so migrations/contracts are traceable)
+    # Zpot (Part 2)
     "apps.reports",
     "apps.community",
     "apps.sessions",
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.privacy",
     "apps.monetization",
     "apps.scouts",
+    "apps.detection",
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,10 @@ REST_FRAMEWORK = {
         "anon": env("THROTTLE_ANON", default="120/min"),
         "user": env("THROTTLE_USER", default="300/min"),
         "auth": env("THROTTLE_AUTH", default="10/min"),
+        "reports": env("THROTTLE_REPORTS", default="20/hour"),
+        "verifications": env("THROTTLE_VERIFICATIONS", default="60/hour"),
+        "support": env("THROTTLE_SUPPORT", default="10/hour"),
+        "uploads": env("THROTTLE_UPLOADS", default="30/hour"),
         "auth_email": env("THROTTLE_AUTH_EMAIL", default="5/hour"),
     },
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
@@ -150,6 +155,8 @@ SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
     "ENUM_NAME_OVERRIDES": {
         "VehicleClassEnum": "apps.regulations.models.VehicleClass",
+        "NotificationCategoryEnum": "apps.notifications.models.Category",
+        "TicketCategoryEnum": "apps.support.models.TicketCategory",
     },
 }
 
@@ -169,6 +176,22 @@ CELERY_RESULT_BACKEND = None
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=not bool(REDIS_URL))
 CELERY_TASK_EAGER_PROPAGATES = True
 CELERY_TIMEZONE = "UTC"
+CELERY_BEAT_SCHEDULE = {
+    # Reminders are persisted rows; this dispatcher is idempotent (row locks + status), so a missed
+    # tick only delays delivery — it never loses or duplicates a reminder.
+    "dispatch-due-reminders": {"task": "apps.sessions.tasks.dispatch_due_reminders", "schedule": 30.0},
+    "expire-stale-sessions": {"task": "apps.sessions.tasks.expire_stale_sessions", "schedule": 300.0},
+    "purge-expired-observations": {"task": "apps.availability.tasks.purge_expired_observations", "schedule": 900.0},
+    "retention-cleanup": {"task": "apps.privacy.tasks.retention_cleanup", "schedule": 3600.0},
+    "data-quality-check": {"task": "apps.core.tasks.data_quality_check", "schedule": 86400.0},
+}
+
+# Private uploads (report photos, scout evidence, privacy exports). NOT served publicly:
+# files are streamed through authenticated API views only.
+MEDIA_ROOT = env("MEDIA_ROOT", default=str(BASE_DIR / "media"))
+UPLOAD_MAX_BYTES = env.int("UPLOAD_MAX_BYTES", default=5 * 1024 * 1024)
+UPLOAD_ALLOWED_FORMATS = ("JPEG", "PNG", "WEBP")
+DATA_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
 
 ZPOT = {
     "API_VERSION": "1",
@@ -187,17 +210,42 @@ ZPOT = {
     # Walking model: straight-line distance x detour factor at average urban walking speed.
     "WALK_SPEED_M_PER_MIN": 80,
     "WALK_DETOUR_FACTOR": 1.25,
+    # Community availability — provisional values, adjustable as accuracy evidence accumulates (TRD: 5–10 min).
+    "OBSERVATION_TTL_MINUTES": {
+        "available": env.int("OBS_TTL_AVAILABLE", default=10),
+        "leaving": env.int("OBS_TTL_LEAVING", default=10),
+        "occupied": env.int("OBS_TTL_OCCUPIED", default=10),
+    },
+    "OBSERVATION_CONFIRM_EXTENSION_MINUTES": 5,
+    "OBSERVATION_RETENTION_DAYS": 7,
+    # TRD hypothesis: Score = karma×0.6 + proximity×0.2 + recency×0.2 (configurable, explainable, provisional)
+    "TRUST_WEIGHTS": {"karma": 0.6, "proximity": 0.2, "recency": 0.2},
+    "TRUST_PUBLISH_THRESHOLD": 0.45,
+    "TRUST_DEFAULT_KARMA": 0.5,
+    "DUPLICATE_REPORT_RADIUS_M": 30,
+    "DUPLICATE_REPORT_WINDOW_MIN": 10,
+    "SESSION_EXPIRE_AFTER_HOURS": 24,
+    "RESTRICTION_WARNING_MINUTES": 30,
+    "PRIVACY_EXPORT_TTL_DAYS": 7,
+    "SEARCH_HISTORY_RETENTION_DAYS": 90,
+    "SESSION_RETENTION_DAYS": 365,
+    "PUSH_PROVIDER": env("PUSH_PROVIDER", default="none"),  # none = inbox only (no APNs/FCM credentials)
     "FEATURES": {
         "guest_search": True,
         "parking_search": True,
         "external_navigation": True,
-        "community_reports": env.bool("FEATURE_COMMUNITY_REPORTS", default=False),
-        "parking_sessions": env.bool("FEATURE_PARKING_SESSIONS", default=False),
-        "saved_places_sync": False,
-        "notifications": False,
+        "community_reports": env.bool("FEATURE_COMMUNITY_REPORTS", default=True),
+        "parking_sessions": env.bool("FEATURE_PARKING_SESSIONS", default=True),
+        "saved_places_sync": True,
+        "notifications": True,
+        "support": True,
+        "privacy_requests": True,
         "monetisation_concepts": env.bool("FEATURE_MONETISATION_CONCEPTS", default=False),
         "z_trigger": env.bool("FEATURE_Z_TRIGGER", default=False),
-        "scouts": env.bool("FEATURE_SCOUTS", default=False),
+        "scouts": env.bool("FEATURE_SCOUTS", default=True),
+        "pro": env.bool("FEATURE_PRO", default=False),
+        "partners": env.bool("FEATURE_PARTNERS", default=False),
+        "advertising": env.bool("FEATURE_ADVERTISING", default=False),
     },
 }
 

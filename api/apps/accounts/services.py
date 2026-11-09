@@ -58,6 +58,10 @@ def register_user(*, email, password, display_name="", language="en", accepted_t
     )
     record_audit("account.registered", actor=user, target=user, request=request)
     transaction.on_commit(lambda: send_verification_email(user))
+    from apps.notifications.models import Category
+    from apps.notifications.services import notify
+
+    notify(user, Category.SERVICE, "welcome", {}, dedupe_key="welcome", force=True)
     return user
 
 

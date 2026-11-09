@@ -11,6 +11,16 @@ class ObservationKind(models.TextChoices):
     OCCUPIED = "occupied", "Reported occupied"
 
 
+class AvailabilityState(models.TextChoices):
+    UNKNOWN = "unknown", "Unknown"
+    RECENTLY_AVAILABLE = "recently_reported_available", "Recently reported available"
+    RECENTLY_OCCUPIED = "reported_occupied", "Recently reported occupied"
+    CONFLICTING = "conflicting_reports", "Conflicting reports"
+    EXPIRED = "observation_expired", "Observation expired"
+    PREDICTION_UNAVAILABLE = "prediction_unavailable", "Prediction unavailable"
+    PREDICTED = "supported_prediction", "Supported prediction (validated model)"
+
+
 class ParkingObservation(models.Model):
     area = models.ForeignKey(
         "parking.ParkingArea", null=True, blank=True, on_delete=models.CASCADE, related_name="observations"
@@ -22,10 +32,12 @@ class ParkingObservation(models.Model):
     expires_at = models.DateTimeField()
     confirmations = models.PositiveSmallIntegerField(default=1)
     contradictions = models.PositiveSmallIntegerField(default=0)
+    trust_score = models.FloatField(default=0.5)
+    needs_review = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-observed_at"]
-        indexes = [models.Index(fields=["area", "expires_at"])]
+        indexes = [models.Index(fields=["area", "expires_at"]), models.Index(fields=["expires_at"])]
         constraints = [
             models.CheckConstraint(
                 condition=Q(expires_at__gt=F("observed_at")), name="observation_expiry_after_observed"
