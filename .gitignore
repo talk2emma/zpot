@@ -1,0 +1,39 @@
+# secrets / local env
+.env
+*.env.local
+api/.env
+mobile/.env
+mobile/android/local.properties
+mobile/android/app/*.keystore
+!mobile/android/app/debug.keystore
+.netrc
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+api/staticfiles/
+
+# node / react native
+node_modules/
+mobile/.bundle/
+mobile/vendor/bundle/
+mobile/ios/Pods/
+mobile/ios/build/
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/.kotlin/
+*.xcuserstate
+xcuserdata/
+DerivedData/
+mobile/coverage/
+.metro-health-check*
+
+# OS / editor
+.DS_Store
+.idea/
+*.log

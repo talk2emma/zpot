@@ -1,0 +1,86 @@
+# Zpot local infrastructure. The mobile app runs natively (Metro + simulators), NOT in Docker.
+name: zpot
+
+x-api-env: &api-env
+  DJANGO_SETTINGS_MODULE: config.settings.local
+  DATABASE_URL: postgis://zpot:zpot@db:5432/zpot
+  REDIS_URL: redis://redis:6379/0
+  EMAIL_HOST: mailpit
+  EMAIL_PORT: "1025"
+
+services:
+  db:
+    image: imresamu/postgis:17-3.5  # multi-arch (arm64 + amd64) build of the official postgis image
+    environment:
+      POSTGRES_DB: zpot
+      POSTGRES_USER: zpot
+      POSTGRES_PASSWORD: zpot
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/docker/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zpot -d zpot && psql -U zpot -d zpot -tAc 'SELECT PostGIS_Version()' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "8025:8025"   # web UI
+      - "1025:1025"   # SMTP
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      args: { REQUIREMENTS: dev }
+    env_file:
+      - path: ./api/.env
+        required: false
+    environment: *api-env
+    ports: ["8000:8000"]
+    volumes:
+      - ./api:/app
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/v1/health/"]
+      interval: 10s
+      timeout: 5s
+      start_period: 40s
+      retries: 10
+
+  worker:
+    build:
+      context: ./api
+      args: { REQUIREMENTS: dev }
+    command: celery -A config worker --loglevel=INFO --concurrency=2
+    env_file:
+      - path: ./api/.env
+        required: false
+    environment: *api-env
+    volumes:
+      - ./api:/app
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+volumes:
+  pgdata:

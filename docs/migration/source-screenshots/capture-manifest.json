@@ -1,0 +1,626 @@
+{
+  "capturedAt": "2026-11-09T16:54:35.749Z",
+  "viewport": "390x844 @2x",
+  "results": [
+    {
+      "name": "SCR-001-splash",
+      "state": "splash",
+      "ok": true
+    },
+    {
+      "name": "SCR-002-language",
+      "state": "language",
+      "ok": true
+    },
+    {
+      "name": "SCR-003-welcome",
+      "state": "welcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-004a-onboard-1",
+      "state": "onboard",
+      "ok": true
+    },
+    {
+      "name": "SCR-004b-onboard-2",
+      "state": "onboard",
+      "ok": true
+    },
+    {
+      "name": "SCR-004c-onboard-3",
+      "state": "onboard",
+      "ok": true
+    },
+    {
+      "name": "SCR-005-locPerm",
+      "state": "locPerm",
+      "ok": true
+    },
+    {
+      "name": "OVL-001-osLoc",
+      "state": "locPerm+osLoc",
+      "ok": true
+    },
+    {
+      "name": "SCR-006a-locOutcome-precise",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-006b-locOutcome-approx",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-006c-locOutcome-denied",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-006d-locOutcome-restricted",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-006e-locOutcome-off",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-006f-locOutcome-unavailable",
+      "state": "locOutcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-007-account",
+      "state": "account",
+      "ok": true
+    },
+    {
+      "name": "SCR-008a-signin",
+      "state": "signin",
+      "ok": true
+    },
+    {
+      "name": "SCR-008b-signin-errors",
+      "state": "signin",
+      "ok": true
+    },
+    {
+      "name": "SCR-009a-register",
+      "state": "register",
+      "ok": true
+    },
+    {
+      "name": "SCR-009b-register-errors",
+      "state": "register",
+      "ok": true
+    },
+    {
+      "name": "SCR-010a-verify-pending",
+      "state": "verify",
+      "ok": true
+    },
+    {
+      "name": "SCR-010b-verify-expired",
+      "state": "verify",
+      "ok": true
+    },
+    {
+      "name": "SCR-010c-verify-done",
+      "state": "verify",
+      "ok": true
+    },
+    {
+      "name": "SCR-011a-forgot-email",
+      "state": "forgot",
+      "ok": true
+    },
+    {
+      "name": "SCR-011b-forgot-sent",
+      "state": "forgot",
+      "ok": true
+    },
+    {
+      "name": "SCR-011c-forgot-newpw",
+      "state": "forgot",
+      "ok": true
+    },
+    {
+      "name": "SCR-011d-forgot-done",
+      "state": "forgot",
+      "ok": true
+    },
+    {
+      "name": "SCR-012-legal",
+      "state": "legal",
+      "ok": true
+    },
+    {
+      "name": "SCR-013a-explore-noarea",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013b-explore-map-saldanha",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013c-explore-sheet-full",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013d-explore-sheet-peek",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013e-explore-list",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013f-explore-selected-spot",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013g-explore-selected-vacancy",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013h-explore-no-free",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013i-explore-offline",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013j-explore-mapfail",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013k-explore-loading",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "OVL-002-layers",
+      "state": "explore+layers",
+      "ok": true
+    },
+    {
+      "name": "OVL-003-adWhy",
+      "state": "explore+adWhy",
+      "ok": true
+    },
+    {
+      "name": "SCR-014a-search-empty",
+      "state": "search",
+      "ok": true
+    },
+    {
+      "name": "SCR-014b-search-query",
+      "state": "search",
+      "ok": true
+    },
+    {
+      "name": "SCR-014c-search-none",
+      "state": "search",
+      "ok": true
+    },
+    {
+      "name": "SCR-014d-search-unsupported",
+      "state": "search",
+      "ok": true
+    },
+    {
+      "name": "_prep-plan",
+      "state": "plan",
+      "ok": true
+    },
+    {
+      "name": "SCR-015-plan",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-015-plan",
+      "state": "plan",
+      "ok": true
+    },
+    {
+      "name": "SCR-015b-plan-midnight",
+      "state": "plan",
+      "ok": true
+    },
+    {
+      "name": "_prep-filters",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-016-filters",
+      "state": "filters",
+      "ok": true
+    },
+    {
+      "name": "SCR-017a-details",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "SCR-017b-details-verification-open",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "SCR-017c-details-restricted",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "SCR-017d-details-unknown",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "SCR-017e-details-partner",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "OVL-004-saveGuest",
+      "state": "details+saveGuest",
+      "ok": true
+    },
+    {
+      "name": "SCR-018a-navPick",
+      "state": "navPick",
+      "ok": true
+    },
+    {
+      "name": "SCR-018b-navPick-waze-error",
+      "state": "navPick",
+      "ok": true
+    },
+    {
+      "name": "SCR-019-handoff",
+      "state": "handoff",
+      "ok": true
+    },
+    {
+      "name": "SCR-020-navReturn",
+      "state": "navReturn",
+      "ok": true
+    },
+    {
+      "name": "SCR-021-partner",
+      "state": "partner",
+      "ok": true
+    },
+    {
+      "name": "_prep-session",
+      "state": "details",
+      "ok": true
+    },
+    {
+      "name": "SCR-022-startSession",
+      "state": "startSession",
+      "ok": true
+    },
+    {
+      "name": "OVL-005-notifPrime",
+      "state": "startSession+notifPrime",
+      "ok": true
+    },
+    {
+      "name": "SCR-023a-session",
+      "state": "session",
+      "ok": true
+    },
+    {
+      "name": "SCR-023b-session-rule-change",
+      "state": "session",
+      "ok": true
+    },
+    {
+      "name": "SCR-024-editSession",
+      "state": "editSession",
+      "ok": true
+    },
+    {
+      "name": "_prep-end",
+      "state": "session",
+      "ok": true
+    },
+    {
+      "name": "SCR-025-endSession",
+      "state": "endSession",
+      "ok": true
+    },
+    {
+      "name": "SCR-026-summary",
+      "state": "summary",
+      "ok": true
+    },
+    {
+      "name": "_prep-report",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-027-rType",
+      "state": "rType",
+      "ok": true
+    },
+    {
+      "name": "SCR-028a-rLoc",
+      "state": "rType",
+      "ok": true
+    },
+    {
+      "name": "SCR-028a-rLoc",
+      "state": "rLoc",
+      "ok": true
+    },
+    {
+      "name": "SCR-028b-rLoc-segment",
+      "state": "rLoc",
+      "ok": true
+    },
+    {
+      "name": "SCR-029a-rDetails",
+      "state": "rDetails",
+      "ok": true
+    },
+    {
+      "name": "SCR-029b-rDetails-errors",
+      "state": "rDetails",
+      "ok": true
+    },
+    {
+      "name": "SCR-029c-rDetails-leaving",
+      "state": "rDetails",
+      "ok": true
+    },
+    {
+      "name": "SCR-029d-rDetails-closure",
+      "state": "rDetails",
+      "ok": true
+    },
+    {
+      "name": "SCR-030-rReview",
+      "state": "rReview",
+      "ok": true
+    },
+    {
+      "name": "OVL-006-cancelReport",
+      "state": "rReview+cancelReport",
+      "ok": true
+    },
+    {
+      "name": "SCR-031-rSuccess",
+      "state": "rSuccess",
+      "ok": true
+    },
+    {
+      "name": "SCR-032-myReports",
+      "state": "myReports",
+      "ok": true
+    },
+    {
+      "name": "SCR-033-reportDetail",
+      "state": "reportDetail",
+      "ok": true
+    },
+    {
+      "name": "SCR-033b-reportDetail-rejected",
+      "state": "reportDetail",
+      "ok": true
+    },
+    {
+      "name": "SCR-034a-saved-empty",
+      "state": "saved",
+      "ok": true
+    },
+    {
+      "name": "SCR-034b-saved-items",
+      "state": "saved",
+      "ok": true
+    },
+    {
+      "name": "OVL-007-rename",
+      "state": "saved+rename",
+      "ok": true
+    },
+    {
+      "name": "OVL-008-removeConfirm",
+      "state": "saved+removeConfirm",
+      "ok": true
+    },
+    {
+      "name": "SCR-035-activity",
+      "state": "activity",
+      "ok": true
+    },
+    {
+      "name": "SCR-036-notifs",
+      "state": "notifs",
+      "ok": true
+    },
+    {
+      "name": "SCR-037-nprefs",
+      "state": "nprefs",
+      "ok": true
+    },
+    {
+      "name": "SCR-038a-profile-user",
+      "state": "profile",
+      "ok": true
+    },
+    {
+      "name": "OVL-009-signOut",
+      "state": "profile+signOut",
+      "ok": true
+    },
+    {
+      "name": "SCR-038b-profile-guest",
+      "state": "profile",
+      "ok": true
+    },
+    {
+      "name": "SCR-038c-profile-scout-z",
+      "state": "profile",
+      "ok": true
+    },
+    {
+      "name": "SCR-039-acctMgmt",
+      "state": "acctMgmt",
+      "ok": true
+    },
+    {
+      "name": "SCR-040-pprefs",
+      "state": "pprefs",
+      "ok": true
+    },
+    {
+      "name": "SCR-041-privacy",
+      "state": "privacy",
+      "ok": true
+    },
+    {
+      "name": "SCR-042-help",
+      "state": "help",
+      "ok": true
+    },
+    {
+      "name": "SCR-043a-support",
+      "state": "support",
+      "ok": true
+    },
+    {
+      "name": "SCR-043b-support-guidance",
+      "state": "support",
+      "ok": true
+    },
+    {
+      "name": "SCR-043c-support-done",
+      "state": "support",
+      "ok": true
+    },
+    {
+      "name": "SCR-044-deleteAcct",
+      "state": "deleteAcct",
+      "ok": true
+    },
+    {
+      "name": "SCR-045-language-from-profile",
+      "state": "language",
+      "ok": true
+    },
+    {
+      "name": "SCR-046-zIntro",
+      "state": "zIntro",
+      "ok": true
+    },
+    {
+      "name": "SCR-047-zConsent",
+      "state": "zConsent",
+      "ok": true
+    },
+    {
+      "name": "SCR-048a-zSetup",
+      "state": "zSetup",
+      "ok": true
+    },
+    {
+      "name": "SCR-048b-zSetup-blocked",
+      "state": "zSetup",
+      "ok": true
+    },
+    {
+      "name": "SCR-049-zHome",
+      "state": "zHome",
+      "ok": true
+    },
+    {
+      "name": "SCR-050-zEvent",
+      "state": "zEvent",
+      "ok": true
+    },
+    {
+      "name": "SCR-051-scoutList",
+      "state": "scoutList",
+      "ok": true
+    },
+    {
+      "name": "SCR-052a-scoutTask",
+      "state": "scoutTask",
+      "ok": true
+    },
+    {
+      "name": "SCR-052b-scoutTask-errors",
+      "state": "scoutTask",
+      "ok": true
+    },
+    {
+      "name": "SCR-053-pro",
+      "state": "pro",
+      "ok": true
+    },
+    {
+      "name": "OVL-010-store",
+      "state": "pro+store",
+      "ok": true
+    },
+    {
+      "name": "SCR-054-proWelcome",
+      "state": "proWelcome",
+      "ok": true
+    },
+    {
+      "name": "SCR-055-manageSub",
+      "state": "manageSub",
+      "ok": true
+    },
+    {
+      "name": "SCR-056-cancelSub",
+      "state": "cancelSub",
+      "ok": true
+    },
+    {
+      "name": "SCR-057-commute",
+      "state": "commute",
+      "ok": true
+    },
+    {
+      "name": "SCR-058-vehicles",
+      "state": "vehicles",
+      "ok": true
+    },
+    {
+      "name": "SCR-059-insights",
+      "state": "insights",
+      "ok": true
+    },
+    {
+      "name": "SCR-013l-explore-ad-pt",
+      "state": "explore",
+      "ok": true
+    },
+    {
+      "name": "SCR-013l-explore-ad-pt",
+      "state": "explore",
+      "ok": true
+    }
+  ]
+}

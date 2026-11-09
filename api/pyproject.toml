@@ -1,0 +1,27 @@
+[project]
+name = "zpot-api"
+version = "0.1.0"
+description = "Zpot parking discovery API (Django + DRF + GeoDjango/PostGIS)"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["**/migrations/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "DJ", "S", "C4", "SIM"]
+ignore = ["S101", "S105", "S106", "DJ001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B"]
+"config/settings/*.py" = ["F405", "F403"]
+"apps/accounts/web.py" = ["E501"]  # inline HTML template
+"apps/cities/geocoding/nominatim.py" = ["S310"]  # fixed https host constant
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --ds=config.settings.test"
+markers = ["postgis: requires a real PostGIS database"]
