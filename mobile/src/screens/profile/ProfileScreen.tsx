@@ -45,10 +45,14 @@ export function ProfileScreen() {
       {authed ? <ListRow icon="user" label={t('profile.account')} onPress={() => navigation.navigate('AccountSettings')} testID="profile-account" /> : null}
       <ListRow icon="filter" label={t('profile.parkingPrefs')} onPress={() => navigation.navigate('ParkingPreferences')} testID="profile-prefs" />
       <ListRow icon="bell" label={t('profile.notifications')} onPress={() => navigation.navigate(authed ? 'NotificationPrefs' : 'NotificationsIntro')} testID="profile-notifs" />
+      {authed ? <ListRow icon="user" label={t('p3.vehicles')} onPress={() => navigation.navigate('Vehicles')} testID="profile-vehicles" /> : null}
+      {authed ? <ListRow icon="calendar" label={t('p3.commute')} onPress={() => navigation.navigate('Commute')} testID="profile-commute" /> : null}
+      {authed ? <ListRow icon="euro" label={t('p3.insights')} onPress={() => navigation.navigate('Insights')} testID="profile-insights" /> : null}
       {authed ? <ListRow icon="star" label={t('p2.contributions')} onPress={() => navigation.navigate('Contributions')} testID="profile-contrib" /> : null}
       {authed && extras.scout ? <ListRow icon="pin" label={t('p2.scout')} onPress={() => navigation.navigate('ScoutList')} testID="profile-scout" /> : null}
       {extras.zTrigger ? <ListRow icon="settings" label={t('p2.ztrigger')} onPress={() => navigation.navigate('ZTrigger')} testID="profile-ztrigger" /> : null}
       {extras.pro ? <ListRow icon="star" label={t('p2.pro')} onPress={() => navigation.navigate('Pro')} testID="profile-pro" /> : null}
+      {authed && extras.pro ? <ListRow icon="file" label={t('p3.subscription')} onPress={() => navigation.navigate('ManageSubscription')} testID="profile-subscription" /> : null}
       <ListRow icon="globe" label={t('profile.language')} value={language === 'pt-PT' ? 'Português' : 'English'}
         onPress={() => navigation.navigate('Language', { fromSettings: true })} testID="profile-language" />
       <ListRow icon="shield" label={t('profile.privacy')} onPress={() => navigation.navigate('Privacy')} testID="profile-privacy" />

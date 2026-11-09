@@ -1,11 +1,11 @@
 {
   "generated_from": "drf-spectacular OpenAPI 3",
-  "count": 99,
+  "count": 117,
   "summary": {
-    "response_schema": 99,
-    "backend_tests": 99,
-    "mobile_client": 89,
-    "documented": 99
+    "response_schema": 117,
+    "backend_tests": 117,
+    "mobile_client": 106,
+    "documented": 117
   },
   "operations": [
     {
@@ -175,6 +175,21 @@
     },
     {
       "method": "GET",
+      "path": "/billing/entitlement/",
+      "operation_id": "billing_entitlement_retrieve",
+      "tags": [
+        "billing"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
       "path": "/cities/",
       "operation_id": "cities_list",
       "tags": [
@@ -224,6 +239,111 @@
       "operation_id": "community_me_retrieve",
       "tags": [
         "community"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/commute/plans/",
+      "operation_id": "commute_plans_list",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/commute/plans/",
+      "operation_id": "commute_plans_create",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/commute/plans/{id}/",
+      "operation_id": "commute_plans_partial_update",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/commute/plans/{id}/",
+      "operation_id": "commute_plans_destroy",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/commute/plans/{id}/check/",
+      "operation_id": "commute_plans_check_retrieve",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/commute/plans/{id}/check/",
+      "operation_id": "commute_plans_check_partial_update",
+      "tags": [
+        "commute"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/commute/plans/{id}/check/",
+      "operation_id": "commute_plans_check_destroy",
+      "tags": [
+        "commute"
       ],
       "auth": "jwt",
       "deprecated": false,
@@ -309,6 +429,21 @@
       "documented": true
     },
     {
+      "method": "GET",
+      "path": "/events/park/",
+      "operation_id": "events_park_list",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
       "method": "POST",
       "path": "/events/park/",
       "operation_id": "events_park_create",
@@ -324,9 +459,39 @@
       "documented": true
     },
     {
+      "method": "DELETE",
+      "path": "/events/park/",
+      "operation_id": "events_park_destroy",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
       "method": "POST",
       "path": "/events/park/{id}/confirm/",
       "operation_id": "events_park_confirm_create",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/events/park/{id}/correct/",
+      "operation_id": "events_park_correct_create",
       "tags": [
         "events"
       ],
@@ -1225,6 +1390,36 @@
     },
     {
       "method": "GET",
+      "path": "/sessions/insights/",
+      "operation_id": "sessions_insights_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/insights/export/",
+      "operation_id": "sessions_insights_export_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
       "path": "/sessions/{id}/",
       "operation_id": "sessions_retrieve",
       "tags": [
@@ -1469,6 +1664,81 @@
       "operation_id": "users_me_preferences_partial_update",
       "tags": [
         "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/vehicles/",
+      "operation_id": "vehicles_list",
+      "tags": [
+        "vehicles"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/vehicles/",
+      "operation_id": "vehicles_create",
+      "tags": [
+        "vehicles"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/vehicles/{id}/",
+      "operation_id": "vehicles_partial_update",
+      "tags": [
+        "vehicles"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/vehicles/{id}/",
+      "operation_id": "vehicles_destroy",
+      "tags": [
+        "vehicles"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/vehicles/{id}/activate/",
+      "operation_id": "vehicles_activate_create",
+      "tags": [
+        "vehicles"
       ],
       "auth": "jwt",
       "deprecated": false,

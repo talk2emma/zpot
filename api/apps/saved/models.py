@@ -40,3 +40,23 @@ class SearchHistory(models.Model):
     class Meta:
         ordering = ["-searched_at"]
         constraints = [models.UniqueConstraint(fields=["user", "place_ref", "name"], name="search_history_unique")]
+
+
+class CommutePlan(models.Model):
+    """A regular trip (destination + weekdays + arrival time + stay). Checked against the rules on demand."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="commute_plans")
+    label = models.CharField(max_length=80)
+    name = models.CharField(max_length=160)
+    location = models.PointField(srid=4326, geography=True)
+    days = models.JSONField(default=list, help_text="Weekdays, 0 = Monday … 6 = Sunday")
+    arrival_minute = models.PositiveSmallIntegerField(help_text="Local minutes after midnight")
+    duration_minutes = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.label} ({self.days})"

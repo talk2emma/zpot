@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-09 23:18 UTC",
+  "generated_at": "2026-11-09 23:44 UTC",
   "part": 2,
   "git": {
     "branch": "main",
-    "commit": "586e8a231aa3e964e997f377b6361208be0dea57",
+    "commit": "2b8a33236122609fe887d693d2741ff678fdf150",
     "uncommitted_changes": true
   },
   "status_vocabulary": [
@@ -11,6 +11,7 @@
     "partial",
     "routed-placeholder",
     "not-started",
+    "blocked",
     "dev-only"
   ],
   "screens": [
@@ -281,25 +282,25 @@
       "module": "navigation",
       "rn": "screens/parking/NavigationReturnScreen.tsx",
       "phase": "P1",
-      "status": "partial",
+      "status": "implemented",
       "apis": [
         "GET /parking/areas/{id}/"
       ],
-      "tests": "manual",
+      "tests": "e2e:mobile/e2e/part1-core-journey.yaml",
       "prototype_key": "navReturn"
     },
     {
       "id": "SCR-021",
       "key": "partner",
-      "name": "Partner reservation",
+      "name": "Partner offer",
       "module": "monetisation",
-      "rn": "—",
+      "rn": "screens/planning/PlanningScreens.tsx#PartnerScreen",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(future) partner API"
+        "GET /parking/areas/{id}/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/planning.test.tsx",
       "prototype_key": "partner"
     },
     {
@@ -651,10 +652,10 @@
       "status": "partial",
       "apis": [
         "GET /detection/config/",
-        "POST /events/park/",
-        "POST /events/park/{id}/confirm|dismiss/"
+        "GET/POST/DELETE /events/park/",
+        "POST /events/park/{id}/confirm|dismiss|correct/"
       ],
-      "tests": "api:tests/test_scouts_detection_flags.py",
+      "tests": "api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
       "prototype_key": "zIntro"
     },
     {
@@ -667,10 +668,10 @@
       "status": "partial",
       "apis": [
         "GET /detection/config/",
-        "POST /events/park/",
-        "POST /events/park/{id}/confirm|dismiss/"
+        "GET/POST/DELETE /events/park/",
+        "POST /events/park/{id}/confirm|dismiss|correct/"
       ],
-      "tests": "api:tests/test_scouts_detection_flags.py",
+      "tests": "api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
       "prototype_key": "zConsent"
     },
     {
@@ -683,10 +684,10 @@
       "status": "partial",
       "apis": [
         "GET /detection/config/",
-        "POST /events/park/",
-        "POST /events/park/{id}/confirm|dismiss/"
+        "GET/POST/DELETE /events/park/",
+        "POST /events/park/{id}/confirm|dismiss|correct/"
       ],
-      "tests": "api:tests/test_scouts_detection_flags.py",
+      "tests": "api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
       "prototype_key": "zSetup"
     },
     {
@@ -699,10 +700,10 @@
       "status": "partial",
       "apis": [
         "GET /detection/config/",
-        "POST /events/park/",
-        "POST /events/park/{id}/confirm|dismiss/"
+        "GET/POST/DELETE /events/park/",
+        "POST /events/park/{id}/confirm|dismiss|correct/"
       ],
-      "tests": "api:tests/test_scouts_detection_flags.py",
+      "tests": "api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
       "prototype_key": "zHome"
     },
     {
@@ -715,10 +716,10 @@
       "status": "partial",
       "apis": [
         "GET /detection/config/",
-        "POST /events/park/",
-        "POST /events/park/{id}/confirm|dismiss/"
+        "GET/POST/DELETE /events/park/",
+        "POST /events/park/{id}/confirm|dismiss|correct/"
       ],
-      "tests": "api:tests/test_scouts_detection_flags.py",
+      "tests": "api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
       "prototype_key": "zEvent"
     },
     {
@@ -772,26 +773,12 @@
       "module": "monetisation",
       "rn": "—",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "blocked",
       "apis": [
-        "(post-MVP)"
+        "(needs App Store / Google Play billing)"
       ],
       "tests": "none",
       "prototype_key": "proWelcome"
-    },
-    {
-      "id": "SCR-055",
-      "key": "manageSub",
-      "name": "Manage subscription",
-      "module": "monetisation",
-      "rn": "—",
-      "phase": "post-MVP",
-      "status": "not-started",
-      "apis": [
-        "(post-MVP)"
-      ],
-      "tests": "none",
-      "prototype_key": "manageSub"
     },
     {
       "id": "SCR-056",
@@ -800,53 +787,71 @@
       "module": "monetisation",
       "rn": "—",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "blocked",
       "apis": [
-        "(post-MVP)"
+        "(needs App Store / Google Play billing)"
       ],
       "tests": "none",
       "prototype_key": "cancelSub"
     },
     {
+      "id": "SCR-055",
+      "key": "manageSub",
+      "name": "Your subscription",
+      "module": "monetisation",
+      "rn": "screens/planning/PlanningScreens.tsx#ManageSubscriptionScreen",
+      "phase": "post-MVP",
+      "status": "implemented",
+      "apis": [
+        "GET /billing/entitlement/"
+      ],
+      "tests": "unit:__tests__/planning.test.tsx; api:tests/test_planning_and_plans.py",
+      "prototype_key": "manageSub"
+    },
+    {
       "id": "SCR-057",
       "key": "commute",
       "name": "Commute planner",
-      "module": "monetisation",
-      "rn": "—",
+      "module": "planning",
+      "rn": "screens/planning/PlanningScreens.tsx#CommuteScreen",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(post-MVP)"
+        "GET/POST /commute/plans/",
+        "PATCH/DELETE /commute/plans/{id}/",
+        "GET /commute/plans/{id}/check/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/planning.test.tsx; api:tests/test_planning_and_plans.py",
       "prototype_key": "commute"
     },
     {
       "id": "SCR-058",
       "key": "vehicles",
       "name": "Vehicles & permits",
-      "module": "monetisation",
-      "rn": "—",
+      "module": "planning",
+      "rn": "screens/planning/PlanningScreens.tsx#VehiclesScreen",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(post-MVP)"
+        "GET/POST /vehicles/",
+        "PATCH/DELETE /vehicles/{id}/",
+        "POST /vehicles/{id}/activate/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/planning.test.tsx; api:tests/test_planning_and_plans.py",
       "prototype_key": "vehicles"
     },
     {
       "id": "SCR-059",
       "key": "insights",
       "name": "Savings & history",
-      "module": "monetisation",
-      "rn": "—",
+      "module": "planning",
+      "rn": "screens/planning/PlanningScreens.tsx#InsightsScreen",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(post-MVP)"
+        "GET /sessions/insights/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/planning.test.tsx; api:tests/test_planning_and_plans.py",
       "prototype_key": "insights"
     }
   ],
@@ -869,8 +874,8 @@
       "id": "OVL-003",
       "key": "adWhy",
       "name": "Why this ad?",
-      "rn": "post-MVP (ads not shipped)",
-      "status": "not-started"
+      "rn": "Not built: ads are not shipped (flag advertising=off), so there is nothing to explain",
+      "status": "blocked"
     },
     {
       "id": "OVL-004",
@@ -918,16 +923,16 @@
       "id": "OVL-010",
       "key": "store",
       "name": "App-store purchase sheet",
-      "rn": "post-MVP",
-      "status": "not-started"
+      "rn": "Not built: needs App Store / Google Play billing; a simulated sheet would fake a purchase",
+      "status": "blocked"
     }
   ],
   "interactions": {
     "total_bindings": 390,
     "by_status": {
-      "implemented": 299,
-      "not-started": 63,
-      "partial": 11,
+      "implemented": 339,
+      "blocked": 21,
+      "partial": 13,
       "dev-only": 17
     }
   },

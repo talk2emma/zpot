@@ -115,7 +115,7 @@ explanation_codes recommendation_reason{code,params,text} commercial (disclosure
 * **Feature flags.** `GET /config/` returns server flags (DB `FeatureFlag` rows override settings). A disabled module returns `403 feature_disabled`.
 * **Throttles** (per user/IP): reports 20/h, verifications 60/h, support 10/h, uploads 30/h. Over the limit: `429 throttled`.
 * **Uploads.** JPEG/PNG/WebP up to 5 MB. Images are decoded, decompression-bomb checked and re-encoded to JPEG, which strips EXIF/GPS. **No automatic face or number-plate redaction is performed.** Files are stored privately and are only downloadable through authenticated views.
-* Additional error codes used by Part 2: `parking_not_permitted`, `active_session_exists`, `session_not_active`, `invalid_planned_end`, `reminder_in_past`, `duplicate_report`, `client_token_required`, `location_mismatch`, `location_unsupported`, `not_editable`, `not_verifiable`, `observation_expired`, `own_observation`, `already_verified`, `not_appealable`, `already_appealed`, `invalid_transition`, `reason_required`, `file_required`, `file_too_large`, `unsupported_format`, `invalid_image`, `too_many_attachments`, `duplicate_label`, `use_deletion_request`, `request_in_progress`, `confirmation_required`, `already_submitted`, `already_reviewed`, `already_handled`, `feature_disabled`, `permission_denied`.
+* Additional error codes used by Part 2: `parking_not_permitted`, `active_session_exists`, `session_not_active`, `invalid_planned_end`, `reminder_in_past`, `duplicate_report`, `client_token_required`, `location_mismatch`, `location_unsupported`, `not_editable`, `not_verifiable`, `observation_expired`, `own_observation`, `already_verified`, `not_appealable`, `already_appealed`, `invalid_transition`, `reason_required`, `file_required`, `file_too_large`, `unsupported_format`, `invalid_image`, `too_many_attachments`, `duplicate_label`, `use_deletion_request`, `request_in_progress`, `confirmation_required`, `already_submitted`, `already_reviewed`, `already_handled`, `feature_disabled`, `permission_denied`, `plan_limit`, `plan_required`.
 
 ## Parking sessions (JWT)
 
@@ -208,12 +208,29 @@ These endpoints support GDPR rights; they are not a claim of automated GDPR comp
 | GET | `/scouts/assignments/` · `/scouts/assignments/{id}/` | Own assignments, including current rules on file. |
 | POST | `/scouts/assignments/{id}/submit/` | Multipart `outcome` (`matches\|differs\|no_access`), `observed_rules`, `notes`, `photos[]` (required unless `no_access`). Approval is a reviewer action in Django admin and creates `ParkingEvidence`. |
 
+## Planning: vehicles, commute, savings (JWT)
+
+| Method | Path | Notes |
+|---|---|---|
+| GET / POST | `/vehicles/` | GET creates a default "My car" from parking preferences if there is none. POST is limited by plan (Free = 1) → `403 plan_limit`. |
+| PATCH / DELETE | `/vehicles/{id}/` | `{label?, vehicle_class?, permit_type? (code)}`. Editing or removing the active vehicle updates parking preferences. |
+| POST | `/vehicles/{id}/activate/` | One active vehicle per user (DB constraint). Its class and permit are copied to preferences and used by every rule check. |
+| GET / POST | `/commute/plans/` | `{label, name, latitude, longitude, days[0–6], arrival_minute, duration_minutes}`. Up to 10 plans. |
+| PATCH / DELETE | `/commute/plans/{id}/` | |
+| GET | `/commute/plans/{id}/check/` | Runs the canonical `search_parking` for the next occurrence of each day. Free: the soonest day; other days `locked: true`. |
+| GET | `/sessions/insights/` | Totals for ended sessions. `estimated_savings_total` is `null` unless the driver entered costs. |
+| GET | `/sessions/insights/export/` | Pro feature → `403 plan_required` (Pro cannot be purchased in this build). |
+| GET | `/billing/entitlement/` | Always `{plan: "free", status: "none", provider: null, purchases_available: false, limits}`. There is no billing provider, and nothing can grant Pro. |
+
 ## Z-Trigger (experimental, flag `z_trigger`, off by default)
 
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/detection/config/` | Always available: `enabled`, `phase`, `requirements`, `limitations`. |
+| GET | `/events/park/` | Your own last 20 detected events (private). |
 | POST | `/events/park/` | `{latitude, longitude, detected_at, source, accuracy_m?}`. Private; **never** creates a public observation. `403 feature_disabled` while off. |
+| DELETE | `/events/park/` | Deletes all of your Z-Trigger data → `{deleted}`. |
+| POST | `/events/park/{id}/correct/` | `{latitude, longitude}` re-matches the parking area (pending events only). |
 | POST | `/events/park/{id}/confirm/` | Starts nothing by itself; the app then opens Start session for the matched area. |
 | POST | `/events/park/{id}/dismiss/` | |
 

@@ -58,3 +58,20 @@ export const contributionsSchema = z.object({ karma: z.number(), reports: z.numb
   level: z.enum(['new', 'contributor', 'trusted']), recent_events: z.array(z.object({ reason: z.string(), delta: z.number(), created_at: z.string() })) });
 
 export const helpArticleSchema = z.object({ id: z.number(), slug: z.string(), title: z.string(), body: z.string() }).passthrough();
+
+export const vehicleSchema = z.object({ id: z.number(), label: z.string(), vehicle_class: z.enum(['car', 'van', 'motorcycle']).or(z.string()),
+  permit_type: z.string().nullable(), permit_name: z.string().nullable(), is_active: z.boolean() }).passthrough();
+
+export const commutePlanSchema = z.object({ id: z.number(), label: z.string(), name: z.string(), location: latlng,
+  days: z.array(z.number().int().min(0).max(6)), arrival_minute: z.number(), duration_minutes: z.number() }).passthrough();
+
+export const commuteCheckSchema = z.object({ plan_id: z.number(), note: z.string(), days: z.array(z.object({
+  weekday: z.number(), arrival_at: z.string(), locked: z.boolean(), free_options: z.number().nullable(),
+  best: z.object({ area_id: z.number(), name: z.string(), category: z.enum(['free', 'free_time_limited', 'paid', 'unknown', 'restricted']),
+    expected_total_cost: money.nullable(), leave_by: z.string().nullable(), walking_duration_minutes: z.number() }).passthrough().nullable() })) });
+
+export const insightsSchema = z.object({ sessions: z.number(), parked_minutes: z.number(), sessions_with_cost: z.number(), paid_total: money,
+  estimated_savings_total: money.nullable(), estimated_savings_sessions: z.number(), export_available: z.boolean() }).passthrough();
+
+export const entitlementSchema = z.object({ plan: z.literal('free'), status: z.literal('none'), provider: z.null(),
+  purchases_available: z.literal(false), limits: z.object({ vehicles: z.number() }).passthrough() }).passthrough();

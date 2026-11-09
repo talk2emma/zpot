@@ -1,9 +1,11 @@
 from django.urls import path
 
-from . import views
+from . import insights, views
 
 urlpatterns = [
     path("sessions/", views.SessionListCreateView.as_view(), name="session-list"),
+    path("sessions/insights/", insights.InsightsView.as_view(), name="session-insights"),
+    path("sessions/insights/export/", insights.InsightsExportView.as_view(), name="session-insights-export"),
     path("sessions/active/", views.ActiveSessionView.as_view(), name="session-active"),
     path("sessions/<uuid:pk>/", views.SessionDetailView.as_view(), name="session-detail"),
     path("sessions/<uuid:pk>/end/", views.SessionEndView.as_view(), name="session-end"),

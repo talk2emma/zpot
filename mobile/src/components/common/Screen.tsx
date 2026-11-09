@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { typography, useTheme } from '../../theme';
@@ -29,8 +29,17 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const Body = scroll ? ScrollView : View;
+  // In iOS page sheets the view doesn't start at the window top; KeyboardAvoidingView needs that offset or the
+  // keyboard covers the footer buttons.
+  const wrapRef = useRef<React.ComponentRef<typeof View>>(null);
+  const [offset, setOffset] = useState(0);
+  const measure = useCallback(() => {
+    if (Platform.OS === 'ios') wrapRef.current?.measureInWindow((_x: number, y: number) => { if (Number.isFinite(y)) setOffset(Math.max(0, Math.round(y))); });
+  }, []);
   return (
-    <KeyboardAvoidingView style={[styles.flex, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined} testID={testID}>
+    <View ref={wrapRef} onLayout={measure} style={styles.flex}>
+    <KeyboardAvoidingView keyboardVerticalOffset={offset}
+      style={[styles.flex, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined} testID={testID}>
       <View style={{ paddingTop: insets.top }}>{header}</View>
       <Body style={styles.flex} contentContainerStyle={scroll ? [padded && styles.content] : undefined}
         keyboardShouldPersistTaps="handled">
@@ -42,6 +51,7 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
         </View>
       ) : <View style={{ height: insets.bottom }} />}
     </KeyboardAvoidingView>
+    </View>
   );
 }
 

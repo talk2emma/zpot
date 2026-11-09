@@ -62,9 +62,14 @@ export type RootStackParamList = {
   ScoutList: undefined;
   ScoutTask: { id: number };
   ZTrigger: undefined;
-  ZEvent: { id: string; areaId?: number; areaName?: string; at: string };
+  ZEvent: { id: string; areaId?: number; areaName?: string; at: string; latitude?: number; longitude?: number };
   Pro: undefined;
   Contributions: undefined;
+  Commute: undefined;
+  Vehicles: undefined;
+  Insights: undefined;
+  Partner: { areaId: number };
+  ManageSubscription: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;

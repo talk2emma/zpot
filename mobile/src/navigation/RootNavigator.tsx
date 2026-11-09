@@ -32,6 +32,7 @@ import {
   ContactSupportScreen, DeleteAccountScreen, HelpArticleScreen, HelpScreen, PrivacyRequestsScreen, PrivacyScreen, ProScreen,
   ScoutListScreen, ScoutTaskScreen, SupportTicketScreen, SupportTicketsScreen, ZEventScreen, ZTriggerScreen,
 } from '../screens/support/SupportScreens';
+import { CommuteScreen, InsightsScreen, ManageSubscriptionScreen, PartnerScreen, VehiclesScreen } from '../screens/planning/PlanningScreens';
 import { Part2Screen } from '../screens/shared/Part2Screen';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
@@ -62,6 +63,7 @@ export function RootNavigator() {
         <Stack.Screen name="ReportType" component={ReportTypeScreen} />
         <Stack.Screen name="ContactSupport" component={ContactSupportScreen} />
         <Stack.Screen name="ZEvent" component={ZEventScreen} />
+        <Stack.Screen name="Partner" component={PartnerScreen} />
       </Stack.Group>
       <Stack.Screen name="Session" component={SessionScreen} />
       <Stack.Screen name="EditSession" component={EditSessionScreen} />
@@ -85,6 +87,10 @@ export function RootNavigator() {
       <Stack.Screen name="ScoutTask" component={ScoutTaskScreen} />
       <Stack.Screen name="ZTrigger" component={ZTriggerScreen} />
       <Stack.Screen name="Pro" component={ProScreen} />
+      <Stack.Screen name="Commute" component={CommuteScreen} />
+      <Stack.Screen name="Vehicles" component={VehiclesScreen} />
+      <Stack.Screen name="Insights" component={InsightsScreen} />
+      <Stack.Screen name="ManageSubscription" component={ManageSubscriptionScreen} />
       <Stack.Screen name="ParkingDetails" component={ParkingDetailsScreen} />
       <Stack.Screen name="NavigationPicker" component={NavigationPickerScreen} />
       <Stack.Screen name="NavigationReturn" component={NavigationReturnScreen} />

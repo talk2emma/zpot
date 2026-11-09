@@ -291,6 +291,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Observation'
           description: ''
+  /api/v1/billing/entitlement/:
+    get:
+      operationId: billing_entitlement_retrieve
+      tags:
+      - billing
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+          description: ''
   /api/v1/cities/:
     get:
       operationId: cities_list
@@ -368,6 +382,169 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contributions'
           description: ''
+  /api/v1/commute/plans/:
+    get:
+      operationId: commute_plans_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - commute
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommutePlanList'
+          description: ''
+    post:
+      operationId: commute_plans_create
+      tags:
+      - commute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommutePlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommutePlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommutePlanRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommutePlan'
+          description: ''
+  /api/v1/commute/plans/{id}/:
+    patch:
+      operationId: commute_plans_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - commute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommutePlan'
+          description: ''
+    delete:
+      operationId: commute_plans_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - commute
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/commute/plans/{id}/check/:
+    get:
+      operationId: commute_plans_check_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - commute
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommuteCheck'
+          description: ''
+    patch:
+      operationId: commute_plans_check_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - commute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCommutePlanRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommutePlan'
+          description: ''
+    delete:
+      operationId: commute_plans_check_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - commute
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/config/:
     get:
       operationId: config_retrieve
@@ -454,8 +631,38 @@ paths:
         '204':
           description: No response body
   /api/v1/events/park/:
+    get:
+      operationId: events_park_list
+      description: GET own history · POST a detected event (flag-guarded) · DELETE
+        all own Z-Trigger data.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedParkEventList'
+          description: ''
     post:
       operationId: events_park_create
+      description: GET own history · POST a detected event (flag-guarded) · DELETE
+        all own Z-Trigger data.
       tags:
       - events
       requestBody:
@@ -478,6 +685,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ParkEvent'
+          description: ''
+    delete:
+      operationId: events_park_destroy
+      description: GET own history · POST a detected event (flag-guarded) · DELETE
+        all own Z-Trigger data.
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZDeleted'
           description: ''
   /api/v1/events/park/{id}/confirm/:
     post:
@@ -502,6 +724,39 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ParkEventRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkEvent'
+          description: ''
+  /api/v1/events/park/{id}/correct/:
+    post:
+      operationId: events_park_correct_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrectLocationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CorrectLocationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CorrectLocationRequest'
         required: true
       security:
       - jwtAuth: []
@@ -2380,6 +2635,38 @@ paths:
           description: ''
         '204':
           description: No response body
+  /api/v1/sessions/insights/:
+    get:
+      operationId: sessions_insights_retrieve
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionInsights'
+          description: ''
+  /api/v1/sessions/insights/export/:
+    get:
+      operationId: sessions_insights_export_retrieve
+      description: Monthly CSV export is a Pro feature in the prototype; Pro cannot
+        be purchased in this build.
+      tags:
+      - sessions
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+          description: ''
+        '403':
+          description: 'plan_required: Pro is not available in this build'
   /api/v1/spots/nearby/:
     get:
       operationId: spots_nearby_retrieve
@@ -2599,6 +2886,125 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Preference'
+          description: ''
+  /api/v1/vehicles/:
+    get:
+      operationId: vehicles_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - vehicles
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVehicleList'
+          description: ''
+    post:
+      operationId: vehicles_create
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+  /api/v1/vehicles/{id}/:
+    patch:
+      operationId: vehicles_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    delete:
+      operationId: vehicles_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - vehicles
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/vehicles/{id}/activate/:
+    post:
+      operationId: vehicles_activate_create
+      description: POST only (must not inherit PATCH/DELETE from the detail view).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - vehicles
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
           description: ''
   /api/v1/verify/:
     post:
@@ -2878,6 +3284,123 @@ components:
       - id
       - name
       - slug
+    CommuteCheck:
+      type: object
+      properties:
+        plan_id:
+          type: integer
+        checked_at:
+          type: string
+          format: date-time
+        days:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        note:
+          type: string
+      required:
+      - checked_at
+      - days
+      - note
+      - plan_id
+    CommutePlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        label:
+          type: string
+          maxLength: 80
+        name:
+          type: string
+          maxLength: 160
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        days:
+          type: array
+          items:
+            type: integer
+            maximum: 6
+            minimum: 0
+          maxItems: 7
+          minItems: 1
+        arrival_minute:
+          type: integer
+          maximum: 1439
+          minimum: 0
+        duration_minutes:
+          type: integer
+          maximum: 1440
+          minimum: 15
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - arrival_minute
+      - created_at
+      - days
+      - duration_minutes
+      - id
+      - label
+      - location
+      - name
+      - updated_at
+    CommutePlanRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 80
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+        days:
+          type: array
+          items:
+            type: integer
+            maximum: 6
+            minimum: 0
+          maxItems: 7
+          minItems: 1
+        arrival_minute:
+          type: integer
+          maximum: 1439
+          minimum: 0
+        duration_minutes:
+          type: integer
+          maximum: 1440
+          minimum: 15
+      required:
+      - arrival_minute
+      - days
+      - duration_minutes
+      - label
+      - latitude
+      - longitude
+      - name
     CompareResponse:
       type: object
       properties:
@@ -2954,6 +3477,22 @@ components:
       - recent_events
       - reports
       - verifications
+    CorrectLocationRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+      required:
+      - latitude
+      - longitude
     CoverageDoc:
       type: object
       properties:
@@ -3291,6 +3830,47 @@ components:
       - already_ended
       - session
       - summary
+    Entitlement:
+      type: object
+      properties:
+        plan:
+          $ref: '#/components/schemas/PlanEnum'
+        status:
+          $ref: '#/components/schemas/EntitlementStatusEnum'
+        provider:
+          type: string
+          nullable: true
+        purchases_available:
+          type: boolean
+        pro_preview_enabled:
+          type: boolean
+        limits:
+          type: object
+          additionalProperties: {}
+        note:
+          type: string
+      required:
+      - limits
+      - note
+      - plan
+      - pro_preview_enabled
+      - provider
+      - purchases_available
+      - status
+    EntitlementStatusEnum:
+      enum:
+      - none
+      - trial
+      - active
+      - cancelled
+      - expired
+      type: string
+      description: |-
+        * `none` - none
+        * `trial` - trial
+        * `active` - active
+        * `cancelled` - cancelled
+        * `expired` - expired
     EvaluateRequestRequest:
       type: object
       properties:
@@ -3764,6 +4344,25 @@ components:
         * `easy` - Easy
         * `ok` - OK
         * `hard` - Hard to find
+    PaginatedCommutePlanList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommutePlan'
     PaginatedNotificationList:
       type: object
       required:
@@ -3802,6 +4401,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Observation'
+    PaginatedParkEventList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkEvent'
     PaginatedParkingAreaListList:
       type: object
       required:
@@ -3916,6 +4534,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Ticket'
+    PaginatedVehicleList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
     ParkEvent:
       type: object
       properties:
@@ -4470,6 +5107,45 @@ components:
           type: string
       required:
       - status
+    PatchedCommutePlanRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 80
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+          writeOnly: true
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+          writeOnly: true
+        days:
+          type: array
+          items:
+            type: integer
+            maximum: 6
+            minimum: 0
+          maxItems: 7
+          minItems: 1
+        arrival_minute:
+          type: integer
+          maximum: 1439
+          minimum: 0
+        duration_minutes:
+          type: integer
+          maximum: 1440
+          minimum: 15
     PatchedConsentsPatchRequest:
       type: object
       properties:
@@ -4562,6 +5238,19 @@ components:
         display_name:
           type: string
           maxLength: 80
+    PatchedVehicleRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 60
+        vehicle_class:
+          $ref: '#/components/schemas/VehicleClassEnum'
+        permit_type:
+          type: string
+          minLength: 1
+          nullable: true
     PhotoUploadRequest:
       type: object
       properties:
@@ -4600,6 +5289,14 @@ components:
       - name
       - provider
       - subtitle
+    PlanEnum:
+      enum:
+      - free
+      - pro
+      type: string
+      description: |-
+        * `free` - free
+        * `pro` - pro
     PlatformEnum:
       enum:
       - ios
@@ -5447,6 +6144,38 @@ components:
       - reminders
       - started_at
       - updated_at
+    SessionInsights:
+      type: object
+      properties:
+        sessions:
+          type: integer
+        parked_minutes:
+          type: integer
+        sessions_with_cost:
+          type: integer
+        paid_total:
+          type: string
+        estimated_savings_total:
+          type: string
+          nullable: true
+        estimated_savings_sessions:
+          type: integer
+        currency:
+          type: string
+        export_available:
+          type: boolean
+        note:
+          type: string
+      required:
+      - currency
+      - estimated_savings_sessions
+      - estimated_savings_total
+      - export_available
+      - note
+      - paid_total
+      - parked_minutes
+      - sessions
+      - sessions_with_cost
     SessionSummary:
       type: object
       properties:
@@ -5890,6 +6619,37 @@ components:
       - id
       - is_email_verified
       - roles
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        label:
+          type: string
+          maxLength: 60
+        vehicle_class:
+          $ref: '#/components/schemas/VehicleClassEnum'
+        permit_type:
+          type: string
+          nullable: true
+        permit_name:
+          type: string
+          nullable: true
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_active
+      - label
+      - permit_name
     VehicleClass49fEnum:
       enum:
       - car
@@ -5914,6 +6674,21 @@ components:
         * `motorcycle` - Motorcycle
         * `van` - Van
         * `ev` - Electric vehicle
+    VehicleRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 60
+        vehicle_class:
+          $ref: '#/components/schemas/VehicleClassEnum'
+        permit_type:
+          type: string
+          minLength: 1
+          nullable: true
+      required:
+      - label
     VerificationAnswerEnum:
       enum:
       - still_available
@@ -5985,6 +6760,13 @@ components:
       required:
       - answer
       - observation_id
+    ZDeleted:
+      type: object
+      properties:
+        deleted:
+          type: integer
+      required:
+      - deleted
   securitySchemes:
     jwtAuth:
       type: http

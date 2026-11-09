@@ -121,6 +121,7 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
             {a.commercial.offer ? <Text style={[typography.body, { color: colors.textBody }]}>{a.commercial.offer}</Text> : null}
             {a.commercial.ev_charging ? <Text style={[typography.meta, { color: colors.textMuted }]}>EV: {a.commercial.ev_charging}</Text> : null}
             <Text style={[typography.meta, { color: colors.textMuted }]}>{t('details.partnerDisclosure')}</Text>
+            <ZpotButton variant="small" label={t('partner.view')} onPress={() => navigation.navigate('Partner', { areaId: a.id })} testID="details-partner" />
           </View>
         ) : null}
         <AreaAvailability areaId={a.id} />

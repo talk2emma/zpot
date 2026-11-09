@@ -5,7 +5,7 @@
  * support, privacy and contribution endpoints, and every response is parsed with the app's runtime schemas.
  */
 import {
-  contributionsSchema, helpArticleSchema, notificationListSchema, observationSchema, privacyRequestSchema, reportSchema,
+  commuteCheckSchema, commutePlanSchema, contributionsSchema, entitlementSchema, helpArticleSchema, insightsSchema, vehicleSchema, notificationListSchema, observationSchema, privacyRequestSchema, reportSchema,
   savedLocationSchema, sessionSchema, sessionSummarySchema, sessionWithWarningsSchema, ticketSchema,
 } from '../../src/services/api/schemas.part2';
 
@@ -76,5 +76,19 @@ d('Part 2 API contract (live)', () => {
     const ex = await call('POST', '/privacy/data-export/');
     expect(ex.status).toBe(202);
     privacyRequestSchema.parse(ex.body);
+  });
+
+  it('planning: vehicles, commute, insights and an honest Free entitlement', async () => {
+    entitlementSchema.parse((await call('GET', '/billing/entitlement/')).body);
+    const vs = (await call('GET', '/vehicles/')).body;
+    vs.forEach((v: unknown) => vehicleSchema.parse(v));
+    expect((await call('POST', '/vehicles/', { label: 'Van', vehicle_class: 'van' })).status).toBe(403);
+    const p = await call('POST', '/commute/plans/', { label: 'Office', name: 'Saldanha', latitude: 38.7347, longitude: -9.145,
+      days: [0, 3], arrival_minute: 600, duration_minutes: 120 });
+    expect(p.status).toBe(201);
+    const plan = commutePlanSchema.parse(p.body);
+    const chk = commuteCheckSchema.parse((await call('GET', `/commute/plans/${plan.id}/check/`)).body);
+    expect(chk.days.filter(d => !d.locked)).toHaveLength(1);
+    insightsSchema.parse((await call('GET', '/sessions/insights/')).body);
   });
 });

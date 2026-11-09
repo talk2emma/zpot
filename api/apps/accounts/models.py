@@ -167,3 +167,25 @@ class ConsentRecord(models.Model):
 
     def __str__(self):
         return f"{self.consent_type}={self.granted}"
+
+
+class Vehicle(models.Model):
+    """A driver's vehicle. The active vehicle's class and permit are copied to UserPreference for rule checks."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vehicles")
+    label = models.CharField(max_length=60)
+    vehicle_class = models.CharField(max_length=16, choices=VehicleClass.choices, default=VehicleClass.CAR)
+    permit_type = models.ForeignKey("regulations.PermitType", null=True, blank=True, on_delete=models.SET_NULL)
+    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-is_active", "created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user"], condition=models.Q(is_active=True), name="one_active_vehicle_per_user"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.label} ({self.vehicle_class})"

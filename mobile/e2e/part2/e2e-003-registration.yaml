@@ -5,10 +5,12 @@ appId: pt.zpot.app
 - runFlow: _common/guest.yaml
 - tapOn: { id: "tab-profile" }
 - runFlow:                       # iOS keeps Keychain tokens across clearState: start signed out
-    when: { visible: { id: "profile-signout" } }
+    when: { notVisible: { id: "profile-signin" } }
     commands:
+      - scrollUntilVisible: { element: { id: "profile-signout" }, direction: DOWN }
       - tapOn: { id: "profile-signout" }
       - tapOn: { id: "signout-dialog-confirm" }
+- scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }
 - tapOn: { id: "profile-signin" }
 - tapOn: { id: "signin-to-register" }
 - tapOn: { id: "register-email" }
@@ -17,7 +19,7 @@ appId: pt.zpot.app
 - inputText: ${PASSWORD}
 - tapOn: { id: "register-password2" }
 - inputText: ${PASSWORD}
-- tapOn: { text: "Create account", index: 0, optional: true }
+- tapOn: { text: "Confirm password" }
 - tapOn: { id: "register-terms" }
 - tapOn: { id: "register-submit" }
 - tapOn: { text: "Not Now", optional: true }
@@ -29,8 +31,10 @@ appId: pt.zpot.app
 - takeScreenshot: e2e003-verified
 - tapOn: { id: "verify-continue" }
 - tapOn: { id: "tab-profile" }
+- scrollUntilVisible: { element: { id: "profile-signout" }, direction: DOWN }
 - tapOn: { id: "profile-signout" }
 - tapOn: { id: "signout-dialog-confirm" }
+- scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }
 - tapOn: { id: "profile-signin" }
 - tapOn: { id: "signin-email" }
 - inputText: ${output.email}
@@ -38,8 +42,10 @@ appId: pt.zpot.app
 - inputText: ${PASSWORD}
 - tapOn: { id: "signin-submit" }
 - tapOn: { text: "Not Now", optional: true }
-- extendedWaitUntil: { visible: { id: "profile-signout" }, timeout: 15000 }
+- extendedWaitUntil: { visible: { id: "profile-name" }, timeout: 15000 }
+- assertNotVisible: { id: "profile-signin" }
 - assertVisible: { text: "${output.email}" }
+- scrollUntilVisible: { element: { id: "profile-signout" }, direction: DOWN }
 - tapOn: { id: "profile-signout" }
 - tapOn: { id: "signout-dialog-confirm" }
-- assertVisible: { id: "profile-signin" }
+- scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }

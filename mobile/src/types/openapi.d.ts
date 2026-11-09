@@ -165,6 +165,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/billing/entitlement/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["billing_entitlement_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/cities/": {
         parameters: {
             query?: never;
@@ -228,6 +244,54 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/commute/plans/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["commute_plans_list"];
+        put?: never;
+        post: operations["commute_plans_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/commute/plans/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["commute_plans_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["commute_plans_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/commute/plans/{id}/check/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["commute_plans_check_retrieve"];
+        put?: never;
+        post?: never;
+        delete: operations["commute_plans_check_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["commute_plans_check_partial_update"];
         trace?: never;
     };
     "/api/v1/config/": {
@@ -302,10 +366,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** @description GET own history · POST a detected event (flag-guarded) · DELETE all own Z-Trigger data. */
+        get: operations["events_park_list"];
         put?: never;
+        /** @description GET own history · POST a detected event (flag-guarded) · DELETE all own Z-Trigger data. */
         post: operations["events_park_create"];
-        delete?: never;
+        /** @description GET own history · POST a detected event (flag-guarded) · DELETE all own Z-Trigger data. */
+        delete: operations["events_park_destroy"];
         options?: never;
         head?: never;
         patch?: never;
@@ -321,6 +388,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["events_park_confirm_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/park/{id}/correct/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["events_park_correct_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1201,6 +1284,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sessions/insights/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sessions_insights_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sessions/insights/export/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Monthly CSV export is a Pro feature in the prototype; Pro cannot be purchased in this build. */
+        get: operations["sessions_insights_export_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/spots/nearby/": {
         parameters: {
             query?: never;
@@ -1300,6 +1416,55 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["users_me_preferences_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/vehicles/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["vehicles_list"];
+        put?: never;
+        post: operations["vehicles_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vehicles/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["vehicles_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["vehicles_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/vehicles/{id}/activate/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description POST only (must not inherit PATCH/DELETE from the detail view). */
+        post: operations["vehicles_activate_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/verify/": {
@@ -1428,6 +1593,41 @@ export interface components {
             };
             readonly bbox: number[] | null;
         };
+        CommuteCheck: {
+            plan_id: number;
+            /** Format: date-time */
+            checked_at: string;
+            days: {
+                [key: string]: unknown;
+            }[];
+            note: string;
+        };
+        CommutePlan: {
+            readonly id: number;
+            label: string;
+            name: string;
+            readonly location: {
+                [key: string]: unknown;
+            };
+            days: number[];
+            arrival_minute: number;
+            duration_minutes: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        CommutePlanRequest: {
+            label: string;
+            name: string;
+            /** Format: double */
+            latitude: number;
+            /** Format: double */
+            longitude: number;
+            days: number[];
+            arrival_minute: number;
+            duration_minutes: number;
+        };
         CompareResponse: {
             results: components["schemas"]["ParkingOptionDoc"][];
             best_id: number | null;
@@ -1467,6 +1667,12 @@ export interface components {
             recent_events: {
                 [key: string]: unknown;
             }[];
+        };
+        CorrectLocationRequest: {
+            /** Format: double */
+            latitude: number;
+            /** Format: double */
+            longitude: number;
         };
         CoverageDoc: {
             status: components["schemas"]["CoverageDocStatusEnum"];
@@ -1631,6 +1837,26 @@ export interface components {
             already_ended: boolean;
             summary: components["schemas"]["SessionSummary"];
         };
+        Entitlement: {
+            plan: components["schemas"]["PlanEnum"];
+            status: components["schemas"]["EntitlementStatusEnum"];
+            provider: string | null;
+            purchases_available: boolean;
+            pro_preview_enabled: boolean;
+            limits: {
+                [key: string]: unknown;
+            };
+            note: string;
+        };
+        /**
+         * @description * `none` - none
+         *     * `trial` - trial
+         *     * `active` - active
+         *     * `cancelled` - cancelled
+         *     * `expired` - expired
+         * @enum {string}
+         */
+        EntitlementStatusEnum: "none" | "trial" | "active" | "cancelled" | "expired";
         EvaluateRequestRequest: {
             area_id: number;
             /** Format: date-time */
@@ -1844,6 +2070,19 @@ export interface components {
          * @enum {string}
          */
         OutcomeB5dEnum: "easy" | "ok" | "hard";
+        PaginatedCommutePlanList: {
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cD00ODY%3D"
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+             */
+            previous?: string | null;
+            results: components["schemas"]["CommutePlan"][];
+        };
         PaginatedNotificationList: {
             /**
              * Format: uri
@@ -1869,6 +2108,19 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Observation"][];
+        };
+        PaginatedParkEventList: {
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cD00ODY%3D"
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+             */
+            previous?: string | null;
+            results: components["schemas"]["ParkEvent"][];
         };
         PaginatedParkingAreaListList: {
             /**
@@ -1947,6 +2199,19 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Ticket"][];
+        };
+        PaginatedVehicleList: {
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cD00ODY%3D"
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+             */
+            previous?: string | null;
+            results: components["schemas"]["Vehicle"][];
         };
         ParkEvent: {
             /** Format: uuid */
@@ -2185,6 +2450,17 @@ export interface components {
         PasswordResetStatus: {
             status: string;
         };
+        PatchedCommutePlanRequest: {
+            label?: string;
+            name?: string;
+            /** Format: double */
+            latitude?: number;
+            /** Format: double */
+            longitude?: number;
+            days?: number[];
+            arrival_minute?: number;
+            duration_minutes?: number;
+        };
         PatchedConsentsPatchRequest: {
             terms?: boolean;
             privacy?: boolean;
@@ -2230,6 +2506,11 @@ export interface components {
         PatchedUserRequest: {
             display_name?: string;
         };
+        PatchedVehicleRequest: {
+            label?: string;
+            vehicle_class?: components["schemas"]["VehicleClassEnum"];
+            permit_type?: string | null;
+        };
         PhotoUploadRequest: {
             /** Format: binary */
             file: string;
@@ -2248,6 +2529,12 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /**
+         * @description * `free` - free
+         *     * `pro` - pro
+         * @enum {string}
+         */
+        PlanEnum: "free" | "pro";
         /**
          * @description * `ios` - iOS
          *     * `android` - Android
@@ -2611,6 +2898,17 @@ export interface components {
             readonly updated_at: string;
             readonly events: components["schemas"]["Event"][];
         };
+        SessionInsights: {
+            sessions: number;
+            parked_minutes: number;
+            sessions_with_cost: number;
+            paid_total: string;
+            estimated_savings_total: string | null;
+            estimated_savings_sessions: number;
+            currency: string;
+            export_available: boolean;
+            note: string;
+        };
         SessionSummary: {
             /** Format: uuid */
             session_id: string;
@@ -2807,6 +3105,16 @@ export interface components {
             readonly date_joined: string;
             readonly roles: string[];
         };
+        Vehicle: {
+            readonly id: number;
+            label: string;
+            vehicle_class?: components["schemas"]["VehicleClassEnum"];
+            permit_type?: string | null;
+            readonly permit_name: string | null;
+            readonly is_active: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
         /**
          * @description * `car` - car
          *     * `motorcycle` - motorcycle
@@ -2823,6 +3131,11 @@ export interface components {
          * @enum {string}
          */
         VehicleClassEnum: "car" | "motorcycle" | "van" | "ev";
+        VehicleRequest: {
+            label: string;
+            vehicle_class?: components["schemas"]["VehicleClassEnum"];
+            permit_type?: string | null;
+        };
         /**
          * @description * `still_available` - still_available
          *     * `taken` - taken
@@ -2860,6 +3173,9 @@ export interface components {
         VerifyCompatRequest: {
             observation_id: number;
             answer: components["schemas"]["VerifyCompatAnswerEnum"];
+        };
+        ZDeleted: {
+            deleted: number;
         };
     };
     responses: never;
@@ -3134,6 +3450,25 @@ export interface operations {
             };
         };
     };
+    billing_entitlement_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Entitlement"];
+                };
+            };
+        };
+    };
     cities_list: {
         parameters: {
             query?: never;
@@ -3210,6 +3545,170 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Contributions"];
+                };
+            };
+        };
+    };
+    commute_plans_list: {
+        parameters: {
+            query?: {
+                /** @description The pagination cursor value. */
+                cursor?: string;
+                /** @description Number of results to return per page. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCommutePlanList"];
+                };
+            };
+        };
+    };
+    commute_plans_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommutePlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CommutePlanRequest"];
+                "multipart/form-data": components["schemas"]["CommutePlanRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommutePlan"];
+                };
+            };
+        };
+    };
+    commute_plans_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    commute_plans_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCommutePlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCommutePlanRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCommutePlanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommutePlan"];
+                };
+            };
+        };
+    };
+    commute_plans_check_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommuteCheck"];
+                };
+            };
+        };
+    };
+    commute_plans_check_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    commute_plans_check_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCommutePlanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCommutePlanRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCommutePlanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommutePlan"];
                 };
             };
         };
@@ -3316,6 +3815,30 @@ export interface operations {
             };
         };
     };
+    events_park_list: {
+        parameters: {
+            query?: {
+                /** @description The pagination cursor value. */
+                cursor?: string;
+                /** @description Number of results to return per page. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedParkEventList"];
+                };
+            };
+        };
+    };
     events_park_create: {
         parameters: {
             query?: never;
@@ -3341,6 +3864,25 @@ export interface operations {
             };
         };
     };
+    events_park_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ZDeleted"];
+                };
+            };
+        };
+    };
     events_park_confirm_create: {
         parameters: {
             query?: never;
@@ -3355,6 +3897,33 @@ export interface operations {
                 "application/json": components["schemas"]["ParkEventRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["ParkEventRequest"];
                 "multipart/form-data": components["schemas"]["ParkEventRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParkEvent"];
+                };
+            };
+        };
+    };
+    events_park_correct_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CorrectLocationRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CorrectLocationRequest"];
+                "multipart/form-data": components["schemas"]["CorrectLocationRequest"];
             };
         };
         responses: {
@@ -4936,6 +5505,51 @@ export interface operations {
             };
         };
     };
+    sessions_insights_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionInsights"];
+                };
+            };
+        };
+    };
+    sessions_insights_export_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+            /** @description plan_required: Pro is not available in this build */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     spots_nearby_retrieve: {
         parameters: {
             query?: {
@@ -5156,6 +5770,123 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Preference"];
+                };
+            };
+        };
+    };
+    vehicles_list: {
+        parameters: {
+            query?: {
+                /** @description The pagination cursor value. */
+                cursor?: string;
+                /** @description Number of results to return per page. */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedVehicleList"];
+                };
+            };
+        };
+    };
+    vehicles_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VehicleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["VehicleRequest"];
+                "multipart/form-data": components["schemas"]["VehicleRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Vehicle"];
+                };
+            };
+        };
+    };
+    vehicles_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    vehicles_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedVehicleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedVehicleRequest"];
+                "multipart/form-data": components["schemas"]["PatchedVehicleRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Vehicle"];
+                };
+            };
+        };
+    };
+    vehicles_activate_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Vehicle"];
                 };
             };
         };

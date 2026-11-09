@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { Linking, Platform, Share, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
-  Banner, Body, EmptyState, ErrorState, FilterChip, Icon, ListRow, LoadingState, Screen, ScreenHeader, SectionLabel,
+  Banner, Body, ConfirmDialog, EmptyState, ErrorState, FilterChip, Icon, ListRow, LoadingState, Screen, ScreenHeader, SectionLabel,
   SummaryRow, Title, Toggle, Wrap, ZpotButton, ZpotTextField,
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { PhotoField } from '../../components/forms/PhotoField';
 import { useAuthed, useFeatures } from '../../hooks/useAccount';
 import type { RootScreenProps } from '../../navigation/types';
-import { authApi, detectionApi, privacyApi, scoutsApi, supportApi } from '../../services/api';
+import { authApi, detectionApi, parkingApi, privacyApi, scoutsApi, supportApi } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import type { DraftPhoto } from '../../store/reportDraftStore';
@@ -318,9 +318,13 @@ export function ZTriggerScreen({ navigation }: RootScreenProps<'ZTrigger'>) {
   const sim = useMutation({
     mutationFn: () => detectionApi.report({ latitude: center?.latitude ?? 38.7369, longitude: center?.longitude ?? -9.1427,
       detected_at: new Date().toISOString(), source: 'manual_test' }),
-    onSuccess: (e: ParkEvent) => navigation.navigate('ZEvent', { id: e.id, at: e.detected_at, areaId: (e.area as { id?: number } | null)?.id,
-      areaName: (e.area as { name?: string } | null)?.name }),
+    onSuccess: (e: ParkEvent) => { void hist.refetch(); openEvent(e); },
   });
+  const hist = useQuery({ queryKey: ['z-history'], queryFn: detectionApi.history });
+  const [del, setDel] = useState(false);
+  const wipe = useMutation({ mutationFn: detectionApi.deleteAll, onSuccess: r => { setDel(false); toast(t('z2.deleted', { n: r.deleted })); void hist.refetch(); } });
+  const openEvent = (e: ParkEvent) => navigation.navigate('ZEvent', { id: e.id, at: e.detected_at, areaId: (e.area as { id?: number } | null)?.id,
+    areaName: (e.area as { name?: string } | null)?.name, ...(e.location as { latitude: number; longitude: number }) });
   const enabled = !!cfg.data?.enabled;
   return (
     <Screen testID="ztrigger-screen" header={<ScreenHeader title={t('z.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
@@ -339,17 +343,35 @@ export function ZTriggerScreen({ navigation }: RootScreenProps<'ZTrigger'>) {
           {sim.error ? <ErrorState error={sim.error} /> : null}
         </>
       )}
+      <SectionLabel>{t('z2.history')}</SectionLabel>
+      {(hist.data ?? []).length === 0 ? <Body muted>{t('z2.noEvents')}</Body> : null}
+      {(hist.data ?? []).map(e => (
+        <ListRow key={e.id} icon="clock" label={(e.area as { name?: string } | null)?.name ?? '—'} testID={`z-event-${e.id}`}
+          sub={`${formatTime(e.detected_at)} · ${t(`z2.st_${e.status}`)}`} onPress={e.status === 'detected' && enabled ? () => openEvent(e) : undefined} />
+      ))}
+      <SectionLabel>{t('z2.troubleTitle')}</SectionLabel>
+      <Body muted>{t('z2.trouble')}</Body>
+      {(hist.data ?? []).length ? <ZpotButton variant="small" icon="trash" label={t('z2.delete')} onPress={() => setDel(true)} testID="z-delete" /> : null}
+      <ConfirmDialog visible={del} title={t('z2.deleteQ')} confirmLabel={t('z2.delete')} cancelLabel={t('common.cancel')} destructive
+        onCancel={() => setDel(false)} onConfirm={() => wipe.mutate()} testID="z-delete-dialog" />
     </Screen>
   );
 }
 
 export function ZEventScreen({ navigation, route }: RootScreenProps<'ZEvent'>) {
-  const { id, at, areaId, areaName } = route.params;
+  const { id, at, areaId, areaName, latitude, longitude } = route.params;
   const { t } = useTranslation();
   const confirm = useMutation({ mutationFn: () => detectionApi.confirm(id), onSuccess: () => {
-    if (areaId) navigation.replace('StartSession', { areaId }); else navigation.goBack();
+    if (place.areaId) navigation.replace('StartSession', { areaId: place.areaId }); else navigation.goBack();
   } });
   const dismiss = useMutation({ mutationFn: () => detectionApi.dismiss(id), onSuccess: () => navigation.goBack() });
+  const [picking, setPicking] = useState(false);
+  const [place, setPlace] = useState({ areaId, areaName });
+  const near = useQuery({ queryKey: ['z-near', latitude, longitude], enabled: picking && latitude != null,
+    queryFn: () => parkingApi.options({ latitude: latitude!, longitude: longitude!, duration_minutes: 60, max_walk_minutes: 5, include_paid: true, limit: 8 }) });
+  const correct = useMutation({ mutationFn: (o: { id: number; name: string; location: { latitude: number; longitude: number } }) =>
+    detectionApi.correct(id, o.location.latitude, o.location.longitude).then(() => o),
+    onSuccess: o => { setPlace({ areaId: o.id, areaName: o.name }); setPicking(false); toast(t('z2.corrected')); } });
   return (
     <Screen testID="zevent-screen" header={<ScreenHeader onBack={navigation.goBack} close backLabel={t('common.close')} />}
       footer={<>
@@ -357,7 +379,19 @@ export function ZEventScreen({ navigation, route }: RootScreenProps<'ZEvent'>) {
         <ZpotButton variant="secondary" label={t('z.dismiss')} loading={dismiss.isPending} onPress={() => dismiss.mutate()} testID="zevent-dismiss" />
       </>}>
       <Title>{t('z.eventTitle')}</Title>
-      <Body>{t('z.eventBody', { time: formatTime(at), place: areaName ?? '—' })}</Body>
+      <Body>{t('z.eventBody', { time: formatTime(at), place: place.areaName ?? '—' })}</Body>
+      <Body muted>{t('z2.confirmNote')}</Body>
+      {latitude != null ? <ZpotButton variant="small" icon="pin" label={t('z2.correct')} onPress={() => setPicking(p => !p)} testID="zevent-correct" /> : null}
+      {picking ? (
+        <>
+          <SectionLabel>{t('z2.pickArea')}</SectionLabel>
+          {near.isLoading ? <LoadingState /> : null}
+          {(near.data?.results ?? []).map(o => (
+            <ListRow key={o.id} icon="pin" label={o.name} sub={t(`category.${o.category}`)} onPress={() => correct.mutate(o)} testID={`zevent-area-${o.id}`} />
+          ))}
+          {correct.error ? <ErrorState error={correct.error} /> : null}
+        </>
+      ) : null}
       {confirm.error || dismiss.error ? <ErrorState error={confirm.error ?? dismiss.error} /> : null}
     </Screen>
   );
@@ -366,6 +400,7 @@ export function ZEventScreen({ navigation, route }: RootScreenProps<'ZEvent'>) {
 /** SCR: Pro preview — informational only. No purchase can be made and nothing is unlocked. */
 export function ProScreen({ navigation }: RootScreenProps<'Pro'>) {
   const { t } = useTranslation();
+  const authed = useAuthed();
   const { on } = useFeatures();
   return (
     <Screen testID="pro-screen" header={<ScreenHeader title={t('pro.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}
@@ -375,6 +410,7 @@ export function ProScreen({ navigation }: RootScreenProps<'Pro'>) {
       <SummaryRow k={t('pro.annual')} v="" />
       <SummaryRow k={t('pro.monthly')} v="" />
       <Banner tone="warn" testID="pro-unavailable">{t('pro.unavailable')}</Banner>
+      {authed ? <ZpotButton variant="tertiary" label={t('sub.restore')} onPress={() => navigation.navigate('ManageSubscription')} testID="pro-restore" /> : null}
       {!on('pro') ? <Text style={[typography.small, { color: palette.slate500 }]}>feature flag: pro = off</Text> : null}
     </Screen>
   );

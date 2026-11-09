@@ -23,6 +23,7 @@ DOCS = os.path.join(ROOT, "docs")
 #   partial            – built; some prototype behaviour deferred (noted)
 #   routed-placeholder – entry point exists; destination is an explicit "coming in the next build" screen (Part 2)
 #   not-started        – Part 2 / post-MVP; no RN code yet
+#   blocked            – cannot be built honestly in this build (needs app-store billing, ads, or native detection); no entry point
 #   dev-only           – prototype simulation control; intentionally not shipped
 S = {}
 def screen(key, sid, name, purpose, module, rn, phase, status, apis, tests, note="", inputs="", entry="", exit_=""):
@@ -62,9 +63,10 @@ screen("details","SCR-017","Parking details","Status for stay, cost/limit/walk/a
        "Save / I parked here / Report are routed to Part 2 placeholders. Share uses the OS share sheet. Guidance-support form is Part 2.",entry="result card; selected spot; deep link zpot://parking/{id}",exit_="navPick, map, Part 2 entries")
 screen("navPick","SCR-018","Navigate with","Choose Apple Maps / Google Maps / Waze / system","navigation","screens/parking/NavigationPickerScreen.tsx","P1","implemented",["device: Linking.canOpenURL/openURL"],"unit:"+T_PK,entry="details; selected spot",exit_="external app → navReturn")
 screen("handoff","SCR-019","Simulated hand-off","Prototype stand-in for the external maps app","navigation","(real external app)","P1","implemented",[],"manual","Replaced by the real deep link to the maps app.",entry="navPick",exit_="navReturn")
-screen("navReturn","SCR-020","Welcome back","Outcome after navigation (parked / no space / another / wrong info)","navigation","screens/parking/NavigationReturnScreen.tsx","P1","partial",["GET /parking/areas/{id}/"],"manual",
-       "'I parked here' and 'information was wrong' route to Part 2 (sessions/reports).",entry="app returns to foreground after hand-off",exit_="explore | Part 2")
-screen("partner","SCR-021","Partner reservation","Partner booking (monetisation concept)","monetisation","—","post-MVP","not-started",["(future) partner API"],"none","Partner offer + disclosure shown read-only on details; booking flow deferred (flag partners=off). No entry point in the app.")
+screen("navReturn","SCR-020","Welcome back","Outcome after navigation (parked / no space / another / wrong info)","navigation","screens/parking/NavigationReturnScreen.tsx","P1","implemented",["GET /parking/areas/{id}/"],"e2e:mobile/e2e/part1-core-journey.yaml",
+       "'I parked here' → Start session (sign-in first for guests); 'information was wrong' → report flow.",entry="app returns to foreground after hand-off",exit_="explore | StartSession | ReportType")
+screen("partner","SCR-021","Partner offer","Partner offer with disclosure (monetisation concept)","monetisation","screens/planning/PlanningScreens.tsx#PartnerScreen","post-MVP","implemented",["GET /parking/areas/{id}/"],"unit:__tests__/planning.test.tsx",
+       "Opened from the labelled partner card on details. Shows offer, stay, price, EV. Booking CTA is disabled and explained: no partner booking link exists and Zpot takes no payments. Never affects ranking.")
 T_P2 = "__tests__/part2.test.tsx"; E = "e2e:mobile/e2e/part2/"
 SS = "screens/session/SessionScreens.tsx#"
 screen("startSession","SCR-022","Start parking session","Plan departure, see legal deadline, choose reminder","sessions",SS+"StartSessionScreen","P2","implemented",["GET /parking/areas/{id}/","POST /sessions/"],"unit:"+T_P2+"; api:tests/test_sessions.py; "+E+"e2e-004",
@@ -103,28 +105,37 @@ screen("deleteAcct","SCR-044","Delete account","Type DELETE to erase account (or
        "Reports are anonymised, the account deleted, audited.")
 for key,sid,name in [("zIntro","SCR-046","Z-Trigger intro"),("zConsent","SCR-047","Z-Trigger consent"),("zSetup","SCR-048","Z-Trigger setup"),("zHome","SCR-049","Z-Trigger home"),("zEvent","SCR-050","Z-Trigger event")]:
     screen(key,sid,name,"Automatic parking detection (Bluetooth)","z-trigger",SU+("ZEventScreen" if key=="zEvent" else "ZTriggerScreen"),"experimental","partial",
-           ["GET /detection/config/","POST /events/park/","POST /events/park/{id}/confirm|dismiss/"],"api:tests/test_scouts_detection_flags.py",
-           "Flag z_trigger=off by default (row hidden). Server workflow + consent + simulated event work; native Bluetooth detection is NOT implemented. Events are private (never public availability).")
+           ["GET /detection/config/","GET/POST/DELETE /events/park/","POST /events/park/{id}/confirm|dismiss|correct/"],"api:tests/test_scouts_detection_flags.py; api:tests/test_planning_and_plans.py; unit:__tests__/planning.test.tsx",
+           "Flag z_trigger=off by default (row hidden). Consent, simulated event, private history, correct location, confirm/dismiss and delete-all work against the API; native Bluetooth detection is NOT implemented. Events are private (never public availability).")
 for key,sid,name,comp in [("scoutList","SCR-051","Scout tasks","ScoutListScreen"),("scoutTask","SCR-052","Scout task","ScoutTaskScreen")]:
     screen(key,sid,name,"Field verification tasks for scouts","scouts",SU+comp,"P2","implemented",["GET /scouts/assignments/","POST /scouts/assignments/{id}/submit/"],"api:tests/test_scouts_detection_flags.py",
            "Visible only to users with the scout role; approval happens in Django admin (reviewer).")
 screen("pro","SCR-053","Zpot Pro paywall","Preview of proposed Pro features","monetisation",SU+"ProScreen","post-MVP","partial",["GET /config/ (flag pro)"],"unit:"+T_P2,
-       "Informational preview only; purchase button disabled; no payment, no entitlement. Hidden while flag pro=off.")
-for key,sid,name in [("proWelcome","SCR-054","Pro welcome"),("manageSub","SCR-055","Manage subscription"),("cancelSub","SCR-056","Cancel subscription"),
-                     ("commute","SCR-057","Commute planner"),("vehicles","SCR-058","Vehicles & permits"),("insights","SCR-059","Savings & history")]:
-    screen(key,sid,name,"Monetisation concept (prototype marks as concept)","monetisation","—","post-MVP","not-started",["(post-MVP)"],"none","No entry point in the app (no dead buttons); requires a real billing provider.")
+       "Informational preview; purchase button disabled; no payment, no entitlement. Hidden while flag pro=off. 'Restore purchases' opens Your subscription.")
+for key,sid,name,why in [("proWelcome","SCR-054","Pro welcome","only reachable after a verified purchase"),("cancelSub","SCR-056","Cancel subscription","only reachable with an active subscription")]:
+    screen(key,sid,name,"Subscription lifecycle","monetisation","—","post-MVP","blocked",["(needs App Store / Google Play billing)"],"none",
+           f"Not built: {why}. Building it without billing would fake a purchase. No entry point in the app.")
+T_PL = "__tests__/planning.test.tsx"; T_PA = "api:tests/test_planning_and_plans.py"
+screen("manageSub","SCR-055","Your subscription","Real plan state; restore purchases","monetisation","screens/planning/PlanningScreens.tsx#ManageSubscriptionScreen","post-MVP","implemented",["GET /billing/entitlement/"],"unit:"+T_PL+"; "+T_PA,
+       "Shows the server entitlement honestly (Free, no billing provider). Restore explains there is nothing to restore.")
+screen("commute","SCR-057","Commute planner","Weekly trip; rules checked per day","planning","screens/planning/PlanningScreens.tsx#CommuteScreen","post-MVP","implemented",["GET/POST /commute/plans/","PATCH/DELETE /commute/plans/{id}/","GET /commute/plans/{id}/check/"],"unit:"+T_PL+"; "+T_PA,
+       "Server runs the canonical search for each day. Free plan: soonest day checked, others shown locked (Pro unavailable).")
+screen("vehicles","SCR-058","Vehicles & permits","Vehicle class + permit used for rule checks","planning","screens/planning/PlanningScreens.tsx#VehiclesScreen","post-MVP","implemented",["GET/POST /vehicles/","PATCH/DELETE /vehicles/{id}/","POST /vehicles/{id}/activate/"],"unit:"+T_PL+"; "+T_PA,
+       "Active vehicle is mirrored into parking preferences. Free limit (one vehicle) enforced by the server and explained.")
+screen("insights","SCR-059","Savings & history","Sessions, time parked, amounts paid, estimated savings","planning","screens/planning/PlanningScreens.tsx#InsightsScreen","post-MVP","implemented",["GET /sessions/insights/"],"unit:"+T_PL+"; "+T_PA,
+       "Savings only from amounts the driver entered. CSV export is Pro (403 plan_required) and shown locked with an explanation.")
 
 OVERLAYS = {
  "osLoc": ("OVL-001","Simulated OS location prompt","Replaced by the real OS permission dialog","implemented"),
  "layers": ("OVL-002","Map layers & legend","components/maps/LayersSheet.tsx","implemented"),
- "adWhy": ("OVL-003","Why this ad?","post-MVP (ads not shipped)","not-started"),
+ "adWhy": ("OVL-003","Why this ad?","Not built: ads are not shipped (flag advertising=off), so there is nothing to explain","blocked"),
  "saveGuest": ("OVL-004","Save as guest / create account","screens/account/AccountScreens.tsx#useSaveLocation (sheet)","implemented"),
  "notifPrime": ("OVL-005","Notification permission primer at session start","SessionScreens.tsx#StartSessionScreen (ConfirmDialog → real OS prompt)","implemented"),
  "cancelReport": ("OVL-006","Discard report?","ReportScreens.tsx#ReportReviewScreen (ConfirmDialog)","implemented"),
  "rename": ("OVL-007","Rename saved place","AccountScreens.tsx#SavedScreen (BottomSheet)","implemented"),
  "removeConfirm": ("OVL-008","Remove saved place","AccountScreens.tsx#SavedScreen (ConfirmDialog)","implemented"),
  "signOut": ("OVL-009","Sign out confirm","components/common/BottomSheet.tsx#ConfirmDialog (ProfileScreen)","implemented"),
- "store": ("OVL-010","App-store purchase sheet","post-MVP","not-started"),
+ "store": ("OVL-010","App-store purchase sheet","Not built: needs App Store / Google Play billing; a simulated sheet would fake a purchase","blocked"),
 }
 
 # Handler → (expected action, implementation status, RN destination/notes, backend op)
@@ -144,10 +155,15 @@ hs("reportFromMap reportFromDetails reportGeneric infoNo toMyReports pinL pinR p
    "implemented", "ReportScreens / VerificationPanel", "/reports/, /reports/{id}/verifications/")
 hs("toGuidance toSupport suDesc suShot suInclude suSend supportDone dataExport", "implemented", "ContactSupport / PrivacyScreen", "/support/tickets/, /privacy/data-export/")
 hs("toZ toZConsent zcBg zDecline toZSetup zSimulate zConfirm zDismiss", "partial", "ZTriggerScreen / ZEventScreen (flag z_trigger; no native detection)", "/detection/config/, /events/park/")
-hs("zcBat zFinish zToggle zFail zCorrect zDisable zDelete", "not-started", "experimental: needs native Bluetooth detection", "")
+hs("zCorrect zDelete", "implemented", "ZEventScreen correct location / ZTriggerScreen delete data", "/events/park/{id}/correct/, DELETE /events/park/")
+hs("zcBat zFinish zToggle zFail zDisable", "blocked", "needs native Bluetooth/motion detection (not implemented)", "")
 hs("toScout scNotes scPhoto scSubmit", "implemented", "ScoutList / ScoutTask", "/scouts/assignments/")
-hs("toPro toProOrManage restore proStart storeCancel storeConfirm toCommuteFromWelcome switchPlan toCancelSub doCancelSub resubscribe toCommute toVehicles toInsights cmHourMinus cmHourPlus cmDurMinus cmDurPlus cmSave vhAdd insExport adWhy adHide adToPro adPrefs pvAds toPartner partnerGo",
-   "not-started", "post-MVP monetisation", "")
+hs("toPro toProOrManage restore toCommute toVehicles toInsights cmHourMinus cmHourPlus cmDurMinus cmDurPlus cmSave toPartner", "implemented",
+   "Pro preview / Your subscription / Commute / Vehicles / Insights / Partner", "/billing/entitlement/, /commute/, /vehicles/, /sessions/insights/")
+hs("vhAdd insExport", "partial", "Free-tier limit enforced by the server and explained (Pro not purchasable)", "403 plan_limit / plan_required")
+hs("proStart storeCancel storeConfirm toCommuteFromWelcome switchPlan toCancelSub doCancelSub resubscribe partnerGo", "blocked",
+   "needs app-store billing / a partner booking link — would otherwise fake a transaction", "")
+hs("adWhy adHide adToPro adPrefs pvAds", "blocked", "ads not shipped (flag advertising=off)", "")
 hs("adv5 adv15 adv60 devOffline devMapFail devDriving devRuleChange devReview devExpire devZ devScout devLang devRestart devReset devMonet devProReset passenger", "dev-only", "prototype controls panel (not shipped)", "")
 
 def parse():
@@ -200,7 +216,7 @@ def main():
          f"**{len(S)} screens** and **{len(OVERLAYS)} overlays** discovered by parsing every `<sc-if value=\"{{{{is.*}}}}\">` / "
          f"`ov.*` block (hidden and interaction-only screens included). Reference screenshots: `docs/migration/source-screenshots/` "
          f"(116 captures, regenerate with `scripts/tools/capture-prototype-screens.cjs`).\n",
-         "Status values: `implemented` · `partial` · `routed-placeholder` (entry exists; explicit Part 2 screen) · `not-started` · `dev-only`.\n"]
+         "Status values: `implemented` · `partial` · `routed-placeholder` · `not-started` · `blocked` (cannot be built honestly here; no entry point) · `dev-only`.\n"]
     counts = defaultdict(int)
     for v in S.values(): counts[v["status"]] += 1
     L.append("| Status | Screens |\n|---|---|\n" + "\n".join(f"| {k} | {n} |" for k, n in sorted(counts.items())) + "\n")
@@ -258,7 +274,7 @@ def main():
     prev = json.load(open(status_path)) if os.path.exists(status_path) else {}
     data = {
         "generated_at": gen, "part": 2, "git": {"branch": "main", "commit": commit, "uncommitted_changes": dirty},
-        "status_vocabulary": ["implemented", "partial", "routed-placeholder", "not-started", "dev-only"],
+        "status_vocabulary": ["implemented", "partial", "routed-placeholder", "not-started", "blocked", "dev-only"],
         "screens": [{k: v[k] for k in ("id", "key", "name", "module", "rn", "phase", "status", "apis", "tests")} | {"prototype_key": v["key"]} for v in S.values()],
         "overlays": [{"id": oid, "key": k, "name": n, "rn": rn, "status": st} for k, (oid, n, rn, st) in OVERLAYS.items()],
         "interactions": {"total_bindings": len(inter), "by_status": dict(summ)},

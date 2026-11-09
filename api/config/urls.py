@@ -18,6 +18,8 @@ api_v1 = [
     path("", include("apps.privacy.urls")),
     path("", include("apps.scouts.urls")),
     path("", include("apps.detection.urls")),
+    path("", include("apps.accounts.urls.vehicles")),
+    path("", include("apps.monetization.urls")),
 ]
 
 urlpatterns = [

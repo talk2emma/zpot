@@ -4,10 +4,12 @@ appId: pt.zpot.app
 - runFlow: guest.yaml
 - tapOn: { id: "tab-profile" }
 - runFlow:                       # iOS keeps Keychain tokens across clearState: start signed out
-    when: { visible: { id: "profile-signout" } }
+    when: { notVisible: { id: "profile-signin" } }
     commands:
+      - scrollUntilVisible: { element: { id: "profile-signout" }, direction: DOWN }
       - tapOn: { id: "profile-signout" }
       - tapOn: { id: "signout-dialog-confirm" }
+- scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }
 - tapOn: { id: "profile-signin" }
 - tapOn: { id: "signin-email" }
 - inputText: ${EMAIL}
@@ -15,4 +17,5 @@ appId: pt.zpot.app
 - inputText: ${PASSWORD}
 - tapOn: { id: "signin-submit" }
 - tapOn: { text: "Not Now", optional: true }
-- extendedWaitUntil: { visible: { id: "profile-signout" }, timeout: 15000 }
+- extendedWaitUntil: { visible: { id: "profile-name" }, timeout: 15000 }
+- assertNotVisible: { id: "profile-signin" }

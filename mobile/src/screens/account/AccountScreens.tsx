@@ -5,7 +5,7 @@ import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import {
-  Banner, Body, BottomSheet, ConfirmDialog, EmptyState, ErrorState, ListRow, LoadingState, Row, Screen, ScreenHeader, SectionLabel,
+  Banner, Body, BottomSheet, ConfirmDialog, EmptyState, errorMessage, ErrorState, ListRow, LoadingState, Row, Screen, ScreenHeader, SectionLabel,
   SummaryRow, Title, Toggle, ZpotButton, ZpotCard, ZpotTextField,
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
@@ -61,18 +61,21 @@ export function SavedScreen() {
   const items: SavedItem[] = authed ? (locs.data ?? []).map(toItem)
     : guestSaved.map(g => ({ key: `g${g.areaId}`, areaId: g.areaId, label: g.label, category: g.category }));
   const refresh = () => { void qc.invalidateQueries({ queryKey: qk.saved }); };
-  const doRename = async () => {
+  /** Server actions never throw into the UI: failures keep the item and explain why. */
+  const safely = async (fn: () => Promise<void>) => { try { await fn(); } catch (e) { toast(errorMessage(e, t)); } };
+  const doRename = () => safely(async () => {
     if (!rename || !name.trim()) return;
     if (rename.id) { await savedApi.rename(rename.id, name.trim()); refresh(); } else renameGuestSaved(rename.areaId, name.trim());
     setRename(null);
-  };
-  const doRemove = async () => {
+  });
+  const doRemove = () => safely(async () => {
     if (!remove) return;
-    if (remove.id) { await savedApi.remove(remove.id); refresh(); }
-    removeGuestSaved(remove.areaId);
+    const item = remove;
     setRemove(null);
+    if (item.id) { await savedApi.remove(item.id); refresh(); }
+    removeGuestSaved(item.areaId);
     toast(t('saved.removed'));
-  };
+  });
   const recentRows = authed ? (recent.data ?? []).map(r => ({ id: String(r.id), name: r.name, subtitle: r.subtitle ?? '',
     ...(r.location as { latitude: number; longitude: number }) })) : recents;
   return (
@@ -103,14 +106,14 @@ export function SavedScreen() {
               <ListRow key={d.id} icon="star" label={d.label || d.name} sub={d.subtitle} testID={`dest-${d.id}`}
                 onPress={() => { setDestination({ id: d.place_ref || `dest-${d.id}`, name: d.name, subtitle: d.subtitle ?? '', ...loc }); navigation.navigate('Main', { screen: 'Explore' }); }}
                 right={<ZpotButton variant="tertiary" label={t('saved.remove')} testID={`dest-remove-${d.id}`}
-                  onPress={async () => { await savedApi.removeDestination(d.id); void qc.invalidateQueries({ queryKey: qk.destinations }); toast(t('saved.removed')); }} />} />
+                  onPress={() => void safely(async () => { await savedApi.removeDestination(d.id); void qc.invalidateQueries({ queryKey: qk.destinations }); toast(t('saved.removed')); })} />} />
             );
           })}
         </>
       ) : null}
       <Row><View style={styles.flex}><SectionLabel>{t('saved.recent')}</SectionLabel></View>
         {recentRows.length ? <ZpotButton variant="tertiary" label={t('saved.clearRecent')} testID="recent-clear"
-          onPress={async () => { if (authed) { await savedApi.clearRecent(); void qc.invalidateQueries({ queryKey: qk.recent }); } clearRecents(); }} /> : null}
+          onPress={() => void safely(async () => { if (authed) { await savedApi.clearRecent(); void qc.invalidateQueries({ queryKey: qk.recent }); } clearRecents(); })} /> : null}
       </Row>
       {recentRows.map(r => (
         <ListRow key={r.id} icon="clock" label={r.name} sub={r.subtitle} testID={`saved-recent-${r.id}`}
@@ -136,9 +139,11 @@ export function useSaveLocation() {
   const [guestSheet, setGuestSheet] = useState<{ areaId: number; name: string; category: string } | null>(null);
   const save = async (a: { id: number; name: string; category: string }) => {
     if (!authed) { setGuestSheet({ areaId: a.id, name: a.name, category: a.category }); return; }
-    await savedApi.save(a.id, a.name);
-    void qc.invalidateQueries({ queryKey: qk.saved });
-    toast(t('saved.savedToast'));
+    try {
+      await savedApi.save(a.id, a.name);
+      void qc.invalidateQueries({ queryKey: qk.saved });
+      toast(t('saved.savedToast'));
+    } catch (e) { toast(errorMessage(e, t)); }
   };
   const keepOnDevice = (thenRegister: boolean) => {
     if (!guestSheet) return;

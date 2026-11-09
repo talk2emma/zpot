@@ -39,6 +39,15 @@ class CreateEventSerializer(serializers.Serializer):
     )
 
 
+def _match_area(p):
+    return (
+        ParkingArea.objects.filter(is_active=True, location__dwithin=(p, D(m=60)))
+        .annotate(d=Distance("location", p))
+        .order_by("d")
+        .first()
+    )
+
+
 def _guard():
     if not is_enabled("z_trigger"):
         raise ZpotAPIError(
@@ -93,12 +102,7 @@ class ParkEventCreateView(GenericAPIView):
         s.is_valid(raise_exception=True)
         d = s.validated_data
         p = Point(d["longitude"], d["latitude"], srid=4326)
-        area = (
-            ParkingArea.objects.filter(is_active=True, location__dwithin=(p, D(m=60)))
-            .annotate(d=Distance("location", p))
-            .order_by("d")
-            .first()
-        )
+        area = _match_area(p)
         e = ParkingEvent.objects.create(
             user=request.user,
             location=p,
@@ -125,3 +129,49 @@ class ParkEventActionView(GenericAPIView):
         e.status = ParkEventStatus.CONFIRMED if self.action == "confirm" else ParkEventStatus.DISMISSED
         e.save(update_fields=["status"])
         return Response(ParkEventSerializer(e).data)
+
+
+class ParkEventListView(GenericAPIView):
+    """The driver's own (private) detection history, and deletion of all Z-Trigger data."""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ParkEventSerializer
+
+    @extend_schema(responses={200: ParkEventSerializer(many=True)})
+    def get(self, request):
+        qs = ParkingEvent.objects.filter(user=request.user).select_related("area")[:20]
+        return Response(ParkEventSerializer(qs, many=True).data)
+
+    @extend_schema(responses={200: inline_serializer("ZDeleted", {"deleted": serializers.IntegerField()})})
+    def delete(self, request):
+        n, _ = ParkingEvent.objects.filter(user=request.user).delete()
+        return Response({"deleted": n})
+
+
+class CorrectLocationSerializer(serializers.Serializer):
+    latitude = serializers.FloatField(min_value=-90, max_value=90)
+    longitude = serializers.FloatField(min_value=-180, max_value=180)
+
+
+class ParkEventCorrectView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CorrectLocationSerializer
+
+    @extend_schema(responses={200: ParkEventSerializer})
+    def post(self, request, pk):
+        _guard()
+        e = ParkingEvent.objects.filter(pk=pk, user=request.user).first()
+        if e is None:
+            raise ZpotAPIError("Event not found.", code="not_found", status_code=404)
+        if e.status != ParkEventStatus.DETECTED:
+            raise ZpotAPIError("This event was already handled.", code="already_handled", status_code=409)
+        s = self.get_serializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        e.location = Point(s.validated_data["longitude"], s.validated_data["latitude"], srid=4326)
+        e.area = _match_area(e.location)
+        e.save(update_fields=["location", "area"])
+        return Response(ParkEventSerializer(e).data)
+
+
+class ParkEventsView(ParkEventCreateView, ParkEventListView):
+    """GET own history · POST a detected event (flag-guarded) · DELETE all own Z-Trigger data."""
