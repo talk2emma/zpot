@@ -7,6 +7,7 @@ import { FiltersScreen } from '../src/screens/explore/FiltersScreen';
 import { SearchScreen } from '../src/screens/explore/SearchScreen';
 import { NavigationPickerScreen } from '../src/screens/parking/NavigationPickerScreen';
 import { ParkingDetailsScreen } from '../src/screens/parking/ParkingDetailsScreen';
+import { useAuthStore } from '../src/store/authStore';
 import { usePrefsStore } from '../src/store/prefsStore';
 import { DEFAULT_FILTERS, useSearchStore } from '../src/store/searchStore';
 import type { MapLayersResponse, ParkingAreaDetail, ParkingOptionsResponse, PlaceResult } from '../src/types/api';
@@ -150,11 +151,19 @@ describe('parking details', () => {
     await fireEvent.press(screen.getByTestId('details-navigate'));
     expect(screen.getByTestId('stub-NavigationPicker')).toHaveTextContent('Av. Duque de', { exact: false });
   });
-  it('Part 2 entry points route honestly (no fake completion)', async () => {
+  it('"I parked here" asks a guest to sign in and remembers the session start', async () => {
     jest.spyOn(parkingApi, 'area').mockResolvedValue(detail as unknown as ParkingAreaDetail);
+    useAuthStore.setState({ status: 'guest', pendingReturn: null });
     await renderScreen('ParkingDetails', ParkingDetailsScreen, { id: (detail as { id: number }).id }, ALL_ROUTES);
     await fireEvent.press(await screen.findByTestId('details-parked'));
-    expect(screen.getByTestId('stub-Part2')).toHaveTextContent('"feature":"session"', { exact: false });
+    expect(await screen.findByTestId('stub-SignIn')).toBeTruthy();
+    expect(useAuthStore.getState().pendingReturn).toEqual({ route: 'StartSession', params: { areaId: (detail as { id: number }).id } });
+  });
+  it('report opens the real report flow', async () => {
+    jest.spyOn(parkingApi, 'area').mockResolvedValue(detail as unknown as ParkingAreaDetail);
+    await renderScreen('ParkingDetails', ParkingDetailsScreen, { id: (detail as { id: number }).id }, ALL_ROUTES);
+    await fireEvent.press(await screen.findByTestId('details-report'));
+    expect(screen.getByTestId('stub-ReportType')).toHaveTextContent(`"areaId":${(detail as { id: number }).id}`, { exact: false });
   });
 });
 

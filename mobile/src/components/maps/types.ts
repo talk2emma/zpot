@@ -14,6 +14,10 @@ export interface ZpotMapHandle {
   fitTo(points: LatLng[]): void;
 }
 
+export interface ExtraMarker {
+  id: string; coordinate: LatLng; kind: 'vacancy' | 'conflict' | 'pin'; label: string; onPress?: () => void;
+}
+
 /** Provider-agnostic map contract. Swap providers without touching screens. */
 export interface ZpotMapProps {
   styleUrl: string;
@@ -23,6 +27,8 @@ export interface ZpotMapProps {
   layers: Record<LayerKey, boolean>;
   selectedId: number | null;
   destination?: { label: string; coordinate: LatLng } | null;
+  /** Non-parking pins: short-lived community vacancy reports and the report-location pin. */
+  extraMarkers?: ExtraMarker[];
   showUserLocation?: boolean;
   markerLabel: (f: MapFeatureProps) => string;
   onSelect: (id: number | null) => void;

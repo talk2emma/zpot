@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon, type IconName, LoadingState, Screen, ScreenHeader, ZpotCard } from '../../components/common';
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
 import { describeOption } from '../../features/parking/presentation';
+import { useRequireAuth } from '../../features/shared';
 import { useAreaDetail, useSearchParams } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
 import { useSearchStore } from '../../store/searchStore';
@@ -17,12 +18,13 @@ export function NavigationReturnScreen({ navigation }: RootScreenProps<'Navigati
   const { params } = useSearchParams();
   const id = handoff?.areaId ?? null;
   const q = useAreaDetail(id, { arrival_at: params?.arrival_at, duration_minutes: params?.duration_minutes ?? 120 });
+  const requireAuth = useRequireAuth();
   const close = () => { setHandoff(null); navigation.navigate('Main', { screen: 'Explore' }); };
   const rows: [IconName, string, string, string, () => void][] = [
-    ['check', t('nav.parked'), t('nav.parkedSub'), palette.green700, () => navigation.replace('Part2', { feature: 'session', areaId: id ?? undefined })],
+    ['check', t('nav.parked'), t('nav.parkedSub'), palette.green700, () => (id ? requireAuth('StartSession', { areaId: id }) : close())],
     ['close', t('nav.noSpace'), t('nav.noSpaceSub'), palette.red600, () => { select(null); close(); }],
     ['search', t('nav.another'), t('nav.anotherSub'), colors.text, close],
-    ['flag', t('nav.wrong'), t('nav.wrongSub'), colors.text, () => navigation.replace('Part2', { feature: 'report', areaId: id ?? undefined })],
+    ['flag', t('nav.wrong'), t('nav.wrongSub'), colors.text, () => navigation.replace('ReportType', { areaId: id ?? undefined })],
   ];
   return (
     <Screen testID="nav-return-screen" header={<ScreenHeader title={t('nav.returnTitle')} onBack={close} close backLabel={t('common.close')} />}>

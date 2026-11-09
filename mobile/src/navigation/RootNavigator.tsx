@@ -18,14 +18,20 @@ import { WelcomeScreen } from '../screens/onboarding/WelcomeScreen';
 import { NavigationPickerScreen } from '../screens/parking/NavigationPickerScreen';
 import { NavigationReturnScreen } from '../screens/parking/NavigationReturnScreen';
 import { ParkingDetailsScreen } from '../screens/parking/ParkingDetailsScreen';
+import { AccountSettingsScreen, LegalScreen, ParkingPreferencesScreen } from '../screens/profile/SettingsScreens';
 import {
-  AccountSettingsScreen,
-  DeleteAccountScreen,
-  HelpScreen,
-  LegalScreen,
-  ParkingPreferencesScreen,
-  PrivacyScreen,
-} from '../screens/profile/SettingsScreens';
+  ContributionsScreen, NotificationDetailScreen, NotificationPrefsScreen, NotificationsScreen,
+} from '../screens/account/AccountScreens';
+import {
+  MyReportsScreen, ReportDetailScreen, ReportDetailsScreen, ReportLocationScreen, ReportReviewScreen, ReportSuccessScreen, ReportTypeScreen,
+} from '../screens/report/ReportScreens';
+import {
+  EditSessionScreen, EndSessionScreen, SessionHistoryScreen, SessionScreen, SessionSummaryScreen, StartSessionScreen,
+} from '../screens/session/SessionScreens';
+import {
+  ContactSupportScreen, DeleteAccountScreen, HelpArticleScreen, HelpScreen, PrivacyRequestsScreen, PrivacyScreen, ProScreen,
+  ScoutListScreen, ScoutTaskScreen, SupportTicketScreen, SupportTicketsScreen, ZEventScreen, ZTriggerScreen,
+} from '../screens/support/SupportScreens';
 import { Part2Screen } from '../screens/shared/Part2Screen';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
@@ -51,7 +57,34 @@ export function RootNavigator() {
         <Stack.Screen name="Filters" component={FiltersScreen} />
         <Stack.Screen name="NotificationsIntro" component={NotificationsIntroScreen} />
         <Stack.Screen name="Part2" component={Part2Screen} />
+        <Stack.Screen name="StartSession" component={StartSessionScreen} />
+        <Stack.Screen name="EndSession" component={EndSessionScreen} />
+        <Stack.Screen name="ReportType" component={ReportTypeScreen} />
+        <Stack.Screen name="ContactSupport" component={ContactSupportScreen} />
+        <Stack.Screen name="ZEvent" component={ZEventScreen} />
       </Stack.Group>
+      <Stack.Screen name="Session" component={SessionScreen} />
+      <Stack.Screen name="EditSession" component={EditSessionScreen} />
+      <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen name="SessionHistory" component={SessionHistoryScreen} />
+      <Stack.Screen name="ReportLocation" component={ReportLocationScreen} />
+      <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="ReportReview" component={ReportReviewScreen} />
+      <Stack.Screen name="ReportSuccess" component={ReportSuccessScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen name="MyReports" component={MyReportsScreen} />
+      <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="NotificationDetail" component={NotificationDetailScreen} />
+      <Stack.Screen name="NotificationPrefs" component={NotificationPrefsScreen} />
+      <Stack.Screen name="Contributions" component={ContributionsScreen} />
+      <Stack.Screen name="HelpArticle" component={HelpArticleScreen} />
+      <Stack.Screen name="SupportTickets" component={SupportTicketsScreen} />
+      <Stack.Screen name="SupportTicket" component={SupportTicketScreen} />
+      <Stack.Screen name="PrivacyRequests" component={PrivacyRequestsScreen} />
+      <Stack.Screen name="ScoutList" component={ScoutListScreen} />
+      <Stack.Screen name="ScoutTask" component={ScoutTaskScreen} />
+      <Stack.Screen name="ZTrigger" component={ZTriggerScreen} />
+      <Stack.Screen name="Pro" component={ProScreen} />
       <Stack.Screen name="ParkingDetails" component={ParkingDetailsScreen} />
       <Stack.Screen name="NavigationPicker" component={NavigationPickerScreen} />
       <Stack.Screen name="NavigationReturn" component={NavigationReturnScreen} />

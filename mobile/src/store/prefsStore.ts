@@ -7,6 +7,8 @@ export type LocationStatus = 'unknown' | 'precise' | 'approx' | 'denied' | 'rest
 
 export interface RecentPlace { id: string; name: string; subtitle: string; latitude: number; longitude: number }
 
+export interface GuestSaved { areaId: number; label: string; savedAt: string; category: string }
+
 export interface ParkingPrefs {
   maxWalk: number;
   freeOnlyDefault: boolean;
@@ -23,7 +25,14 @@ interface PrefsState {
   locationStatus: LocationStatus;
   recents: RecentPlace[];
   parking: ParkingPrefs;
+  guestSaved: GuestSaved[];
+  notifPermission: 'unknown' | 'granted' | 'denied';
   setLanguage(l: Language): void;
+  addGuestSaved(s: GuestSaved): void;
+  removeGuestSaved(areaId: number): void;
+  renameGuestSaved(areaId: number, label: string): void;
+  clearGuestSaved(): void;
+  setNotifPermission(p: 'unknown' | 'granted' | 'denied'): void;
   completeOnboarding(): void;
   setLocationStatus(s: LocationStatus): void;
   addRecent(p: RecentPlace): void;
@@ -46,13 +55,20 @@ export const usePrefsStore = create<PrefsState>()(
       locationStatus: 'unknown',
       recents: [],
       parking: DEFAULT_PARKING_PREFS,
+      guestSaved: [],
+      notifPermission: 'unknown',
       setLanguage: language => set({ language }),
+      addGuestSaved: g => set(s => ({ guestSaved: [g, ...s.guestSaved.filter(x => x.areaId !== g.areaId)] })),
+      removeGuestSaved: id => set(s => ({ guestSaved: s.guestSaved.filter(x => x.areaId !== id) })),
+      renameGuestSaved: (id, label) => set(s => ({ guestSaved: s.guestSaved.map(x => (x.areaId === id ? { ...x, label } : x)) })),
+      clearGuestSaved: () => set({ guestSaved: [] }),
+      setNotifPermission: notifPermission => set({ notifPermission }),
       completeOnboarding: () => set({ onboardingDone: true }),
       setLocationStatus: locationStatus => set({ locationStatus }),
       addRecent: p => set(s => ({ recents: [p, ...s.recents.filter(r => r.id !== p.id)].slice(0, 5) })),
       clearRecents: () => set({ recents: [] }),
       setParking: p => set(s => ({ parking: { ...s.parking, ...p } })),
-      resetDeviceData: () => set({ onboardingDone: true, recents: [], parking: DEFAULT_PARKING_PREFS }),
+      resetDeviceData: () => set({ onboardingDone: true, recents: [], parking: DEFAULT_PARKING_PREFS, guestSaved: [] }),
     }),
     {
       name: 'zpot.prefs.v1',

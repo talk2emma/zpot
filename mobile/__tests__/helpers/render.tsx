@@ -43,4 +43,7 @@ export async function renderScreen(name: string, Component: React.ComponentType<
 export const ALL_ROUTES = ['Splash', 'Language', 'Welcome', 'Onboarding', 'LocationPermission', 'LocationOutcome', 'AccountChoice',
   'Main', 'Search', 'Plan', 'Filters', 'ParkingDetails', 'NavigationPicker', 'NavigationReturn', 'SignIn', 'Register',
   'VerifyEmail', 'ForgotPassword', 'Legal', 'AccountSettings', 'ParkingPreferences', 'Privacy', 'Help', 'DeleteAccount',
-  'NotificationsIntro', 'Part2'];
+  'NotificationsIntro', 'Part2', 'StartSession', 'Session', 'EditSession', 'EndSession', 'SessionSummary', 'SessionHistory',
+  'ReportType', 'ReportLocation', 'ReportDetails', 'ReportReview', 'ReportSuccess', 'MyReports', 'ReportDetail', 'Notifications',
+  'NotificationDetail', 'NotificationPrefs', 'HelpArticle', 'ContactSupport', 'SupportTickets', 'SupportTicket', 'PrivacyRequests',
+  'ScoutList', 'ScoutTask', 'ZTrigger', 'ZEvent', 'Pro', 'Contributions'];

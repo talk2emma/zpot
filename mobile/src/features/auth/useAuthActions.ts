@@ -18,7 +18,9 @@ export function useFinishAuth() {
       navigation.navigate('VerifyEmail', { email: res.user.email });
       return;
     }
-    toast(t('auth.signedIn', { email: res.user.email }));
+    const imported = useAuthStore.getState().lastImport;
+    if (imported) useAuthStore.setState({ lastImport: 0 });
+    toast(imported ? t('saved.imported', { count: imported }) : t('auth.signedIn', { email: res.user.email }));
     if (ret) {
       (navigation.navigate as unknown as (r: string, p?: object) => void)(ret.route, ret.params);
     } else if (navigation.canGoBack()) {

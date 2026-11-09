@@ -10,11 +10,14 @@ import { CheckSignsNotice, ParkingRuleNotice } from '../../components/parking/Pa
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
 import { ENV } from '../../constants/env';
 import { describeOption, markerLabel } from '../../features/parking/presentation';
+import { useRequireAuth } from '../../features/shared';
+import { useSaveLocation } from '../account/AccountScreens';
 import { useAreaDetail, useSearchParams } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
 import { useSearchStore } from '../../store/searchStore';
 import { palette, radius, shadows, typography, useTheme } from '../../theme';
 import { formatDate } from '../../utils/time';
+import { AreaAvailability } from '../explore/VerificationPanel';
 
 export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'ParkingDetails'>) {
   const { id } = route.params;
@@ -28,6 +31,8 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
     latitude: center?.latitude, longitude: center?.longitude };
   const q = useAreaDetail(id, stay);
   const [verifOpen, setVerifOpen] = useState(false);
+  const requireAuth = useRequireAuth();
+  const saveLoc = useSaveLocation();
   const a = q.data;
 
   const feature = useMemo(() => a ? [{ type: 'Feature' as const, geometry: a.geometry,
@@ -56,7 +61,7 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
     <Screen testID="details-screen" padded={false}
       footer={<View style={styles.row}>
         <ZpotButton style={styles.flex} variant="secondary" label={t('details.parkedHere')} disabled={a.category === 'restricted'}
-          onPress={() => navigation.navigate('Part2', { feature: 'session', areaId: a.id })} testID="details-parked" />
+          onPress={() => requireAuth('StartSession', { areaId: a.id })} testID="details-parked" />
         <ZpotButton style={styles.flex} icon="navigation" label={t('details.navigate')} onPress={navTo} testID="details-navigate" />
       </View>}>
       <View style={styles.hero}>
@@ -67,7 +72,7 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
           <RoundBtn icon="chevronLeft" label={t('common.back')} onPress={navigation.goBack} testID="details-back" />
           <View style={styles.flex} />
           <RoundBtn icon="share" label={t('details.share')} onPress={share} testID="details-share" />
-          <RoundBtn icon="bookmark" label={t('details.save')} onPress={() => navigation.navigate('Part2', { feature: 'save', areaId: a.id })} testID="details-save" />
+          <RoundBtn icon="bookmark" label={t('details.save')} onPress={() => void saveLoc.save({ id: a.id, name: a.name, category: a.category })} testID="details-save" />
         </View>
       </View>
       <View style={styles.body}>
@@ -118,9 +123,11 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
             <Text style={[typography.meta, { color: colors.textMuted }]}>{t('details.partnerDisclosure')}</Text>
           </View>
         ) : null}
+        <AreaAvailability areaId={a.id} />
+        {saveLoc.sheet}
         <View style={styles.links}>
           <ZpotButton variant="small" icon="map" label={t('details.viewOnMap')} onPress={viewOnMap} testID="details-view-map" />
-          <ZpotButton variant="small" icon="flag" label={t('details.report')} onPress={() => navigation.navigate('Part2', { feature: 'report', areaId: a.id })} testID="details-report" />
+          <ZpotButton variant="small" icon="flag" label={t('details.report')} onPress={() => navigation.navigate('ReportType', { areaId: a.id })} testID="details-report" />
         </View>
       </View>
     </Screen>

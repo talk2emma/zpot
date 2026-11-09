@@ -12,7 +12,8 @@
     "postinstall": "node scripts/gen-env.js",
     "prestart": "node scripts/gen-env.js",
     "typecheck": "tsc --noEmit",
-    "test:contract": "ZPOT_CONTRACT_API=${ZPOT_CONTRACT_API:-http://localhost:8000/api/v1} jest __tests__/contract"
+    "test:contract": "ZPOT_CONTRACT_API=${ZPOT_CONTRACT_API:-http://localhost:8000/api/v1} jest __tests__/contract",
+    "api:types": "npx -y openapi-typescript@7.13.0 ../docs/api/openapi.yaml -o src/types/openapi.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.5",
@@ -32,8 +33,10 @@
     "react-i18next": "18.0.1",
     "react-native": "0.87.1",
     "react-native-bootsplash": "7.3.5",
+    "react-native-image-picker": "8.3.1",
     "react-native-keychain": "11.0.0",
     "react-native-localize": "3.7.2",
+    "react-native-permissions": "5.6.2",
     "react-native-safe-area-context": "5.11.1",
     "react-native-screens": "4.30.1",
     "react-native-svg": "15.16.1",

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { authApi, authSession } from '../services/api';
+import { usePrefsStore } from './prefsStore';
+import { authApi, authSession, savedApi } from '../services/api';
 import { tokenStorage } from '../services/auth/tokenStorage';
 import type { AuthResponse, User } from '../types/api';
 
@@ -13,6 +14,7 @@ interface AuthState {
   user: User | null;
   sessionExpired: boolean;
   pendingReturn: PendingReturn | null;
+  lastImport: number;
   bootstrap(): Promise<void>;
   completeAuth(res: AuthResponse): Promise<void>;
   setUser(u: User): void;
@@ -26,6 +28,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   sessionExpired: false,
   pendingReturn: null,
+  lastImport: 0,
   async bootstrap() {
     const tokens = await tokenStorage.load();
     if (!tokens) { set({ status: 'guest' }); return; }
@@ -47,6 +50,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     authSession.set(res.tokens);
     await tokenStorage.save(res.tokens);
     set({ status: 'authenticated', user: res.user, sessionExpired: false });
+    await transferGuestSaved();
   },
   setUser: user => set({ user }),
   async signOut() {
@@ -61,5 +65,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   setPendingReturn: pendingReturn => set({ pendingReturn }),
 }));
+
+/** Moves places saved on this device as a guest into the account (idempotent server-side). */
+export async function transferGuestSaved(): Promise<number> {
+  const items = usePrefsStore.getState().guestSaved;
+  if (!items.length) return 0;
+  try {
+    const r = await savedApi.importGuest(items.map(i => ({ area_id: i.areaId, label: i.label })));
+    usePrefsStore.getState().clearGuestSaved();
+    useAuthStore.setState({ lastImport: r.imported + r.already_saved });
+    return r.imported;
+  } catch {
+    return 0; // kept on device; retried at next sign-in — never silently dropped
+  }
+}
 
 authSession.onExpired(() => { void useAuthStore.getState().clearLocalSession(true); });

@@ -290,3 +290,13 @@ def test_photo_size_limit(seeded, make_client, settings):
         "id"
     ]
     assert c.post(f"{URL}{rid}/attachments/", {"file": _jpeg()}, format="multipart").status_code == 413
+
+
+def test_contributor_recognition(seeded, make_client):
+    reporter, voter = make_client(), make_client()
+    rid = leaving(reporter).json()["id"]
+    voter.post(f"{URL}{rid}/verifications/", {"answer": "still_available"}, format="json")
+    me = reporter.get("/api/v1/community/me/").json()
+    assert me["reports"] == 1 and me["published"] == 1 and me["level"] == "contributor"
+    assert me["karma"] > 0.5 and me["recent_events"][0]["reason"] == "confirmed_by_others"
+    assert voter.get("/api/v1/community/me/").json()["verifications"] == 1

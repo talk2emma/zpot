@@ -25,6 +25,9 @@ import { haversineMeters } from '../../utils/geo';
 import { ExploreSheet, type SheetSnap } from './ExploreSheet';
 import { ResultsPanel } from './ResultsPanel';
 import { SelectedSpotPanel } from './SelectedSpotPanel';
+import { useNearbyVacancies, VacancyCard, vacancyMarkers } from './VerificationPanel';
+import { useNotifications } from '../../hooks/useAccount';
+import type { Observation } from '../../types/contracts';
 
 export function ExploreScreen() {
   const { t, i18n } = useTranslation();
@@ -45,6 +48,8 @@ export function ExploreScreen() {
   const [layers, setLayers] = useState(ALL_LAYERS);
   const [layersOpen, setLayersOpen] = useState(false);
   const [mapFailed, setMapFailed] = useState(false);
+  const [vacancy, setVacancy] = useState<Observation | null>(null);
+  const unread = useNotifications().data?.unread_count ?? 0;
   const [panCenter, setPanCenter] = useState<RegionChange['center'] | null>(null);
 
   // Device position (only when permitted). Declined location never blocks guest use.
@@ -64,6 +69,9 @@ export function ExploreScreen() {
   const selectedDetail = useAreaDetail(selectedId !== null && !selectedFromResults ? selectedId : null,
     { ...stay, latitude: center?.latitude, longitude: center?.longitude });
   const selected = selectedFromResults ?? selectedDetail.data;
+  const vacancies = useNearbyVacancies(center);
+  const extra = useMemo(() => vacancyMarkers(vacancies.data?.observations, o => t('verify.vacancy') + (o.area_name ? ` · ${o.area_name}` : ''),
+    o => { select(null); setVacancy(o); }), [vacancies.data, t, select]);
 
   const features = useMemo(() => layersQ.data?.features ?? [], [layersQ.data]);
   const placeName = destination?.name ?? t('explore.nearYou');
@@ -112,7 +120,7 @@ export function ExploreScreen() {
         <ZpotMap ref={map} styleUrl={ENV.mapStyleUrl} center={center ?? APP.lisbon} initialZoom={center ? APP.defaultZoom : 12.5}
           features={features} layers={layers} selectedId={selectedId} showUserLocation={locOn}
           destination={destination ? { label: destination.name, coordinate: destination } : null}
-          markerLabel={label} bottomInset={heights[snap]}
+          markerLabel={label} bottomInset={heights[snap]} extraMarkers={extra}
           onSelect={id => { select(id); if (id !== null && sheet === 'peek') setSheet('half'); }}
           onRegionChange={r => { if (r.userInteraction) setPanCenter(r.center); }}
           onMapError={() => { setMapFailed(true); toast(t('explore.mapFail')); }} testID="explore-map" />
@@ -122,9 +130,10 @@ export function ExploreScreen() {
         <View style={styles.row}>
           <ZpotSearchBar testID="explore-search" title={destination?.name ?? (origin ? t('explore.nearYou') : t('explore.searchPh'))}
             subtitle={subtitle} onPress={() => navigation.navigate('Search')} />
-          <Pressable onPress={() => navigation.navigate('Part2', { feature: 'notifs' })} accessibilityRole="button"
-            accessibilityLabel="Notifications" style={[styles.bell, shadows.card, { backgroundColor: colors.surface }]} testID="explore-bell">
+          <Pressable onPress={() => navigation.navigate('Notifications')} accessibilityRole="button"
+            accessibilityLabel={unread ? `${t('notif.title')}, ${unread}` : t('notif.title')} style={[styles.bell, shadows.card, { backgroundColor: colors.surface }]} testID="explore-bell">
             <Icon name="bell" color={colors.text} />
+            {unread ? <View style={styles.bellDot} testID="explore-bell-badge" /> : null}
           </Pressable>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
@@ -152,12 +161,18 @@ export function ExploreScreen() {
             <MapControls onLayers={() => setLayersOpen(true)} onZoomIn={() => map.current?.zoomBy(1)}
               onZoomOut={() => map.current?.zoomBy(-1)} onRecenter={recenter} />
           </View>
-          <Pressable onPress={() => navigation.navigate('Part2', { feature: 'report', areaId: selectedId ?? undefined })}
+          <Pressable onPress={() => navigation.navigate('ReportType', { areaId: selectedId ?? undefined })}
             accessibilityRole="button" accessibilityLabel={t('explore.report')} testID="explore-report"
             style={[styles.report, shadows.card, { bottom: heights[snap] + 16 }]}>
             <Icon name="flag" color={palette.white} size={18} /><Text style={styles.reportText}>{t('explore.report')}</Text>
           </Pressable>
         </>
+      ) : null}
+
+      {vacancy && effectiveView === 'map' ? (
+        <View style={[styles.vacancy, { bottom: heights[snap] + 72 }]}>
+          <VacancyCard obs={vacancy} onClose={() => setVacancy(null)} />
+        </View>
       ) : null}
 
       <ExploreSheet snap={snap} heights={heights} a11yLabel={t('explore.layers')}
@@ -185,6 +200,8 @@ export function ExploreScreen() {
 }
 
 const styles = StyleSheet.create({
+  vacancy: { position: 'absolute', left: 12, right: 12 },
+  bellDot: { position: 'absolute', top: 9, right: 10, width: 10, height: 10, borderRadius: 5, backgroundColor: palette.red600 },
   root: { flex: 1 },
   top: { position: 'absolute', left: 0, right: 0, top: 0, paddingHorizontal: 12, gap: 8 },
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },

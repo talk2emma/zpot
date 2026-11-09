@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon, type IconName } from '../components/common';
 import { ExploreScreen } from '../screens/explore/ExploreScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
-import { ActivityScreen, SavedScreen } from '../screens/profile/TabScreens';
+import { ActivityScreen, SavedScreen } from '../screens/account/AccountScreens';
 import { palette, useTheme } from '../theme';
 import type { TabParamList } from './types';
 

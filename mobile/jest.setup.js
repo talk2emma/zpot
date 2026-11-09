@@ -52,3 +52,8 @@ jest.mock('@maplibre/maplibre-react-native', () => {
   });
   return { Map: Pass, Camera, GeoJSONSource: Pass, Layer: () => null, Marker: Pass, UserLocation: () => null };
 });
+
+jest.mock('react-native-image-picker', () => ({
+  launchCamera: jest.fn(async () => ({ assets: [{ uri: 'file:///tmp/sign.jpg', type: 'image/jpeg', fileName: 'sign.jpg', fileSize: 120000 }] })),
+  launchImageLibrary: jest.fn(async () => ({ assets: [{ uri: 'file:///tmp/sign.jpg', type: 'image/jpeg', fileName: 'sign.jpg', fileSize: 120000 }] })),
+}));

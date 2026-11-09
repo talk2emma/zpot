@@ -37,6 +37,34 @@ export type RootStackParamList = {
   DeleteAccount: undefined;
   NotificationsIntro: undefined;
   Part2: { feature: Part2Feature; areaId?: number };
+  // Part 2
+  StartSession: { areaId: number };
+  Session: { id: string };
+  EditSession: { id: string };
+  EndSession: { id: string };
+  SessionSummary: { id: string; reportRef?: string };
+  SessionHistory: undefined;
+  ReportType: { areaId?: number; sessionId?: string; type?: string } | undefined;
+  ReportLocation: undefined;
+  ReportDetails: undefined;
+  ReportReview: undefined;
+  ReportSuccess: { id: string; photoFailed?: boolean };
+  MyReports: undefined;
+  ReportDetail: { id: string };
+  Notifications: undefined;
+  NotificationDetail: { id: string };
+  NotificationPrefs: undefined;
+  HelpArticle: { id: number };
+  ContactSupport: { mode?: 'support' | 'guidance'; areaId?: number; areaName?: string } | undefined;
+  SupportTickets: undefined;
+  SupportTicket: { id: string };
+  PrivacyRequests: undefined;
+  ScoutList: undefined;
+  ScoutTask: { id: number };
+  ZTrigger: undefined;
+  ZEvent: { id: string; areaId?: number; areaName?: string; at: string };
+  Pro: undefined;
+  Contributions: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;

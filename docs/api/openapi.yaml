@@ -340,6 +340,22 @@ paths:
                 items:
                   $ref: '#/components/schemas/SupportedArea'
           description: ''
+  /api/v1/community/me/:
+    get:
+      operationId: community_me_retrieve
+      description: Contributor recognition. Reputation never overrides verified legal
+        restrictions.
+      tags:
+      - community
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contributions'
+          description: ''
   /api/v1/config/:
     get:
       operationId: config_retrieve
@@ -2897,6 +2913,35 @@ components:
       - personalised_ads
       - privacy
       - terms
+    Contributions:
+      type: object
+      properties:
+        karma:
+          type: number
+          format: double
+        reports:
+          type: integer
+        accepted:
+          type: integer
+        published:
+          type: integer
+        verifications:
+          type: integer
+        level:
+          type: string
+        recent_events:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - accepted
+      - karma
+      - level
+      - published
+      - recent_events
+      - reports
+      - verifications
     CoverageDoc:
       type: object
       properties:

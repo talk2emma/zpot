@@ -3,6 +3,7 @@ import { ENV } from '../../constants/env';
 import type { Tokens } from '../../types/api';
 import { tokenStorage } from '../auth/tokenStorage';
 import { normaliseError } from './errors';
+import { installToken } from './installToken';
 
 type RetriableConfig = InternalAxiosRequestConfig & { _retried?: boolean; _attempt?: number };
 
@@ -24,8 +25,9 @@ export const api: AxiosInstance = axios.create({
 
 const AUTH_FREE = ['/auth/login/', '/auth/register/', '/auth/refresh/', '/auth/password-reset/', '/auth/verify-email/'];
 
-api.interceptors.request.use(cfg => {
+api.interceptors.request.use(async cfg => {
   const url = cfg.url ?? '';
+  cfg.headers.set('X-Zpot-Client', await installToken());
   if (tokens?.access && !AUTH_FREE.some(p => url.startsWith(p))) {
     cfg.headers.set('Authorization', `Bearer ${tokens.access}`);
   }

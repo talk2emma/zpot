@@ -10,6 +10,7 @@ api_v1 = [
     path("regulations/", include("apps.regulations.urls")),
     path("", include("apps.sessions.urls")),
     path("", include("apps.reports.urls")),
+    path("", include("apps.community.urls")),
     path("", include("apps.availability.urls")),
     path("", include("apps.saved.urls")),
     path("", include("apps.notifications.urls")),

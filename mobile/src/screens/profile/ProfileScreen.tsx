@@ -11,6 +11,7 @@ import { systemApi } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import { palette, typography, useTheme } from '../../theme';
+import { useProfileExtras } from '../account/AccountScreens';
 
 export function ProfileScreen() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export function ProfileScreen() {
   const { status, user, signOut, sessionExpired } = useAuthStore();
   const language = usePrefsStore(s => s.language);
   const [confirm, setConfirm] = useState(false);
+  const extras = useProfileExtras();
   const health = useQuery({ queryKey: ['health'], queryFn: systemApi.health, staleTime: 60_000, retry: 0 });
   const authed = status === 'authenticated' && user;
   const name = authed ? (user.display_name || user.email.split('@')[0]) : t('profile.guest');
@@ -42,15 +44,20 @@ export function ProfileScreen() {
       {!authed ? <ZpotButton label={t('profile.signInCta')} onPress={() => navigation.navigate('SignIn')} testID="profile-signin" /> : null}
       {authed ? <ListRow icon="user" label={t('profile.account')} onPress={() => navigation.navigate('AccountSettings')} testID="profile-account" /> : null}
       <ListRow icon="filter" label={t('profile.parkingPrefs')} onPress={() => navigation.navigate('ParkingPreferences')} testID="profile-prefs" />
-      <ListRow icon="bell" label={t('profile.notifications')} onPress={() => navigation.navigate('NotificationsIntro')} testID="profile-notifs" />
+      <ListRow icon="bell" label={t('profile.notifications')} onPress={() => navigation.navigate(authed ? 'NotificationPrefs' : 'NotificationsIntro')} testID="profile-notifs" />
+      {authed ? <ListRow icon="star" label={t('p2.contributions')} onPress={() => navigation.navigate('Contributions')} testID="profile-contrib" /> : null}
+      {authed && extras.scout ? <ListRow icon="pin" label={t('p2.scout')} onPress={() => navigation.navigate('ScoutList')} testID="profile-scout" /> : null}
+      {extras.zTrigger ? <ListRow icon="settings" label={t('p2.ztrigger')} onPress={() => navigation.navigate('ZTrigger')} testID="profile-ztrigger" /> : null}
+      {extras.pro ? <ListRow icon="star" label={t('p2.pro')} onPress={() => navigation.navigate('Pro')} testID="profile-pro" /> : null}
       <ListRow icon="globe" label={t('profile.language')} value={language === 'pt-PT' ? 'Português' : 'English'}
         onPress={() => navigation.navigate('Language', { fromSettings: true })} testID="profile-language" />
       <ListRow icon="shield" label={t('profile.privacy')} onPress={() => navigation.navigate('Privacy')} testID="profile-privacy" />
-      <ListRow icon="help" label={t('profile.help')} onPress={() => navigation.navigate('Help')} testID="profile-help" />
+      <ListRow icon="help" label={t('p2.helpCentre')} onPress={() => navigation.navigate('Help')} testID="profile-help" />
+      <ListRow icon="mail" label={t('p2.contact')} onPress={() => navigation.navigate('ContactSupport', { mode: 'support' })} testID="profile-contact" />
       <ListRow icon="file" label={t('profile.legal')} onPress={() => navigation.navigate('Legal')} testID="profile-legal" />
       {authed ? <ListRow icon="logout" label={t('profile.signOut')} onPress={() => setConfirm(true)} testID="profile-signout" /> : null}
       <Text style={[typography.small, styles.ver, { color: colors.textSubtle }]} testID="profile-version">
-        {t('profile.version', { v: '0.1.0 (Part 1)', api: health.data ? health.data.version : health.isError ? 'unreachable' : '…' })}
+        {t('profile.version', { v: '0.2.0 (Part 2)', api: health.data ? health.data.version : health.isError ? 'unreachable' : '…' })}
         {ENV.showDevTools ? `\n${ENV.apiBaseUrl}` : ''}
       </Text>
       <ConfirmDialog visible={confirm} title={t('profile.signOutQ')} body={t('profile.signOutBody')} confirmLabel={t('profile.signOut')}

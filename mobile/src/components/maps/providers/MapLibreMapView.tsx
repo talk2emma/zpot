@@ -19,7 +19,7 @@ const CLUSTER_FONT = 'Noto Sans Bold';
 /** MapLibre Native implementation (open-source, no access token required). */
 export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function MapLibreMapView(props, ref) {
   const { styleUrl, center, initialZoom = 15, features, layers, selectedId, destination, showUserLocation,
-    markerLabel, onSelect, onRegionChange, onMapError, bottomInset = 0, testID } = props;
+    markerLabel, onSelect, onRegionChange, onMapError, bottomInset = 0, testID, extraMarkers } = props;
   const camera = useRef<CameraRef>(null);
   const zoomRef = useRef(initialZoom);
   const [zoom, setZoom] = useState(initialZoom);
@@ -123,6 +123,20 @@ export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function 
           </Marker>
         ) : null}
 
+        {extraMarkers?.map(m => (
+          <Marker key={m.id} id={`x-${m.id}`} lngLat={[m.coordinate.longitude, m.coordinate.latitude]} anchor={m.kind === 'pin' ? 'bottom' : 'center'}
+            onPress={m.onPress}>
+            <Pressable accessibilityRole={m.onPress ? 'button' : 'image'} accessibilityLabel={m.label} onPress={m.onPress}
+              testID={`map-extra-${m.id}`} disabled={!m.onPress}>
+              {m.kind === 'pin' ? (
+                <View style={styles.dest}><View style={[styles.pinHead]} /><View style={styles.destStem} /></View>
+              ) : (
+                <View style={[styles.vac, m.kind === 'conflict' && styles.vacConflict]}><Text style={styles.vacText}>P</Text></View>
+              )}
+            </Pressable>
+          </Marker>
+        ))}
+
         {showUserLocation ? <UserLocation accuracy animated /> : null}
       </Map>
     </View>
@@ -135,5 +149,10 @@ const styles = StyleSheet.create({
   destPill: { backgroundColor: palette.navy900, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, maxWidth: 180 },
   destText: { color: palette.white, fontWeight: '800', fontSize: 12 },
   destStem: { width: 2, height: 12, backgroundColor: palette.navy900 },
+  pinHead: { width: 22, height: 22, borderRadius: 11, backgroundColor: palette.red600, borderWidth: 3, borderColor: palette.white },
+  vac: { width: 26, height: 26, borderRadius: 13, backgroundColor: palette.green700, borderWidth: 2, borderColor: palette.white,
+    borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  vacConflict: { backgroundColor: palette.amber900 },
+  vacText: { color: palette.white, fontWeight: '800', fontSize: 12 },
   destDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: palette.navy900 },
 });
