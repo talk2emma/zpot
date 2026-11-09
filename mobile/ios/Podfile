@@ -24,6 +24,8 @@ target 'Zpot' do
   )
 
   post_install do |installer|
+    # MapLibre Native iOS is added via Swift Package Manager (open source, no access token needed)
+    $MLRN.post_install(installer)
     react_native_post_install(
       installer,
       config[:reactNativePath],
