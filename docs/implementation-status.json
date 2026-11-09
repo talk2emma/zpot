@@ -902,5 +902,557 @@
       "partial": 5,
       "dev-only": 17
     }
-  }
+  },
+  "endpoints": [
+    {
+      "id": "EP-SYS-01",
+      "method": "GET",
+      "path": "/api/v1/health/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-SYS-02",
+      "method": "GET",
+      "path": "/api/v1/ready/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-SYS-03",
+      "method": "GET",
+      "path": "/api/v1/config/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py; contract:mobile/__tests__/contract",
+      "note": ""
+    },
+    {
+      "id": "EP-SYS-04",
+      "method": "GET",
+      "path": "/api/v1/features/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-SYS-05",
+      "method": "GET",
+      "path": "/api/v1/schema/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-SYS-06",
+      "method": "GET",
+      "path": "/api/v1/docs/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-01",
+      "method": "POST",
+      "path": "/api/v1/auth/register/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-02",
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-03",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-04",
+      "method": "POST",
+      "path": "/api/v1/auth/logout/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-05",
+      "method": "POST",
+      "path": "/api/v1/auth/verify-email/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-06",
+      "method": "POST",
+      "path": "/api/v1/auth/resend-verification/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-07",
+      "method": "POST",
+      "path": "/api/v1/auth/password-reset/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-AUTH-08",
+      "method": "POST",
+      "path": "/api/v1/auth/password-reset/confirm/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-USER-01",
+      "method": "GET",
+      "path": "/api/v1/users/me/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-USER-02",
+      "method": "PATCH",
+      "path": "/api/v1/users/me/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-USER-03",
+      "method": "DELETE",
+      "path": "/api/v1/users/me/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-USER-04",
+      "method": "GET",
+      "path": "/api/v1/users/me/preferences/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-USER-05",
+      "method": "PATCH",
+      "path": "/api/v1/users/me/preferences/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_auth.py",
+      "note": ""
+    },
+    {
+      "id": "EP-GEO-01",
+      "method": "GET",
+      "path": "/api/v1/cities/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-GEO-02",
+      "method": "GET",
+      "path": "/api/v1/cities/{id}/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-GEO-03",
+      "method": "GET",
+      "path": "/api/v1/cities/{id}/coverage/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-GEO-04",
+      "method": "GET",
+      "path": "/api/v1/places/autocomplete/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": "local gazetteer provider (Nominatim adapter optional)"
+    },
+    {
+      "id": "EP-GEO-05",
+      "method": "GET",
+      "path": "/api/v1/places/geocode/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": "local gazetteer provider (Nominatim adapter optional)"
+    },
+    {
+      "id": "EP-GEO-06",
+      "method": "GET",
+      "path": "/api/v1/places/reverse-geocode/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": "local gazetteer provider (Nominatim adapter optional)"
+    },
+    {
+      "id": "EP-PARK-01",
+      "method": "GET",
+      "path": "/api/v1/parking/options/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py; contract:mobile/__tests__/contract",
+      "note": "canonical search"
+    },
+    {
+      "id": "EP-PARK-02",
+      "method": "GET",
+      "path": "/api/v1/parking/areas/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-PARK-03",
+      "method": "GET",
+      "path": "/api/v1/parking/areas/{id}/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py; contract:mobile/__tests__/contract",
+      "note": ""
+    },
+    {
+      "id": "EP-PARK-04",
+      "method": "GET",
+      "path": "/api/v1/parking/areas/{id}/rules/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-PARK-05",
+      "method": "GET",
+      "path": "/api/v1/parking/areas/{id}/observations/",
+      "phase": "P1",
+      "status": "partial",
+      "tests": "api:tests/test_parking_api.py",
+      "note": "read-only; observation writes are Part 2"
+    },
+    {
+      "id": "EP-PARK-06",
+      "method": "GET",
+      "path": "/api/v1/parking/areas/{id}/evidence/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-PARK-07",
+      "method": "GET",
+      "path": "/api/v1/parking/map-layers/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py; contract:mobile/__tests__/contract",
+      "note": "GeoJSON"
+    },
+    {
+      "id": "EP-PARK-08",
+      "method": "GET",
+      "path": "/api/v1/parking/compare/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-PARK-09",
+      "method": "GET",
+      "path": "/api/v1/spots/nearby/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": "TRD compatibility adapter over canonical search; deprecated"
+    },
+    {
+      "id": "EP-REG-01",
+      "method": "GET",
+      "path": "/api/v1/regulations/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-REG-02",
+      "method": "GET",
+      "path": "/api/v1/regulations/{id}/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-REG-03",
+      "method": "POST",
+      "path": "/api/v1/regulations/evaluate/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-REG-04",
+      "method": "GET",
+      "path": "/api/v1/regulations/closures/",
+      "phase": "P1",
+      "status": "implemented",
+      "tests": "api:tests/test_parking_api.py",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-01",
+      "method": "*",
+      "path": "/api/v1/sessions/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-02",
+      "method": "*",
+      "path": "/api/v1/reports/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-03",
+      "method": "*",
+      "path": "/api/v1/observations/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-04",
+      "method": "*",
+      "path": "/api/v1/saved/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-05",
+      "method": "*",
+      "path": "/api/v1/notifications/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-06",
+      "method": "*",
+      "path": "/api/v1/devices/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-07",
+      "method": "*",
+      "path": "/api/v1/support/tickets/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-08",
+      "method": "*",
+      "path": "/api/v1/privacy/requests/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    },
+    {
+      "id": "EP-P2-09",
+      "method": "*",
+      "path": "/api/v1/scouts/assignments/",
+      "phase": "P2",
+      "status": "not-started",
+      "tests": "none",
+      "note": ""
+    }
+  ],
+  "features": [
+    {
+      "id": "FEAT-001",
+      "name": "Guest-first parking discovery",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-002",
+      "name": "Bilingual UI EN / PT-PT",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-003",
+      "name": "Location permission with manual fallback",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-004",
+      "name": "Authentication (register/verify/login/refresh/logout/reset/delete)",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-005",
+      "name": "Destination search & autocomplete",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-006",
+      "name": "Arrival time / duration / walk planning",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-007",
+      "name": "Filters mapped to API params",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-008",
+      "name": "Whole-stay rule engine (DST, midnight, max-stay, closures, future rules)",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-009",
+      "name": "Free-first, commercially neutral ranking",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-010",
+      "name": "Interactive native map with overlays, clustering, markers",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-011",
+      "name": "Parking details with rules, evidence, confidence",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-012",
+      "name": "External navigation hand-off + return",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-013",
+      "name": "Offline / error / empty / permission states",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-014",
+      "name": "Parking preferences (local + synced)",
+      "status": "implemented"
+    },
+    {
+      "id": "FEAT-015",
+      "name": "Mapbox provider",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-016",
+      "name": "Parking sessions & reminders",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-017",
+      "name": "Community reporting & vacancy signals",
+      "status": "partial"
+    },
+    {
+      "id": "FEAT-018",
+      "name": "Saved places",
+      "status": "partial"
+    },
+    {
+      "id": "FEAT-019",
+      "name": "Notifications engine",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-020",
+      "name": "Support tickets",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-021",
+      "name": "Data export requests",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-022",
+      "name": "Holiday calendar in rule engine",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-023",
+      "name": "Z-Trigger (experimental)",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-024",
+      "name": "Pro / ads / partners (post-MVP)",
+      "status": "not-started"
+    },
+    {
+      "id": "FEAT-025",
+      "name": "Scouts",
+      "status": "not-started"
+    }
+  ]
 }

@@ -48,6 +48,9 @@ def rule_line(r):
 
 
 def restriction_line(r):
+    # labels from sources often already state the time ("Street cleaning, Tue 07:00–09:00"); don't repeat it
+    if any(ch.isdigit() for ch in r.label):
+        return f"No parking: {r.label}."
     return f"No parking: {r.label} ({windows_text(r)})."
 
 

@@ -37,3 +37,6 @@ mobile/coverage/
 .DS_Store
 .idea/
 *.log
+.metro.log
+.emulator.log
+mobile/ios/build/

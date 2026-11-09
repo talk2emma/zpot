@@ -11,6 +11,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		33A54ED455CE93ADAD3803E3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		76F12E82344776A0AB7C87D5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5A472FCF6589E53D17D000 /* SceneDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D6A39B6FE9DC4DC082258E5B /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DAF7A650FDD849A392FEB72F /* BootSplash.storyboard */; };
 		E5D26D733DAB46D39EC49DC7 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 25C1A0A2FEB940F4A2D5F2BA /* Colors.xcassets */; };
@@ -27,6 +28,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-Zpot.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Zpot.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Zpot/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Zpot/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DA5A472FCF6589E53D17D000 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = Zpot/SceneDelegate.swift; sourceTree = "<group>"; };
 		DAF7A650FDD849A392FEB72F /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = Zpot/BootSplash.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -53,6 +55,7 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				DAF7A650FDD849A392FEB72F /* BootSplash.storyboard */,
 				25C1A0A2FEB940F4A2D5F2BA /* Colors.xcassets */,
+				DA5A472FCF6589E53D17D000 /* SceneDelegate.swift */,
 			);
 			name = Zpot;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				76F12E82344776A0AB7C87D5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
