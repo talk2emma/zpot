@@ -1,0 +1,24 @@
+# E2E-012 Start session (2 h free limit) → extend planned stay → server re-evaluates → restriction warning
+appId: pt.zpot.app
+env: { AREA: "7" }
+---
+- runFlow: _common/signin.yaml
+- runFlow: _common/open-area.yaml
+- tapOn: { id: "details-parked" }
+- extendedWaitUntil: { visible: { id: "start-session-area" }, timeout: 15000 }
+- tapOn: { id: "reminder-0" }
+- tapOn: { id: "start-session-submit" }
+- extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 15000 }
+- tapOn: { id: "session-edit" }
+- tapOn: { id: "edit-session-duration-plus" }
+- tapOn: { id: "edit-session-duration-plus" }
+- assertVisible: { id: "edit-session-over" }
+- takeScreenshot: e2e012-over
+- tapOn: { id: "edit-session-save" }
+- extendedWaitUntil: { visible: { id: "session-warnings" }, timeout: 10000 }
+- takeScreenshot: e2e012-warning
+- tapOn: { id: "edit-session-done" }
+- assertVisible: { id: "session-over-deadline" }
+- tapOn: { id: "session-end" }
+- tapOn: { id: "end-session-confirm" }
+- extendedWaitUntil: { visible: { id: "session-summary-screen" }, timeout: 15000 }

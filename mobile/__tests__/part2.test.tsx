@@ -181,7 +181,7 @@ describe('notifications', () => {
   it('lists the inbox and opens the target of a notification', async () => {
     authed();
     jest.spyOn(notificationsApi, 'list').mockResolvedValue({ next: null, previous: null, unread_count: 1, results: [
-      { id: 'n1', category: 'session_reminder', template: 'session_reminder', title: 'Move soon', body: 'b', target: { kind: 'session', id: 'sess-1' },
+      { id: 'n1', category: 'session_reminder', template: 'session_reminder', title: 'Move soon', body: 'b', target: { route: 'Session', id: 'sess-1' },
         created_at: new Date().toISOString(), read_at: null, is_read: false } as never] });
     const read = jest.spyOn(notificationsApi, 'read').mockResolvedValue({} as never);
     await renderScreen('Notifications', NotificationsScreen, undefined, ALL_ROUTES);

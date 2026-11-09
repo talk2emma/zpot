@@ -40,3 +40,7 @@ mobile/coverage/
 .metro.log
 .emulator.log
 mobile/ios/build/
+
+# Maestro E2E raw output (logs/debug dumps); keep only the per-platform summary
+docs/e2e-results/*/*
+!docs/e2e-results/*/summary.txt

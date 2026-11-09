@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.db import IntegrityError
-from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -135,6 +135,10 @@ class VerifyEmailView(_AuthBase):
         return Response(UserSerializer(user).data)
 
 
+def _status(name):
+    return inline_serializer(name, {"status": serializers.CharField()})
+
+
 class ResendVerificationView(GenericAPIView):
     """Authenticated: resend to the signed-in user's address."""
 
@@ -143,7 +147,7 @@ class ResendVerificationView(GenericAPIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "auth_email"
 
-    @extend_schema(request=None, responses={202: None})
+    @extend_schema(request=None, responses={202: _status("ResendVerificationStatus")})
     def post(self, request):
         if request.user.is_email_verified:
             raise ZpotAPIError("Your email is already verified.", code="already_verified", status_code=409)
@@ -155,7 +159,7 @@ class PasswordResetView(_AuthBase):
     serializer_class = EmailSerializer
     throttle_scope = "auth_email"
 
-    @extend_schema(responses={202: None})
+    @extend_schema(responses={202: _status("PasswordResetStatus")})
     def post(self, request):
         s = self.get_serializer(data=request.data)
         s.is_valid(raise_exception=True)
@@ -166,7 +170,7 @@ class PasswordResetView(_AuthBase):
 class PasswordResetConfirmView(_AuthBase):
     serializer_class = PasswordResetConfirmSerializer
 
-    @extend_schema(responses={200: None})
+    @extend_schema(responses={200: _status("PasswordResetConfirmStatus")})
     def post(self, request):
         s = self.get_serializer(data=request.data)
         s.is_valid(raise_exception=True)

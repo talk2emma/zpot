@@ -9,7 +9,7 @@ import {
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
-import { fmtDur } from '../../features/shared';
+import { fmtDur, requestNotifPermission } from '../../features/shared';
 import { qk } from '../../hooks/useAccount';
 import { useAreaDetail } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
@@ -126,7 +126,7 @@ export function StartSessionScreen({ navigation, route }: RootScreenProps<'Start
       )}
       <ConfirmDialog visible={!!prime} title={t('session.notifPrimeTitle')} body={t('session.notifPrimeBody')}
         confirmLabel={t('session.allow')} cancelLabel={t('session.notNow')} testID="notif-prime"
-        onConfirm={() => { usePrefsStore.getState().setNotifPermission('granted'); const id = prime!; setPrime(null); navigation.replace('Session', { id }); }}
+        onConfirm={async () => { const id = prime!; setPrime(null); await requestNotifPermission(); navigation.replace('Session', { id }); }}
         onCancel={() => { usePrefsStore.getState().setNotifPermission('denied'); const id = prime!; setPrime(null); navigation.replace('Session', { id }); }} />
     </Screen>
   );

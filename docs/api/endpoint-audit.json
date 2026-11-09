@@ -1,0 +1,1497 @@
+{
+  "generated_from": "drf-spectacular OpenAPI 3",
+  "count": 99,
+  "summary": {
+    "response_schema": 99,
+    "backend_tests": 99,
+    "mobile_client": 89,
+    "documented": 99
+  },
+  "operations": [
+    {
+      "method": "POST",
+      "path": "/auth/login/",
+      "operation_id": "auth_login_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout/",
+      "operation_id": "auth_logout_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/password-reset/",
+      "operation_id": "auth_password_reset_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/password-reset/confirm/",
+      "operation_id": "auth_password_reset_confirm_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh/",
+      "operation_id": "auth_refresh_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register/",
+      "operation_id": "auth_register_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/resend-verification/",
+      "operation_id": "auth_resend_verification_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/verify-email/",
+      "operation_id": "auth_verify_email_create",
+      "tags": [
+        "auth"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/availability/nearby/",
+      "operation_id": "availability_nearby_list",
+      "tags": [
+        "availability"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/availability/observations/",
+      "operation_id": "availability_observations_list",
+      "tags": [
+        "availability"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/availability/observations/",
+      "operation_id": "availability_observations_create",
+      "tags": [
+        "availability"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/cities/",
+      "operation_id": "cities_list",
+      "tags": [
+        "cities"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/cities/{id}/",
+      "operation_id": "cities_retrieve",
+      "tags": [
+        "cities"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/cities/{id}/coverage/",
+      "operation_id": "cities_coverage_list",
+      "tags": [
+        "cities"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/community/me/",
+      "operation_id": "community_me_retrieve",
+      "tags": [
+        "community"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/config/",
+      "operation_id": "config_retrieve",
+      "tags": [
+        "config"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/detection/config/",
+      "operation_id": "detection_config_retrieve",
+      "tags": [
+        "detection"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/devices/",
+      "operation_id": "devices_retrieve",
+      "tags": [
+        "devices"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/devices/",
+      "operation_id": "devices_create",
+      "tags": [
+        "devices"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/devices/{id}/",
+      "operation_id": "devices_destroy",
+      "tags": [
+        "devices"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/events/park/",
+      "operation_id": "events_park_create",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/events/park/{id}/confirm/",
+      "operation_id": "events_park_confirm_create",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/events/park/{id}/dismiss/",
+      "operation_id": "events_park_dismiss_create",
+      "tags": [
+        "events"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/features/",
+      "operation_id": "features_retrieve",
+      "tags": [
+        "features"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/health/",
+      "operation_id": "health_retrieve",
+      "tags": [
+        "health"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/help/articles/",
+      "operation_id": "help_articles_list",
+      "tags": [
+        "help"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/help/articles/{id}/",
+      "operation_id": "help_articles_retrieve",
+      "tags": [
+        "help"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/notifications/",
+      "operation_id": "notifications_list",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/notifications/preferences/",
+      "operation_id": "notifications_preferences_retrieve",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/notifications/preferences/",
+      "operation_id": "notifications_preferences_partial_update",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/notifications/read-all/",
+      "operation_id": "notifications_read_all_create",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/notifications/{id}/",
+      "operation_id": "notifications_retrieve",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/notifications/{id}/read/",
+      "operation_id": "notifications_read_create",
+      "tags": [
+        "notifications"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/areas/",
+      "operation_id": "parking_areas_list",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/areas/{id}/",
+      "operation_id": "parking_areas_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/areas/{id}/evidence/",
+      "operation_id": "parking_areas_evidence_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/areas/{id}/observations/",
+      "operation_id": "parking_areas_observations_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/areas/{id}/rules/",
+      "operation_id": "parking_areas_rules_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/compare/",
+      "operation_id": "parking_compare_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/map-layers/",
+      "operation_id": "parking_map_layers_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/parking/options/",
+      "operation_id": "parking_options_retrieve",
+      "tags": [
+        "parking"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/places/autocomplete/",
+      "operation_id": "places_autocomplete_list",
+      "tags": [
+        "places"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/places/geocode/",
+      "operation_id": "places_geocode_retrieve",
+      "tags": [
+        "places"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/places/reverse-geocode/",
+      "operation_id": "places_reverse_geocode_retrieve",
+      "tags": [
+        "places"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/consents/",
+      "operation_id": "privacy_consents_retrieve",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/privacy/consents/",
+      "operation_id": "privacy_consents_partial_update",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/data-export/",
+      "operation_id": "privacy_data_export_create",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/privacy/deletion-request/",
+      "operation_id": "privacy_deletion_request_create",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/requests/",
+      "operation_id": "privacy_requests_list",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/privacy/requests/{id}/download/",
+      "operation_id": "privacy_requests_download_retrieve",
+      "tags": [
+        "privacy"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/ready/",
+      "operation_id": "ready_retrieve",
+      "tags": [
+        "ready"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/regulations/",
+      "operation_id": "regulations_list",
+      "tags": [
+        "regulations"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/regulations/closures/",
+      "operation_id": "regulations_closures_list",
+      "tags": [
+        "regulations"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/regulations/evaluate/",
+      "operation_id": "regulations_evaluate_create",
+      "tags": [
+        "regulations"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/regulations/{id}/",
+      "operation_id": "regulations_retrieve",
+      "tags": [
+        "regulations"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/reports/",
+      "operation_id": "reports_list",
+      "tags": [
+        "reports"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/reports/",
+      "operation_id": "reports_create",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/reports/mine/",
+      "operation_id": "reports_mine_list",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/reports/{id}/",
+      "operation_id": "reports_retrieve",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/reports/{id}/",
+      "operation_id": "reports_partial_update",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/reports/{id}/appeals/",
+      "operation_id": "reports_appeals_create",
+      "tags": [
+        "reports"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/reports/{id}/attachments/",
+      "operation_id": "reports_attachments_create",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/reports/{id}/attachments/{attachment_id}/",
+      "operation_id": "reports_attachments_retrieve",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/reports/{id}/verifications/",
+      "operation_id": "reports_verifications_create",
+      "tags": [
+        "reports"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/saved/destinations/",
+      "operation_id": "saved_destinations_retrieve",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/saved/destinations/",
+      "operation_id": "saved_destinations_create",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/saved/destinations/{id}/",
+      "operation_id": "saved_destinations_destroy",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/saved/locations/",
+      "operation_id": "saved_locations_retrieve",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/saved/locations/",
+      "operation_id": "saved_locations_create",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/saved/locations/import/",
+      "operation_id": "saved_locations_import_create",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/saved/locations/{id}/",
+      "operation_id": "saved_locations_partial_update",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/saved/locations/{id}/",
+      "operation_id": "saved_locations_destroy",
+      "tags": [
+        "saved"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/scouts/assignments/",
+      "operation_id": "scouts_assignments_list",
+      "tags": [
+        "scouts"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/scouts/assignments/{id}/",
+      "operation_id": "scouts_assignments_retrieve",
+      "tags": [
+        "scouts"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/scouts/assignments/{id}/submit/",
+      "operation_id": "scouts_assignments_submit_create",
+      "tags": [
+        "scouts"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/searches/recent/",
+      "operation_id": "searches_recent_retrieve",
+      "tags": [
+        "searches"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/searches/recent/",
+      "operation_id": "searches_recent_create",
+      "tags": [
+        "searches"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/searches/recent/",
+      "operation_id": "searches_recent_destroy",
+      "tags": [
+        "searches"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/",
+      "operation_id": "sessions_list",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/sessions/",
+      "operation_id": "sessions_create",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/active/",
+      "operation_id": "sessions_active_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/{id}/",
+      "operation_id": "sessions_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/sessions/{id}/",
+      "operation_id": "sessions_partial_update",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/sessions/{id}/end/",
+      "operation_id": "sessions_end_create",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/{id}/reminders/",
+      "operation_id": "sessions_reminders_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/sessions/{id}/reminders/",
+      "operation_id": "sessions_reminders_create",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/sessions/{id}/reminders/{reminder_id}/",
+      "operation_id": "sessions_reminders_destroy",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/{id}/summary/",
+      "operation_id": "sessions_summary_retrieve",
+      "tags": [
+        "sessions"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/spots/nearby/",
+      "operation_id": "spots_nearby_retrieve",
+      "tags": [
+        "spots"
+      ],
+      "auth": "public",
+      "deprecated": true,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": false,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/support/tickets/",
+      "operation_id": "support_tickets_list",
+      "tags": [
+        "support"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/",
+      "operation_id": "support_tickets_create",
+      "tags": [
+        "support"
+      ],
+      "auth": "public",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/support/tickets/{id}/",
+      "operation_id": "support_tickets_retrieve",
+      "tags": [
+        "support"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/support/tickets/{id}/attachments/",
+      "operation_id": "support_tickets_attachments_create",
+      "tags": [
+        "support"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/users/me/",
+      "operation_id": "users_me_retrieve",
+      "tags": [
+        "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/users/me/",
+      "operation_id": "users_me_partial_update",
+      "tags": [
+        "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/users/me/",
+      "operation_id": "users_me_destroy",
+      "tags": [
+        "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "GET",
+      "path": "/users/me/preferences/",
+      "operation_id": "users_me_preferences_retrieve",
+      "tags": [
+        "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/users/me/preferences/",
+      "operation_id": "users_me_preferences_partial_update",
+      "tags": [
+        "users"
+      ],
+      "auth": "jwt",
+      "deprecated": false,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    },
+    {
+      "method": "POST",
+      "path": "/verify/",
+      "operation_id": "verify_create",
+      "tags": [
+        "verify"
+      ],
+      "auth": "public",
+      "deprecated": true,
+      "response_schema": true,
+      "error_envelope": "ZpotAPIError {error:{code,message,details,request_id}}",
+      "backend_tests": true,
+      "mobile_client": true,
+      "documented": true
+    }
+  ]
+}

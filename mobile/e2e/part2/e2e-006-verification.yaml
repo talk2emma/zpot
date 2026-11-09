@@ -1,0 +1,14 @@
+# E2E-006 Open observation (created by another driver via the real API) → verify → updated status
+appId: pt.zpot.app
+env: { AREA: "7" }
+---
+- runScript: { file: scripts/seed-vacancy.js }
+- runFlow: _common/signin.yaml
+- runFlow: _common/open-area.yaml
+- scrollUntilVisible: { element: { id: "details-availability" }, direction: DOWN }
+- takeScreenshot: e2e006-observation
+- tapOn: { id: "${'details-vacancy-' + output.obsId + '-yes'}" }
+- extendedWaitUntil: { visible: { id: "${'details-vacancy-' + output.obsId + '-thanks'}" }, timeout: 10000 }
+- runScript: { file: scripts/check-observation.js, env: { OBS: "${output.obsId}" } }
+- assertTrue: ${output.confirmations == 1}
+- takeScreenshot: e2e006-confirmed

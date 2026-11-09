@@ -1,0 +1,8 @@
+# E2E-010 (part B, API stopped) change the plan → attempt search → error shown
+appId: pt.zpot.app
+---
+- tapOn: { id: "chip-plan" }
+- tapOn: { id: "plan-duration-plus" }
+- tapOn: { id: "plan-apply" }
+- extendedWaitUntil: { visible: { id: "results-error" }, timeout: 40000 }
+- takeScreenshot: e2e010-error

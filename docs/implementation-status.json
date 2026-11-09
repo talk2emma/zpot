@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-11-09 19:02 UTC",
-  "part": 1,
+  "generated_at": "2026-11-09 23:18 UTC",
+  "part": 2,
   "git": {
     "branch": "main",
-    "commit": "94c14b75e63e878e8a5e0dd836415a9fd823b242",
-    "uncommitted_changes": false
+    "commit": "586e8a231aa3e964e997f377b6361208be0dea57",
+    "uncommitted_changes": true
   },
   "status_vocabulary": [
     "implemented",
@@ -307,13 +307,14 @@
       "key": "startSession",
       "name": "Start parking session",
       "module": "sessions",
-      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "rn": "screens/session/SessionScreens.tsx#StartSessionScreen",
       "phase": "P2",
-      "status": "routed-placeholder",
+      "status": "implemented",
       "apis": [
-        "POST/GET/PATCH /sessions/ (Part 2)"
+        "GET /parking/areas/{id}/",
+        "POST /sessions/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api:tests/test_sessions.py; e2e:mobile/e2e/part2/e2e-004",
       "prototype_key": "startSession"
     },
     {
@@ -321,13 +322,13 @@
       "key": "session",
       "name": "Active session",
       "module": "sessions",
-      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "rn": "screens/session/SessionScreens.tsx#SessionScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST/GET/PATCH /sessions/ (Part 2)"
+        "GET /sessions/{id}/"
       ],
-      "tests": "none",
+      "tests": "api; e2e:mobile/e2e/part2/e2e-004/012",
       "prototype_key": "session"
     },
     {
@@ -335,13 +336,13 @@
       "key": "editSession",
       "name": "Edit session",
       "module": "sessions",
-      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "rn": "screens/session/SessionScreens.tsx#EditSessionScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST/GET/PATCH /sessions/ (Part 2)"
+        "PATCH /sessions/{id}/"
       ],
-      "tests": "none",
+      "tests": "api; e2e:mobile/e2e/part2/e2e-012",
       "prototype_key": "editSession"
     },
     {
@@ -349,13 +350,13 @@
       "key": "endSession",
       "name": "End session",
       "module": "sessions",
-      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "rn": "screens/session/SessionScreens.tsx#EndSessionScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST/GET/PATCH /sessions/ (Part 2)"
+        "POST /sessions/{id}/end/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api; e2e:mobile/e2e/part2/e2e-004",
       "prototype_key": "endSession"
     },
     {
@@ -363,13 +364,13 @@
       "key": "summary",
       "name": "Session summary",
       "module": "sessions",
-      "rn": "Part2Screen(feature=session) → Part 2 SessionScreens",
+      "rn": "screens/session/SessionScreens.tsx#SessionSummaryScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST/GET/PATCH /sessions/ (Part 2)"
+        "GET /sessions/{id}/summary/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api",
       "prototype_key": "summary"
     },
     {
@@ -377,13 +378,13 @@
       "key": "rType",
       "name": "Report type",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportTypeScreen",
       "phase": "P2",
-      "status": "routed-placeholder",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "GET /parking/areas/{id}/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx",
       "prototype_key": "rType"
     },
     {
@@ -391,13 +392,11 @@
       "key": "rLoc",
       "name": "Report location",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportLocationScreen",
       "phase": "P2",
-      "status": "not-started",
-      "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
-      ],
-      "tests": "none",
+      "status": "implemented",
+      "apis": [],
+      "tests": "e2e:mobile/e2e/part2/e2e-005",
       "prototype_key": "rLoc"
     },
     {
@@ -405,13 +404,13 @@
       "key": "rDetails",
       "name": "Report details",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportDetailsScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "device: camera/library"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx",
       "prototype_key": "rDetails"
     },
     {
@@ -419,13 +418,14 @@
       "key": "rReview",
       "name": "Report review",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportReviewScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "POST /reports/",
+        "POST /reports/{id}/attachments/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api:tests/test_reports.py",
       "prototype_key": "rReview"
     },
     {
@@ -433,13 +433,13 @@
       "key": "rSuccess",
       "name": "Report submitted",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportSuccessScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "GET /reports/{id}/"
       ],
-      "tests": "none",
+      "tests": "e2e:mobile/e2e/part2/e2e-005",
       "prototype_key": "rSuccess"
     },
     {
@@ -447,13 +447,13 @@
       "key": "myReports",
       "name": "My reports",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#MyReportsScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "GET /reports/mine/"
       ],
-      "tests": "none",
+      "tests": "e2e:mobile/e2e/part2/e2e-005",
       "prototype_key": "myReports"
     },
     {
@@ -461,13 +461,14 @@
       "key": "reportDetail",
       "name": "Report detail & appeal",
       "module": "community",
-      "rn": "Part2Screen(feature=report) → Part 2 ReportFlow",
+      "rn": "screens/report/ReportScreens.tsx#ReportDetailScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /reports/, GET /reports/mine/ (Part 2)"
+        "GET /reports/{id}/",
+        "POST /reports/{id}/appeals/"
       ],
-      "tests": "none",
+      "tests": "api; e2e:mobile/e2e/part2/e2e-005",
       "prototype_key": "reportDetail"
     },
     {
@@ -475,13 +476,15 @@
       "key": "saved",
       "name": "Saved",
       "module": "saved",
-      "rn": "screens/profile/TabScreens.tsx#SavedScreen",
+      "rn": "screens/account/AccountScreens.tsx#SavedScreen",
       "phase": "P2",
-      "status": "partial",
+      "status": "implemented",
       "apis": [
-        "(Part 2) /saved/"
+        "GET/PATCH/DELETE /saved/locations/",
+        "GET /saved/destinations/",
+        "GET/DELETE /searches/recent/"
       ],
-      "tests": "manual",
+      "tests": "unit:__tests__/part2.test.tsx; api; e2e:mobile/e2e/part2/e2e-007",
       "prototype_key": "saved"
     },
     {
@@ -489,11 +492,13 @@
       "key": "activity",
       "name": "Activity",
       "module": "sessions",
-      "rn": "screens/profile/TabScreens.tsx#ActivityScreen",
+      "rn": "screens/account/AccountScreens.tsx#ActivityScreen",
       "phase": "P2",
-      "status": "partial",
+      "status": "implemented",
       "apis": [
-        "(Part 2)"
+        "GET /sessions/active/",
+        "GET /community/me/",
+        "GET /notifications/"
       ],
       "tests": "manual",
       "prototype_key": "activity"
@@ -503,13 +508,15 @@
       "key": "notifs",
       "name": "Notifications inbox",
       "module": "notifications",
-      "rn": "Part2Screen(feature=notifs)",
+      "rn": "screens/account/AccountScreens.tsx#NotificationsScreen",
       "phase": "P2",
-      "status": "routed-placeholder",
+      "status": "implemented",
       "apis": [
-        "(Part 2) /notifications/"
+        "GET /notifications/",
+        "POST /notifications/{id}/read/",
+        "POST /notifications/read-all/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api; e2e:mobile/e2e/part2/e2e-008",
       "prototype_key": "notifs"
     },
     {
@@ -517,13 +524,14 @@
       "key": "nprefs",
       "name": "Notification preferences",
       "module": "notifications",
-      "rn": "screens/onboarding/NotificationsIntroScreen.tsx (explanation only)",
+      "rn": "screens/account/AccountScreens.tsx#NotificationPrefsScreen",
       "phase": "P2",
-      "status": "partial",
+      "status": "implemented",
       "apis": [
-        "(Part 2)"
+        "GET/PATCH /notifications/preferences/",
+        "device: notification permission"
       ],
-      "tests": "manual",
+      "tests": "api",
       "prototype_key": "nprefs"
     },
     {
@@ -537,7 +545,8 @@
       "apis": [
         "GET /users/me/",
         "POST /auth/logout/",
-        "GET /health/"
+        "GET /health/",
+        "GET /config/"
       ],
       "tests": "manual",
       "prototype_key": "profile"
@@ -567,7 +576,7 @@
       "apis": [
         "GET/PATCH /users/me/preferences/"
       ],
-      "tests": "api:tests/test_auth.py",
+      "tests": "api:tests/test_auth.py; e2e:mobile/e2e/part2/e2e-009",
       "prototype_key": "pprefs"
     },
     {
@@ -575,25 +584,31 @@
       "key": "privacy",
       "name": "Privacy & permissions",
       "module": "privacy",
-      "rn": "screens/profile/SettingsScreens.tsx#PrivacyScreen",
-      "phase": "P1",
-      "status": "partial",
+      "rn": "screens/support/SupportScreens.tsx#PrivacyScreen (+PrivacyRequestsScreen)",
+      "phase": "P2",
+      "status": "implemented",
       "apis": [
-        "GET/PATCH /users/me/preferences/"
+        "GET/PATCH /privacy/consents/",
+        "POST /privacy/data-export/",
+        "GET /privacy/requests/",
+        "GET /privacy/requests/{id}/download/"
       ],
-      "tests": "manual",
+      "tests": "api:tests/test_support_privacy.py",
       "prototype_key": "privacy"
     },
     {
       "id": "SCR-042",
       "key": "help",
-      "name": "Help",
+      "name": "Help centre",
       "module": "support",
-      "rn": "screens/profile/SettingsScreens.tsx#HelpScreen",
-      "phase": "P1",
+      "rn": "screens/support/SupportScreens.tsx#HelpScreen (+HelpArticleScreen)",
+      "phase": "P2",
       "status": "implemented",
-      "apis": [],
-      "tests": "manual",
+      "apis": [
+        "GET /help/articles/",
+        "GET /help/articles/{id}/"
+      ],
+      "tests": "api",
       "prototype_key": "help"
     },
     {
@@ -601,13 +616,15 @@
       "key": "support",
       "name": "Contact support / guidance problem",
       "module": "support",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ContactSupportScreen (+SupportTickets/SupportTicket)",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "POST /support/tickets/ (Part 2)"
+        "POST /support/tickets/",
+        "GET /support/tickets/",
+        "POST /support/tickets/{id}/attachments/"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx; api",
       "prototype_key": "support"
     },
     {
@@ -615,13 +632,13 @@
       "key": "deleteAcct",
       "name": "Delete account",
       "module": "privacy",
-      "rn": "screens/profile/SettingsScreens.tsx#DeleteAccountScreen",
-      "phase": "P1",
+      "rn": "screens/support/SupportScreens.tsx#DeleteAccountScreen",
+      "phase": "P2",
       "status": "implemented",
       "apis": [
-        "DELETE /users/me/"
+        "POST /privacy/deletion-request/"
       ],
-      "tests": "api:tests/test_auth.py",
+      "tests": "api:tests/test_support_privacy.py",
       "prototype_key": "deleteAcct"
     },
     {
@@ -629,13 +646,15 @@
       "key": "zIntro",
       "name": "Z-Trigger intro",
       "module": "z-trigger",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ZTriggerScreen",
       "phase": "experimental",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(experimental)"
+        "GET /detection/config/",
+        "POST /events/park/",
+        "POST /events/park/{id}/confirm|dismiss/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "zIntro"
     },
     {
@@ -643,13 +662,15 @@
       "key": "zConsent",
       "name": "Z-Trigger consent",
       "module": "z-trigger",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ZTriggerScreen",
       "phase": "experimental",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(experimental)"
+        "GET /detection/config/",
+        "POST /events/park/",
+        "POST /events/park/{id}/confirm|dismiss/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "zConsent"
     },
     {
@@ -657,13 +678,15 @@
       "key": "zSetup",
       "name": "Z-Trigger setup",
       "module": "z-trigger",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ZTriggerScreen",
       "phase": "experimental",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(experimental)"
+        "GET /detection/config/",
+        "POST /events/park/",
+        "POST /events/park/{id}/confirm|dismiss/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "zSetup"
     },
     {
@@ -671,13 +694,15 @@
       "key": "zHome",
       "name": "Z-Trigger home",
       "module": "z-trigger",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ZTriggerScreen",
       "phase": "experimental",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(experimental)"
+        "GET /detection/config/",
+        "POST /events/park/",
+        "POST /events/park/{id}/confirm|dismiss/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "zHome"
     },
     {
@@ -685,13 +710,15 @@
       "key": "zEvent",
       "name": "Z-Trigger event",
       "module": "z-trigger",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ZEventScreen",
       "phase": "experimental",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(experimental)"
+        "GET /detection/config/",
+        "POST /events/park/",
+        "POST /events/park/{id}/confirm|dismiss/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "zEvent"
     },
     {
@@ -699,13 +726,14 @@
       "key": "scoutList",
       "name": "Scout tasks",
       "module": "scouts",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ScoutListScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(Part 2) /scouts/assignments/"
+        "GET /scouts/assignments/",
+        "POST /scouts/assignments/{id}/submit/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "scoutList"
     },
     {
@@ -713,13 +741,14 @@
       "key": "scoutTask",
       "name": "Scout task",
       "module": "scouts",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ScoutTaskScreen",
       "phase": "P2",
-      "status": "not-started",
+      "status": "implemented",
       "apis": [
-        "(Part 2) /scouts/assignments/"
+        "GET /scouts/assignments/",
+        "POST /scouts/assignments/{id}/submit/"
       ],
-      "tests": "none",
+      "tests": "api:tests/test_scouts_detection_flags.py",
       "prototype_key": "scoutTask"
     },
     {
@@ -727,13 +756,13 @@
       "key": "pro",
       "name": "Zpot Pro paywall",
       "module": "monetisation",
-      "rn": "—",
+      "rn": "screens/support/SupportScreens.tsx#ProScreen",
       "phase": "post-MVP",
-      "status": "not-started",
+      "status": "partial",
       "apis": [
-        "(post-MVP)"
+        "GET /config/ (flag pro)"
       ],
-      "tests": "none",
+      "tests": "unit:__tests__/part2.test.tsx",
       "prototype_key": "pro"
     },
     {
@@ -847,36 +876,36 @@
       "id": "OVL-004",
       "key": "saveGuest",
       "name": "Save as guest / create account",
-      "rn": "Part 2 (saving)",
-      "status": "not-started"
+      "rn": "screens/account/AccountScreens.tsx#useSaveLocation (sheet)",
+      "status": "implemented"
     },
     {
       "id": "OVL-005",
       "key": "notifPrime",
       "name": "Notification permission primer at session start",
-      "rn": "Part 2 (sessions)",
-      "status": "not-started"
+      "rn": "SessionScreens.tsx#StartSessionScreen (ConfirmDialog → real OS prompt)",
+      "status": "implemented"
     },
     {
       "id": "OVL-006",
       "key": "cancelReport",
       "name": "Discard report?",
-      "rn": "Part 2 (reports)",
-      "status": "not-started"
+      "rn": "ReportScreens.tsx#ReportReviewScreen (ConfirmDialog)",
+      "status": "implemented"
     },
     {
       "id": "OVL-007",
       "key": "rename",
       "name": "Rename saved place",
-      "rn": "Part 2 (saved)",
-      "status": "not-started"
+      "rn": "AccountScreens.tsx#SavedScreen (BottomSheet)",
+      "status": "implemented"
     },
     {
       "id": "OVL-008",
       "key": "removeConfirm",
       "name": "Remove saved place",
-      "rn": "Part 2 (saved)",
-      "status": "not-started"
+      "rn": "AccountScreens.tsx#SavedScreen (ConfirmDialog)",
+      "status": "implemented"
     },
     {
       "id": "OVL-009",
@@ -896,10 +925,9 @@
   "interactions": {
     "total_bindings": 390,
     "by_status": {
-      "implemented": 199,
-      "routed-placeholder": 77,
-      "not-started": 92,
-      "partial": 5,
+      "implemented": 299,
+      "not-started": 63,
+      "partial": 11,
       "dev-only": 17
     }
   },

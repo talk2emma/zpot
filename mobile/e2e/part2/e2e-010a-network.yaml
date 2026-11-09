@@ -1,0 +1,9 @@
+# E2E-010 (part A, API up) guest search → results. The runner then stops the API container.
+appId: pt.zpot.app
+---
+- runFlow: _common/guest.yaml
+- tapOn: { id: "explore-search" }
+- inputText: "Saldanha"
+- extendedWaitUntil: { visible: { id: "suggestion-saldanha" }, timeout: 10000 }
+- tapOn: { id: "suggestion-saldanha" }
+- extendedWaitUntil: { visible: { id: "results-count" }, timeout: 15000 }

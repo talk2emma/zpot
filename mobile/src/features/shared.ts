@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { type Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { checkNotifications, requestNotifications } from 'react-native-permissions';
+import { usePrefsStore } from '../store/prefsStore';
 import { useAuthStore } from '../store/authStore';
 import type { DraftPhoto } from '../store/reportDraftStore';
 
@@ -49,4 +51,29 @@ export async function pickPhoto(source: 'camera' | 'library'): Promise<PickResul
   } catch {
     return { error: 'failed' };
   }
+}
+
+/**
+ * Real OS notification permission prompt. Note: this only allows local display; remote push delivery still needs a
+ * configured provider (APNs/FCM), which this build does not have — reminders are always in the in-app inbox.
+ */
+export async function requestNotifPermission(): Promise<'granted' | 'denied'> {
+  try {
+    const { status } = await requestNotifications(['alert', 'sound', 'badge']);
+    const p = status === 'granted' || status === 'limited' ? 'granted' : 'denied';
+    usePrefsStore.getState().setNotifPermission(p);
+    return p;
+  } catch {
+    usePrefsStore.getState().setNotifPermission('denied');
+    return 'denied';
+  }
+}
+
+/** Re-reads the OS setting (user may have changed it in system settings). */
+export async function syncNotifPermission() {
+  try {
+    const { status } = await checkNotifications();
+    const p = status === 'granted' || status === 'limited' ? 'granted' : status === 'blocked' ? 'denied' : 'unknown';
+    usePrefsStore.getState().setNotifPermission(p);
+  } catch { /* keep the stored value */ }
 }

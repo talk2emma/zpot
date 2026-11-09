@@ -57,3 +57,5 @@ jest.mock('react-native-image-picker', () => ({
   launchCamera: jest.fn(async () => ({ assets: [{ uri: 'file:///tmp/sign.jpg', type: 'image/jpeg', fileName: 'sign.jpg', fileSize: 120000 }] })),
   launchImageLibrary: jest.fn(async () => ({ assets: [{ uri: 'file:///tmp/sign.jpg', type: 'image/jpeg', fileName: 'sign.jpg', fileSize: 120000 }] })),
 }));
+
+jest.mock('react-native-permissions', () => require('react-native-permissions/mock'));

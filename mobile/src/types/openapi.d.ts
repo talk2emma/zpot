@@ -2179,6 +2179,12 @@ export interface components {
             token: string;
             new_password: string;
         };
+        PasswordResetConfirmStatus: {
+            status: string;
+        };
+        PasswordResetStatus: {
+            status: string;
+        };
         PatchedConsentsPatchRequest: {
             terms?: boolean;
             privacy?: boolean;
@@ -2417,6 +2423,9 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        ResendVerificationStatus: {
+            status: string;
         };
         /** @description Owner/reviewer view. Never includes the reporter's identity or device location. */
         ReviewerReport: {
@@ -2925,12 +2934,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No response body */
             202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PasswordResetStatus"];
+                };
             };
         };
     };
@@ -2949,12 +2959,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PasswordResetConfirmStatus"];
+                };
             };
         };
     };
@@ -3017,12 +3028,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ResendVerificationStatus"];
+                };
             };
         };
     };

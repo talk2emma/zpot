@@ -1,0 +1,12 @@
+# Fresh install → English → manual location → continue as guest → Explore
+appId: pt.zpot.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil: { visible: { id: "language-screen" }, timeout: 20000 }
+- tapOn: { id: "lang-en" }
+- tapOn: { id: "language-continue" }
+- tapOn: { id: "welcome-find" }
+- tapOn: { id: "location-manual" }
+- tapOn: { id: "continue-as-guest" }
+- extendedWaitUntil: { visible: { id: "explore-screen" }, timeout: 10000 }

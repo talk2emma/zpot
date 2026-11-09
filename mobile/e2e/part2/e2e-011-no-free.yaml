@@ -1,0 +1,17 @@
+# E2E-011 Search with 5 min walk → no free parking → widen walking distance → new results
+appId: pt.zpot.app
+---
+- runFlow: _common/guest.yaml
+- tapOn: { id: "chip-filters" }
+- tapOn: { id: "filter-walk-5" }
+- tapOn: { id: "filters-apply" }
+- tapOn: { id: "explore-search" }
+- inputText: "Hub Criativo"
+- extendedWaitUntil: { visible: { id: "suggestion-hub-criativo-do-beato" }, timeout: 10000 }
+- tapOn: { id: "suggestion-hub-criativo-do-beato" }
+- extendedWaitUntil: { visible: { id: "no-free-state" }, timeout: 15000 }
+- takeScreenshot: e2e011-no-free
+- tapOn: { id: "widen-walk" }
+- extendedWaitUntil: { visible: { id: "results-count" }, timeout: 15000 }
+- assertNotVisible: { id: "no-free-state" }
+- takeScreenshot: e2e011-widened

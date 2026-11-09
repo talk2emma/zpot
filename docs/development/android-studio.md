@@ -21,7 +21,7 @@ The app loads JavaScript from Metro on `localhost:8081`. Run `adb reverse tcp:80
 | App name | `res/values/strings.xml` | Zpot |
 | Icon | `res/mipmap-*` | Generated from the official logo: `node scripts/gen-icons.js` |
 | Splash | `res/values/styles.xml` (`BootTheme`), `drawable-*/bootsplash_logo.png` | `react-native-bootsplash` |
-| Permissions | `AndroidManifest.xml` | INTERNET, ACCESS_NETWORK_STATE, ACCESS_FINE/COARSE_LOCATION (foreground only) |
+| Permissions | `AndroidManifest.xml` (+ merged from libraries) | INTERNET, POST_NOTIFICATIONS (asked at session start); ACCESS_NETWORK_STATE and ACCESS_FINE/COARSE_LOCATION (foreground only) are merged from NetInfo/geolocation. No CAMERA permission: photos use the system camera/picker intent. |
 | Deep links | `AndroidManifest.xml` | `zpot://` intent filter |
 | Navigation hand-off | `<queries>` | `google.navigation`, `waze`, `geo`, `https` |
 | Cleartext HTTP | `usesCleartextTraffic` placeholder | Enabled for debug builds only (local API) |

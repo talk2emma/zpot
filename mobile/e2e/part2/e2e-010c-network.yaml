@@ -1,0 +1,6 @@
+# E2E-010 (part C, API restored) retry → results
+appId: pt.zpot.app
+---
+- tapOn: { id: "results-error-retry" }
+- extendedWaitUntil: { visible: { id: "results-count" }, timeout: 30000 }
+- takeScreenshot: e2e010-recovered

@@ -10,7 +10,7 @@ import {
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
-import { fmtDur } from '../../features/shared';
+import { fmtDur, requestNotifPermission, syncNotifPermission } from '../../features/shared';
 import { qk, useActiveSession, useAuthed, useContributions, useFeatures, useHasRole, useNotifications } from '../../hooks/useAccount';
 import type { RootScreenProps } from '../../navigation/types';
 import { notificationsApi, savedApi } from '../../services/api';
@@ -249,13 +249,19 @@ export function ContributionsScreen({ navigation }: RootScreenProps<'Contributio
   );
 }
 
-function openTarget(n: AppNotification, navigate: (r: string, p?: object) => void) {
-  const tg = (n.target ?? {}) as { kind?: string; id?: string | number };
-  if (tg.kind === 'session' && tg.id) navigate('Session', { id: String(tg.id) });
-  else if (tg.kind === 'report' && tg.id) navigate('ReportDetail', { id: String(tg.id) });
-  else if (tg.kind === 'support_ticket' && tg.id) navigate('SupportTicket', { id: String(tg.id) });
-  else if (tg.kind === 'privacy_request') navigate('PrivacyRequests');
-  else if (tg.kind === 'parking_area' && tg.id) navigate('ParkingDetails', { id: Number(tg.id) });
+/** Server targets are `{route, id?}`; only these routes may be opened from a notification. */
+const TARGET_ROUTES: Record<string, (id?: string) => [string, object | undefined] | null> = {
+  Session: id => (id ? ['Session', { id }] : null),
+  ReportDetail: id => (id ? ['ReportDetail', { id }] : null),
+  SupportTicket: id => (id ? ['SupportTicket', { id }] : null),
+  PrivacyRequests: () => ['PrivacyRequests', undefined],
+  ParkingDetails: id => (id ? ['ParkingDetails', { id: Number(id) }] : null),
+};
+
+export function openTarget(n: AppNotification, navigate: (r: string, p?: object) => void) {
+  const tg = (n.target ?? {}) as { route?: string; id?: string | number };
+  const dest = tg.route ? TARGET_ROUTES[tg.route]?.(tg.id != null ? String(tg.id) : undefined) : null;
+  if (dest) navigate(dest[0], dest[1]);
   else navigate('NotificationDetail', { id: n.id });
 }
 
@@ -321,8 +327,8 @@ export function NotificationPrefsScreen({ navigation }: RootScreenProps<'Notific
   const { t } = useTranslation();
   const qc = useQueryClient();
   const perm = usePrefsStore(s => s.notifPermission);
-  const setPerm = usePrefsStore(s => s.setNotifPermission);
   const q = useQuery({ queryKey: ['notif-prefs'], queryFn: notificationsApi.prefs });
+  React.useEffect(() => { void syncNotifPermission(); }, []);
   const update = useMutation({ mutationFn: notificationsApi.updatePrefs, onSuccess: d => qc.setQueryData(['notif-prefs'], d) });
   const p = q.data;
   return (
@@ -331,7 +337,7 @@ export function NotificationPrefsScreen({ navigation }: RootScreenProps<'Notific
       <ListRow icon="bell" label={t('notif.permission')} testID="notif-permission"
         sub={perm === 'granted' ? t('notif.allowed') : perm === 'denied' ? t('notif.blocked') : t('notif.notAsked')}
         right={perm === 'denied' ? <ZpotButton variant="small" label={t('notif.openSettings')} onPress={() => void Linking.openSettings()} />
-          : perm === 'unknown' ? <ZpotButton variant="small" label={t('notif.allow')} onPress={() => setPerm('granted')} testID="notif-allow" /> : null} />
+          : perm === 'unknown' ? <ZpotButton variant="small" label={t('notif.allow')} onPress={() => void requestNotifPermission()} testID="notif-allow" /> : null} />
       {!p ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />) : (
         <>
           <Toggle value label={t('notif.restriction')} sub={t('notif.restrictionSub')} onValueChange={() => undefined} disabled testID="pref-restriction" />

@@ -1,0 +1,27 @@
+# E2E-005 Parking details → report problem → type → confirm location → submit → report history
+appId: pt.zpot.app
+env: { AREA: "2" }
+---
+- runFlow: _common/signin.yaml
+- runFlow: _common/open-area.yaml
+- scrollUntilVisible: { element: { id: "details-report" }, direction: DOWN }
+- tapOn: { id: "details-report" }
+- tapOn: { id: "report-type-incorrect_rule" }
+- extendedWaitUntil: { visible: { id: "report-location-screen" }, timeout: 10000 }
+- tapOn: { id: "nudge-up" }
+- assertVisible: { id: "report-moved" }
+- tapOn: { id: "report-location-confirm" }
+- tapOn: { id: "detail-issue-hours" }
+- tapOn: { id: "detail-description" }
+- inputText: "E2E paid hours on the sign differ from the app"
+- tapOn: { text: "Add details" }
+- tapOn: { id: "report-details-next" }
+- takeScreenshot: e2e005-review
+- tapOn: { id: "report-submit" }
+- extendedWaitUntil: { visible: { id: "report-reference" }, timeout: 15000 }
+- takeScreenshot: e2e005-success
+- tapOn: { id: "report-success-mine" }
+- tapOn: { text: "Parking information is incorrect" }
+- extendedWaitUntil: { visible: { id: "report-detail-screen" }, timeout: 10000 }
+- assertVisible: { text: "Submitted" }
+- takeScreenshot: e2e005-history

@@ -1,0 +1,15 @@
+# E2E-009 Profile → update preference → leave → return (and relaunch) → persisted
+appId: pt.zpot.app
+---
+- runFlow: _common/signin.yaml
+- tapOn: { id: "profile-prefs" }
+- tapOn: { id: "pref-walk-15" }
+- tapOn: { id: "header-back" }
+- tapOn: { id: "profile-prefs" }
+- assertVisible: { id: "pref-walk-15", selected: true }
+- launchApp: { clearState: false, stopApp: true }
+- tapOn: { id: "tab-profile" }
+- tapOn: { id: "profile-prefs" }
+- assertVisible: { id: "pref-walk-15", selected: true }
+- takeScreenshot: e2e009-persisted
+- tapOn: { id: "pref-walk-10" }

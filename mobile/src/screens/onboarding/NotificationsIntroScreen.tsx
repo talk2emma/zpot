@@ -5,7 +5,7 @@ import { Icon, Screen, ScreenHeader, Title, ZpotButton } from '../../components/
 import type { RootScreenProps } from '../../navigation/types';
 import { palette, typography, useTheme } from '../../theme';
 
-/** Contextual explanation only — the OS permission prompt is deferred to session start (Part 2). */
+/** Contextual explanation only — the OS permission prompt is deferred to session start (StartSession primer). */
 export function NotificationsIntroScreen({ navigation }: RootScreenProps<'NotificationsIntro'>) {
   const { t } = useTranslation();
   const { colors } = useTheme();

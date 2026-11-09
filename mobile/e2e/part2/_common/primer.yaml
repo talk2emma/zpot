@@ -1,0 +1,3 @@
+appId: pt.zpot.app
+---
+- tapOn: { id: "notif-prime-cancel", optional: true }

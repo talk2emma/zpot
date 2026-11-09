@@ -1,0 +1,29 @@
+# E2E-004 Find parking → start session → edit departure → reminder → end → summary
+appId: pt.zpot.app
+env: { AREA: "1" }
+---
+- runFlow: _common/signin.yaml
+- runFlow: _common/open-area.yaml
+- tapOn: { id: "details-parked" }
+- extendedWaitUntil: { visible: { id: "start-session-area" }, timeout: 15000 }
+- tapOn: { id: "reminder-30" }
+- takeScreenshot: e2e004-start
+- tapOn: { id: "start-session-submit" }
+- runFlow: _common/primer.yaml
+- extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 15000 }
+- assertVisible: { text: ".*30 min before.*" }
+- takeScreenshot: e2e004-active
+- tapOn: { id: "session-edit" }
+- tapOn: { id: "edit-session-duration-minus" }
+- tapOn: { id: "edit-session-save" }
+- extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 10000 }
+- tapOn: { id: "session-end" }
+- tapOn: { id: "end-session-cost" }
+- inputText: "1.50"
+- tapOn: { text: "Parked for.*" }
+- tapOn: { id: "end-outcome-easy" }
+- tapOn: { id: "end-session-confirm" }
+- extendedWaitUntil: { visible: { id: "session-summary-screen" }, timeout: 15000 }
+- assertVisible: { text: ".*1[.,]50.*" }
+- takeScreenshot: e2e004-summary
+- tapOn: { id: "session-summary-done" }

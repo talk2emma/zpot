@@ -49,6 +49,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Zpot uses the camera only when you choose to add a photo to a parking report or support request.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Zpot opens your photo library only when you choose a photo for a parking report or support request.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Zpot uses your location while you use the app to show parking near you and walking times. Searching a destination works without it.</string>
 	<key>RCTNewArchEnabled</key>

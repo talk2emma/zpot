@@ -1,0 +1,27 @@
+# E2E-002 Launch → deny location → manual search → results → details
+appId: pt.zpot.app
+---
+- runFlow:
+    when: { platform: iOS }
+    commands: [ { launchApp: { clearState: true, permissions: { location: never } } } ]
+- runFlow:
+    when: { platform: Android }
+    commands: [ { launchApp: { clearState: true, permissions: { location: deny } } } ]
+- extendedWaitUntil: { visible: { id: "language-screen" }, timeout: 20000 }
+- tapOn: { id: "lang-en" }
+- tapOn: { id: "language-continue" }
+- tapOn: { id: "welcome-find" }
+- tapOn: { id: "location-enable" }
+- tapOn: { text: "Don.t [Aa]llow", optional: true }
+- extendedWaitUntil: { visible: { id: "location-outcome-screen" }, timeout: 10000 }
+- takeScreenshot: e2e002-denied
+- tapOn: { id: "location-outcome-continue" }
+- tapOn: { id: "continue-as-guest" }
+- tapOn: { id: "explore-search" }
+- inputText: "Campo Pequeno"
+- extendedWaitUntil: { visible: { id: "suggestion-campo-pequeno" }, timeout: 10000 }
+- tapOn: { id: "suggestion-campo-pequeno" }
+- extendedWaitUntil: { visible: { id: "results-count" }, timeout: 15000 }
+- tapOn: { text: "Recommended.*" }
+- assertVisible: { id: "details-name" }
+- takeScreenshot: e2e002-details

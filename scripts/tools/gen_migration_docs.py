@@ -64,44 +64,65 @@ screen("navPick","SCR-018","Navigate with","Choose Apple Maps / Google Maps / Wa
 screen("handoff","SCR-019","Simulated hand-off","Prototype stand-in for the external maps app","navigation","(real external app)","P1","implemented",[],"manual","Replaced by the real deep link to the maps app.",entry="navPick",exit_="navReturn")
 screen("navReturn","SCR-020","Welcome back","Outcome after navigation (parked / no space / another / wrong info)","navigation","screens/parking/NavigationReturnScreen.tsx","P1","partial",["GET /parking/areas/{id}/"],"manual",
        "'I parked here' and 'information was wrong' route to Part 2 (sessions/reports).",entry="app returns to foreground after hand-off",exit_="explore | Part 2")
-screen("partner","SCR-021","Partner reservation","Partner booking (monetisation concept)","monetisation","—","post-MVP","not-started",["(future) partner API"],"none","Partner offer + disclosure shown read-only on details; booking flow deferred.")
-for key,sid,name in [("startSession","SCR-022","Start parking session"),("session","SCR-023","Active session"),("editSession","SCR-024","Edit session"),("endSession","SCR-025","End session"),("summary","SCR-026","Session summary")]:
-    screen(key,sid,name,"Parking session lifecycle with reminders","sessions","Part2Screen(feature=session) → Part 2 SessionScreens","P2","routed-placeholder" if key=="startSession" else "not-started",
-           ["POST/GET/PATCH /sessions/ (Part 2)"],"none","Entry points (details 'I parked here', navReturn) route to an explicit Part 2 screen.")
-for key,sid,name in [("rType","SCR-027","Report type"),("rLoc","SCR-028","Report location"),("rDetails","SCR-029","Report details"),("rReview","SCR-030","Report review"),("rSuccess","SCR-031","Report submitted"),("myReports","SCR-032","My reports"),("reportDetail","SCR-033","Report detail & appeal")]:
-    screen(key,sid,name,"Community reporting & review","community","Part2Screen(feature=report) → Part 2 ReportFlow","P2","routed-placeholder" if key=="rType" else "not-started",
-           ["POST /reports/, GET /reports/mine/ (Part 2)"],"none")
-screen("saved","SCR-034","Saved","Saved places + recent destinations","saved","screens/profile/TabScreens.tsx#SavedScreen","P2","partial",["(Part 2) /saved/"],"manual","Recent destinations implemented (device). Saved places sync is Part 2.")
-screen("activity","SCR-035","Activity","Active session, stats, reports, past sessions","sessions","screens/profile/TabScreens.tsx#ActivityScreen","P2","partial",["(Part 2)"],"manual","Tab exists with honest Part 2 notice.")
-screen("notifs","SCR-036","Notifications inbox","Reminders, rule changes, report updates","notifications","Part2Screen(feature=notifs)","P2","routed-placeholder",["(Part 2) /notifications/"],"none")
-screen("nprefs","SCR-037","Notification preferences","Per-category toggles + permission state","notifications","screens/onboarding/NotificationsIntroScreen.tsx (explanation only)","P2","partial",["(Part 2)"],"manual","Contextual explanation implemented; no permission prompt at launch (by design).")
-screen("profile","SCR-038","Profile","Account summary + settings hub","profile","screens/profile/ProfileScreen.tsx","P1","implemented",["GET /users/me/","POST /auth/logout/","GET /health/"],"manual",
-       "Pro/commute/vehicles/insights/scout/Z-Trigger rows not shown (post-MVP/flagged).")
+screen("partner","SCR-021","Partner reservation","Partner booking (monetisation concept)","monetisation","—","post-MVP","not-started",["(future) partner API"],"none","Partner offer + disclosure shown read-only on details; booking flow deferred (flag partners=off). No entry point in the app.")
+T_P2 = "__tests__/part2.test.tsx"; E = "e2e:mobile/e2e/part2/"
+SS = "screens/session/SessionScreens.tsx#"
+screen("startSession","SCR-022","Start parking session","Plan departure, see legal deadline, choose reminder","sessions",SS+"StartSessionScreen","P2","implemented",["GET /parking/areas/{id}/","POST /sessions/"],"unit:"+T_P2+"; api:tests/test_sessions.py; "+E+"e2e-004",
+       "Guests are sent to sign in and returned here (pendingReturn). 409 active/not-permitted explained.",entry="details 'I parked here'; navReturn; Z-Trigger confirm",exit_="session")
+screen("session","SCR-023","Active session","Time left, your plan vs legal deadline, cost, reminder, report","sessions",SS+"SessionScreen","P2","implemented",["GET /sessions/{id}/"],"api; "+E+"e2e-004/012",entry="start; activity card; notification; zpot://session/{id}",exit_="edit, end, report")
+screen("editSession","SCR-024","Edit session","Change planned departure/reminder; server re-checks rules","sessions",SS+"EditSessionScreen","P2","implemented",["PATCH /sessions/{id}/"],"api; "+E+"e2e-012","Warns before saving past the rule deadline; shows server warnings.")
+screen("endSession","SCR-025","End session","Share departure, outcome, optional cost","sessions",SS+"EndSessionScreen","P2","implemented",["POST /sessions/{id}/end/"],"unit:"+T_P2+"; api; "+E+"e2e-004")
+screen("summary","SCR-026","Session summary","Duration, rule, cost, honest saving estimate","sessions",SS+"SessionSummaryScreen","P2","implemented",["GET /sessions/{id}/summary/"],"unit:"+T_P2+"; api","No saving is shown unless the driver entered what they paid.")
+RS = "screens/report/ReportScreens.tsx#"
+for key,sid,name,comp,apis,tests in [("rType","SCR-027","Report type","ReportTypeScreen",["GET /parking/areas/{id}/"],"unit:"+T_P2),
+    ("rLoc","SCR-028","Report location","ReportLocationScreen",[],E+"e2e-005"),("rDetails","SCR-029","Report details","ReportDetailsScreen",["device: camera/library"],"unit:"+T_P2),
+    ("rReview","SCR-030","Report review","ReportReviewScreen",["POST /reports/","POST /reports/{id}/attachments/"],"unit:"+T_P2+"; api:tests/test_reports.py"),
+    ("rSuccess","SCR-031","Report submitted","ReportSuccessScreen",["GET /reports/{id}/"],E+"e2e-005"),("myReports","SCR-032","My reports","MyReportsScreen",["GET /reports/mine/"],E+"e2e-005"),
+    ("reportDetail","SCR-033","Report detail & appeal","ReportDetailScreen",["GET /reports/{id}/","POST /reports/{id}/appeals/"],"api; "+E+"e2e-005")]:
+    screen(key,sid,name,"Community reporting & review","community",RS+comp,"P2","implemented",apis,tests,
+           "Guests may only share availability (leaving/found/occupied); rule reports need an account. Draft persisted (offline-safe)." if key=="rType" else "")
+AS = "screens/account/AccountScreens.tsx#"
+screen("saved","SCR-034","Saved","Saved places (rule re-check), destinations, recents","saved",AS+"SavedScreen","P2","implemented",["GET/PATCH/DELETE /saved/locations/","GET /saved/destinations/","GET/DELETE /searches/recent/"],"unit:"+T_P2+"; api; "+E+"e2e-007",
+       "Guests: device-only, moved to the account on sign-in (POST /saved/locations/import/).")
+screen("activity","SCR-035","Activity","Active session, stats, history, reports, contributions","sessions",AS+"ActivityScreen","P2","implemented",["GET /sessions/active/","GET /community/me/","GET /notifications/"],"manual")
+screen("notifs","SCR-036","Notifications inbox","Reminders, rule changes, report updates","notifications",AS+"NotificationsScreen","P2","implemented",["GET /notifications/","POST /notifications/{id}/read/","POST /notifications/read-all/"],"unit:"+T_P2+"; api; "+E+"e2e-008",
+       "In-app inbox (polled). Remote push is not configured (no APNs/FCM credentials); delivery status is recorded honestly.")
+screen("nprefs","SCR-037","Notification preferences","Per-category toggles + OS permission state","notifications",AS+"NotificationPrefsScreen","P2","implemented",["GET/PATCH /notifications/preferences/","device: notification permission"],"api")
+screen("profile","SCR-038","Profile","Account summary + settings hub","profile","screens/profile/ProfileScreen.tsx","P1","implemented",["GET /users/me/","POST /auth/logout/","GET /health/","GET /config/"],"manual",
+       "Scout / Z-Trigger / Pro rows appear only when the role or server flag allows. Commute/vehicles/insights are post-MVP (no rows).")
 screen("acctMgmt","SCR-039","Account","Email, display name, delete","profile","screens/profile/SettingsScreens.tsx#AccountSettingsScreen","P1","implemented",["PATCH /users/me/"],"api:tests/test_auth.py")
-screen("pprefs","SCR-040","Parking preferences","Walk, free default, paid alternatives, permit, badge","profile","screens/profile/SettingsScreens.tsx#ParkingPreferencesScreen","P1","implemented",["GET/PATCH /users/me/preferences/"],"api:tests/test_auth.py",
+screen("pprefs","SCR-040","Parking preferences","Walk, free default, paid alternatives, permit, badge","profile","screens/profile/SettingsScreens.tsx#ParkingPreferencesScreen","P1","implemented",["GET/PATCH /users/me/preferences/"],"api:tests/test_auth.py; "+E+"e2e-009",
        "Local for guests; synced when signed in.")
-screen("privacy","SCR-041","Privacy & permissions","Location state, personalisation, analytics, delete","privacy","screens/profile/SettingsScreens.tsx#PrivacyScreen","P1","partial",["GET/PATCH /users/me/preferences/"],"manual",
-       "Data export request and personalised ads are Part 2/post-MVP.")
-screen("help","SCR-042","Help","FAQ","support","screens/profile/SettingsScreens.tsx#HelpScreen","P1","implemented",[],"manual")
-screen("support","SCR-043","Contact support / guidance problem","Support ticket form","support","—","P2","not-started",["POST /support/tickets/ (Part 2)"],"none")
-screen("deleteAcct","SCR-044","Delete account","Type DELETE to erase account (or device data for guests)","privacy","screens/profile/SettingsScreens.tsx#DeleteAccountScreen","P1","implemented",["DELETE /users/me/"],"api:tests/test_auth.py")
+SU = "screens/support/SupportScreens.tsx#"
+screen("privacy","SCR-041","Privacy & permissions","Permissions, consents ledger, export, requests, delete","privacy",SU+"PrivacyScreen (+PrivacyRequestsScreen)","P2","implemented",["GET/PATCH /privacy/consents/","POST /privacy/data-export/","GET /privacy/requests/","GET /privacy/requests/{id}/download/"],"api:tests/test_support_privacy.py",
+       "Supports GDPR rights; legal bases/retention pending legal review (stated in-app).")
+screen("help","SCR-042","Help centre","Bilingual articles from the API + support entries","support",SU+"HelpScreen (+HelpArticleScreen)","P2","implemented",["GET /help/articles/","GET /help/articles/{id}/"],"api")
+screen("support","SCR-043","Contact support / guidance problem","Support ticket form; my requests","support",SU+"ContactSupportScreen (+SupportTickets/SupportTicket)","P2","implemented",["POST /support/tickets/","GET /support/tickets/","POST /support/tickets/{id}/attachments/"],"unit:"+T_P2+"; api",
+       "Context attached only with explicit consent (server whitelist).")
+screen("deleteAcct","SCR-044","Delete account","Type DELETE to erase account (or device data for guests)","privacy",SU+"DeleteAccountScreen","P2","implemented",["POST /privacy/deletion-request/"],"api:tests/test_support_privacy.py",
+       "Reports are anonymised, the account deleted, audited.")
 for key,sid,name in [("zIntro","SCR-046","Z-Trigger intro"),("zConsent","SCR-047","Z-Trigger consent"),("zSetup","SCR-048","Z-Trigger setup"),("zHome","SCR-049","Z-Trigger home"),("zEvent","SCR-050","Z-Trigger event")]:
-    screen(key,sid,name,"Automatic parking detection (Bluetooth)","z-trigger","—","experimental","not-started",["(experimental)"],"none","Behind feature flag z_trigger; BRD: optional opt-in experiment, never required for launch.")
-for key,sid,name in [("scoutList","SCR-051","Scout tasks"),("scoutTask","SCR-052","Scout task")]:
-    screen(key,sid,name,"Field verification tasks for scouts","scouts","—","P2","not-started",["(Part 2) /scouts/assignments/"],"none")
-for key,sid,name in [("pro","SCR-053","Zpot Pro paywall"),("proWelcome","SCR-054","Pro welcome"),("manageSub","SCR-055","Manage subscription"),("cancelSub","SCR-056","Cancel subscription"),
+    screen(key,sid,name,"Automatic parking detection (Bluetooth)","z-trigger",SU+("ZEventScreen" if key=="zEvent" else "ZTriggerScreen"),"experimental","partial",
+           ["GET /detection/config/","POST /events/park/","POST /events/park/{id}/confirm|dismiss/"],"api:tests/test_scouts_detection_flags.py",
+           "Flag z_trigger=off by default (row hidden). Server workflow + consent + simulated event work; native Bluetooth detection is NOT implemented. Events are private (never public availability).")
+for key,sid,name,comp in [("scoutList","SCR-051","Scout tasks","ScoutListScreen"),("scoutTask","SCR-052","Scout task","ScoutTaskScreen")]:
+    screen(key,sid,name,"Field verification tasks for scouts","scouts",SU+comp,"P2","implemented",["GET /scouts/assignments/","POST /scouts/assignments/{id}/submit/"],"api:tests/test_scouts_detection_flags.py",
+           "Visible only to users with the scout role; approval happens in Django admin (reviewer).")
+screen("pro","SCR-053","Zpot Pro paywall","Preview of proposed Pro features","monetisation",SU+"ProScreen","post-MVP","partial",["GET /config/ (flag pro)"],"unit:"+T_P2,
+       "Informational preview only; purchase button disabled; no payment, no entitlement. Hidden while flag pro=off.")
+for key,sid,name in [("proWelcome","SCR-054","Pro welcome"),("manageSub","SCR-055","Manage subscription"),("cancelSub","SCR-056","Cancel subscription"),
                      ("commute","SCR-057","Commute planner"),("vehicles","SCR-058","Vehicles & permits"),("insights","SCR-059","Savings & history")]:
-    screen(key,sid,name,"Monetisation concept (prototype marks as concept)","monetisation","—","post-MVP","not-started",["(post-MVP)"],"none")
+    screen(key,sid,name,"Monetisation concept (prototype marks as concept)","monetisation","—","post-MVP","not-started",["(post-MVP)"],"none","No entry point in the app (no dead buttons); requires a real billing provider.")
 
 OVERLAYS = {
  "osLoc": ("OVL-001","Simulated OS location prompt","Replaced by the real OS permission dialog","implemented"),
  "layers": ("OVL-002","Map layers & legend","components/maps/LayersSheet.tsx","implemented"),
  "adWhy": ("OVL-003","Why this ad?","post-MVP (ads not shipped)","not-started"),
- "saveGuest": ("OVL-004","Save as guest / create account","Part 2 (saving)","not-started"),
- "notifPrime": ("OVL-005","Notification permission primer at session start","Part 2 (sessions)","not-started"),
- "cancelReport": ("OVL-006","Discard report?","Part 2 (reports)","not-started"),
- "rename": ("OVL-007","Rename saved place","Part 2 (saved)","not-started"),
- "removeConfirm": ("OVL-008","Remove saved place","Part 2 (saved)","not-started"),
+ "saveGuest": ("OVL-004","Save as guest / create account","screens/account/AccountScreens.tsx#useSaveLocation (sheet)","implemented"),
+ "notifPrime": ("OVL-005","Notification permission primer at session start","SessionScreens.tsx#StartSessionScreen (ConfirmDialog → real OS prompt)","implemented"),
+ "cancelReport": ("OVL-006","Discard report?","ReportScreens.tsx#ReportReviewScreen (ConfirmDialog)","implemented"),
+ "rename": ("OVL-007","Rename saved place","AccountScreens.tsx#SavedScreen (BottomSheet)","implemented"),
+ "removeConfirm": ("OVL-008","Remove saved place","AccountScreens.tsx#SavedScreen (ConfirmDialog)","implemented"),
  "signOut": ("OVL-009","Sign out confirm","components/common/BottomSheet.tsx#ConfirmDialog (ProfileScreen)","implemented"),
  "store": ("OVL-010","App-store purchase sheet","post-MVP","not-started"),
 }
@@ -116,14 +137,15 @@ hs("setEn setPt toWelcome toOnboard onbNext toLocPerm toLocPermFromMap askLoc to
 hs("togglePw register signIn resend verifyOk verifyExpired finishAuth toForgot forgotSend forgotLink forgotSave forgotDone", "implemented", "auth screens", "auth API")
 hs("toSearch toFilters toPlan quickFree toggleView toList retryMap retryNet openLayers zoomIn zoomOut recenter searchArea pd pm pu cycleSheet expandSheet clearSel widen showPaid resetFilters navSel openSel setQ clearQ useMyLocation hourMinus hourPlus durMinus durPlus plFree plPaid planApply fReset fFree fTimed fPaid fVer fAcc fApply toggleVerif share toNavPick arrive unavailable toExploreTab tabExplore tabSaved tabActivity tabProfile toLegal toHelp toPrivacy toLanguage toPprefs toAcctMgmt toDelete setDel doDelete askSignOut doSignOut ppFree ppAlt ppBadge saveName cycleLoc pvPers pvAna back stop closeOv",
    "implemented", "explore/search/plan/filters/details/profile", "parking/places API")
-hs("toNotifs toNprefs enableNotif npSession npRules npReports npNews", "routed-placeholder", "Part2(notifs) / NotificationsIntro", "Part 2")
-hs("toggleSave saveLocal saveWithAccount toRegisterFromSaved setRename doRename doRemove", "routed-placeholder", "Part2(save)", "Part 2 /saved/")
-hs("toStartSession sdMinus sdPlus startSessionGo notifAllow notifDeny toSession toEditSession edMinus edPlus edSave leaveByDeadline toEndSession endLeaving endCost endGo reportFromSession", "routed-placeholder", "Part2(session)", "Part 2 /sessions/")
+hs("toNotifs toNprefs enableNotif npSession npRules npReports npNews", "implemented", "Notifications / NotificationPrefs", "/notifications/")
+hs("toggleSave saveLocal saveWithAccount toRegisterFromSaved setRename doRename doRemove", "implemented", "useSaveLocation / SavedScreen", "/saved/locations/")
+hs("toStartSession sdMinus sdPlus startSessionGo notifAllow notifDeny toSession toEditSession edMinus edPlus edSave leaveByDeadline toEndSession endLeaving endCost endGo reportFromSession", "implemented", "SessionScreens", "/sessions/")
 hs("reportFromMap reportFromDetails reportGeneric infoNo toMyReports pinL pinR pinU pinD scopeSpot scopeSeg toRDetails rdConfirm rdDesc photoCam photoLib photoRemove toRReview submitReport askCancelReport discardReport openLastReport setAppeal sendAppeal vYes vNo vUnsure openVacSpot infoYes infoUnsure",
-   "routed-placeholder", "Part2(report)", "Part 2 /reports/")
-hs("toGuidance toSupport suDesc suShot suInclude suSend supportDone dataExport", "not-started", "Part 2 support/privacy", "Part 2")
-hs("toZ toZConsent zcBg zcBat zDecline toZSetup zFinish zToggle zSimulate zFail zConfirm zCorrect zDismiss zDisable zDelete", "not-started", "experimental (flagged)", "")
-hs("toScout scNotes scPhoto scSubmit", "not-started", "Part 2 scouts", "")
+   "implemented", "ReportScreens / VerificationPanel", "/reports/, /reports/{id}/verifications/")
+hs("toGuidance toSupport suDesc suShot suInclude suSend supportDone dataExport", "implemented", "ContactSupport / PrivacyScreen", "/support/tickets/, /privacy/data-export/")
+hs("toZ toZConsent zcBg zDecline toZSetup zSimulate zConfirm zDismiss", "partial", "ZTriggerScreen / ZEventScreen (flag z_trigger; no native detection)", "/detection/config/, /events/park/")
+hs("zcBat zFinish zToggle zFail zCorrect zDisable zDelete", "not-started", "experimental: needs native Bluetooth detection", "")
+hs("toScout scNotes scPhoto scSubmit", "implemented", "ScoutList / ScoutTask", "/scouts/assignments/")
 hs("toPro toProOrManage restore proStart storeCancel storeConfirm toCommuteFromWelcome switchPlan toCancelSub doCancelSub resubscribe toCommute toVehicles toInsights cmHourMinus cmHourPlus cmDurMinus cmDurPlus cmSave vhAdd insExport adWhy adHide adToPro adPrefs pvAds toPartner partnerGo",
    "not-started", "post-MVP monetisation", "")
 hs("adv5 adv15 adv60 devOffline devMapFail devDriving devRuleChange devReview devExpire devZ devScout devLang devRestart devReset devMonet devProReset passenger", "dev-only", "prototype controls panel (not shipped)", "")
@@ -195,7 +217,7 @@ def main():
         L.append(f"| {oid} | `{k}` | {name} | {rn} | **{st}** | {len(by_screen.get(k, []))} |")
     L.append("\n## Prototype-only controls\n\nThe artboard's *Prototype controls* panel (demo clock, journeys, world events, flags) "
              f"has {len(by_screen.get('dev-panel', []))} bindings. It simulates the world and is **not** part of the app; equivalents are "
-             "real (offline via NetInfo, map failure via MapLibre `onDidFailLoadingMap`, language in Profile) or Part 2.")
+             "real (offline via NetInfo, map failure via MapLibre `onDidFailLoadingMap`, language in Profile, rule changes via server re-evaluation, report review via Django admin).")
     open(os.path.join(DOCS, "migration/screen-inventory.md"), "w").write("\n".join(L) + "\n")
 
     # ---------------- interaction inventory
@@ -216,7 +238,7 @@ def main():
             if st == "partial": st = "implemented" if i["screen"] in ("explore", "saved") and i["handler"] in ("mk.select", "ex.rec.open", "c.open", "r.pick") else st
         if (i["overlay"] or i["screen"]) == "dev-panel": st, rn = "dev-only", "prototype controls"
         sv = S.get(i["screen"])
-        if sv and sv["status"] in ("not-started", "routed-placeholder") and st == "implemented" and name not in ("back", "stop", "closeOv"):
+        if sv and sv["status"] in ("not-started", "routed-placeholder", "partial") and st == "implemented" and sv["status"] != "partial" and name not in ("back", "stop", "closeOv"):
             st = sv["status"]
         summ[st] += 1
         L.append(f"| {n} | {i['overlay'] or i['screen']} | {i['element']} | {i['event']} | {i['label'].replace('|', '/')} | `{i['handler']}` | {rn} | {be or '—'} | {st} |")
@@ -235,7 +257,7 @@ def main():
     status_path = os.path.join(DOCS, "implementation-status.json")
     prev = json.load(open(status_path)) if os.path.exists(status_path) else {}
     data = {
-        "generated_at": gen, "part": 1, "git": {"branch": "main", "commit": commit, "uncommitted_changes": dirty},
+        "generated_at": gen, "part": 2, "git": {"branch": "main", "commit": commit, "uncommitted_changes": dirty},
         "status_vocabulary": ["implemented", "partial", "routed-placeholder", "not-started", "dev-only"],
         "screens": [{k: v[k] for k in ("id", "key", "name", "module", "rn", "phase", "status", "apis", "tests")} | {"prototype_key": v["key"]} for v in S.values()],
         "overlays": [{"id": oid, "key": k, "name": n, "rn": rn, "status": st} for k, (oid, n, rn, st) in OVERLAYS.items()],

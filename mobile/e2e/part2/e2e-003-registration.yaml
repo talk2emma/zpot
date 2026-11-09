@@ -1,0 +1,45 @@
+# E2E-003 Register → verify email (link read from Mailpit) → login → profile → logout
+appId: pt.zpot.app
+---
+- runScript: { file: scripts/new-email.js }
+- runFlow: _common/guest.yaml
+- tapOn: { id: "tab-profile" }
+- runFlow:                       # iOS keeps Keychain tokens across clearState: start signed out
+    when: { visible: { id: "profile-signout" } }
+    commands:
+      - tapOn: { id: "profile-signout" }
+      - tapOn: { id: "signout-dialog-confirm" }
+- tapOn: { id: "profile-signin" }
+- tapOn: { id: "signin-to-register" }
+- tapOn: { id: "register-email" }
+- inputText: ${output.email}
+- tapOn: { id: "register-password" }
+- inputText: ${PASSWORD}
+- tapOn: { id: "register-password2" }
+- inputText: ${PASSWORD}
+- tapOn: { text: "Create account", index: 0, optional: true }
+- tapOn: { id: "register-terms" }
+- tapOn: { id: "register-submit" }
+- tapOn: { text: "Not Now", optional: true }
+- extendedWaitUntil: { visible: { id: "verify-email-screen" }, timeout: 15000 }
+- runScript: { file: scripts/mailpit-token.js, env: { EMAIL: "${output.email}" } }
+- openLink: zpot://verify-email?token=${output.token}
+- tapOn: { text: "Open", optional: true }
+- extendedWaitUntil: { visible: { text: "Email verified" }, timeout: 15000 }
+- takeScreenshot: e2e003-verified
+- tapOn: { id: "verify-continue" }
+- tapOn: { id: "tab-profile" }
+- tapOn: { id: "profile-signout" }
+- tapOn: { id: "signout-dialog-confirm" }
+- tapOn: { id: "profile-signin" }
+- tapOn: { id: "signin-email" }
+- inputText: ${output.email}
+- tapOn: { id: "signin-password" }
+- inputText: ${PASSWORD}
+- tapOn: { id: "signin-submit" }
+- tapOn: { text: "Not Now", optional: true }
+- extendedWaitUntil: { visible: { id: "profile-signout" }, timeout: 15000 }
+- assertVisible: { text: "${output.email}" }
+- tapOn: { id: "profile-signout" }
+- tapOn: { id: "signout-dialog-confirm" }
+- assertVisible: { id: "profile-signin" }

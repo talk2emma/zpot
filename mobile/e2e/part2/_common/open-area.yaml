@@ -1,0 +1,6 @@
+# Opens parking details for ${AREA} through the app's deep link
+appId: pt.zpot.app
+---
+- openLink: zpot://parking/${AREA}
+- tapOn: { text: "Open", optional: true }
+- extendedWaitUntil: { visible: { id: "details-name" }, timeout: 15000 }
