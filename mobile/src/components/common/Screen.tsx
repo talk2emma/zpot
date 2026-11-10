@@ -29,15 +29,15 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const Body = scroll ? ScrollView : View;
-  // iOS keyboard avoidance. Every Zpot screen (full screen or page sheet) is anchored to the bottom of the display,
-  // so the overlap is the keyboard height. KeyboardAvoidingView and measureInWindow both mis-measure inside page
-  // sheets (coordinates are relative to the sheet), which let the keyboard cover footer buttons (found by E2E-005).
-  // Android relies on windowSoftInputMode=adjustResize.
+  // Keyboard avoidance. Every Zpot screen (full screen or page sheet) is anchored to the bottom of the display, so
+  // the overlap is the keyboard height. iOS: KeyboardAvoidingView and measureInWindow mis-measure inside page sheets
+  // (found by E2E-005). Android: with edge-to-edge (edgeToEdgeEnabled=true) the window no longer resizes, so
+  // adjustResize has no effect (found by the Android E2E run). Android only emits the "Did" events.
   const [kb, setKb] = useState(0);
   useEffect(() => {
-    if (Platform.OS !== 'ios') return undefined;
-    const show = Keyboard.addListener('keyboardWillShow', e => setKb(Math.round(e.endCoordinates.height)));
-    const hide = Keyboard.addListener('keyboardWillHide', () => setKb(0));
+    const ios = Platform.OS === 'ios';
+    const show = Keyboard.addListener(ios ? 'keyboardWillShow' : 'keyboardDidShow', e => setKb(Math.round(e.endCoordinates.height)));
+    const hide = Keyboard.addListener(ios ? 'keyboardWillHide' : 'keyboardDidHide', () => setKb(0));
     return () => { show.remove(); hide.remove(); };
   }, []);
   return (

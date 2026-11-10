@@ -7,6 +7,9 @@ appId: pt.zpot.app
 - runFlow:
     when: { platform: Android }
     commands: [ { launchApp: { clearState: true, permissions: { location: deny } } } ]
+- tapOn:                           # Android 17 debug builds only: React Native's dev manifest requests local-network
+    text: "Allow"                  # access (Metro). Release builds don't declare ACCESS_LOCAL_NETWORK.
+    optional: true
 - extendedWaitUntil: { visible: { id: "language-screen" }, timeout: 20000 }
 - tapOn: { id: "lang-en" }
 - tapOn: { id: "language-continue" }

@@ -53,6 +53,13 @@
 | M-22 | Low | Hard-coded user-visible strings and app version | Several | i18n keys (EN/PT parity 941/941); `APP.version` | i18n parity script ✓ | — |
 | UX-1 | Medium | (Found by E2E) the keyboard covered footer buttons in iOS sheet screens | `components/common/Screen.tsx` | `keyboardVerticalOffset` measured in window | E2E-005 | — |
 | UX-2 | Medium | (Found by E2E) Saved remove/rename on a network error: unhandled rejection, stuck dialog | `AccountScreens` | Error-safe actions | E2E-007 ✓ | — |
+| UX-1b | High | (Found by the Android E2E run) Under edge-to-edge (`edgeToEdgeEnabled=true`) the window doesn't resize, so `adjustResize` did nothing and **the keyboard hid Sign in, Create account, Review and every other footer button on Android** | `components/common/Screen.tsx` | Keyboard-height padding on both platforms (iOS `Will*`, Android `Did*` events); KeyboardAvoidingView removed (it also mis-measured in iOS sheets) | Android + iOS E2E | — |
+| NAV-1 | High | (Found by the Android E2E run) **No `zpot://` intent filter on Android**: email verification, password reset, shared parking links and notification deep links never opened the app on Android. The Android Studio guide wrongly said the filter existed | `android/app/src/main/AndroidManifest.xml` | VIEW + DEFAULT + BROWSABLE intent filter for `zpot` | `adb am start zpot://parking/1` → `Status: ok`; E2E | Universal/App Links (https) not configured (TD-19) |
+| UX-3 | Medium | (Found by E2E-003) After verifying the email, Continue went back into the completed sign-up form, and the pending journey was dropped before verification | `features/auth/useAuthActions.ts`, `screens/auth/VerifyEmailScreen.tsx` | Pending journey kept through verification; Continue resumes it (or the main tabs) | `auth.test.tsx` new test ✓; E2E-003 ✓ | — |
+
+## Investigated, not a defect
+
+* **"Allow Zpot to find… nearby devices" prompt on Android 17.** It comes from `ACCESS_LOCAL_NETWORK`, which only React Native's **debug** manifest declares, for the Metro dev server. Release builds don't request it. The E2E launch accepts it.
 
 ## E2E harness (not app defects)
 

@@ -23,6 +23,14 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+      <!-- zpot:// deep links (email verification, password reset, parking/session/report/notification links).
+           Was missing: links only opened the app on iOS (found by the Android E2E run). -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="zpot" />
+      </intent-filter>
     </activity>
   </application>
 </manifest>
