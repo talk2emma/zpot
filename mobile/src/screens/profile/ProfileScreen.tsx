@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Banner, ConfirmDialog, ListRow, Title, ZpotButton } from '../../components/common';
 import { toast } from '../../components/common/Toast';
+import { APP } from '../../constants/app';
 import { ENV } from '../../constants/env';
 import { systemApi } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
@@ -61,7 +62,7 @@ export function ProfileScreen() {
       <ListRow icon="file" label={t('profile.legal')} onPress={() => navigation.navigate('Legal')} testID="profile-legal" />
       {authed ? <ListRow icon="logout" label={t('profile.signOut')} onPress={() => setConfirm(true)} testID="profile-signout" /> : null}
       <Text style={[typography.small, styles.ver, { color: colors.textSubtle }]} testID="profile-version">
-        {t('profile.version', { v: '0.2.0 (Part 2)', api: health.data ? health.data.version : health.isError ? 'unreachable' : '…' })}
+        {t('profile.version', { v: APP.version, api: health.data ? health.data.version : health.isError ? 'unreachable' : '…' })}
         {ENV.showDevTools ? `\n${ENV.apiBaseUrl}` : ''}
       </Text>
       <ConfirmDialog visible={confirm} title={t('profile.signOutQ')} body={t('profile.signOutBody')} confirmLabel={t('profile.signOut')}

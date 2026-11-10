@@ -10,7 +10,6 @@ import type { ZpotMapHandle, ZpotMapProps } from './types';
  * credentials that are not available in this environment; MapLibre Native (same rendering model, open
  * source, keyless tiles) is the active implementation. See docs/development/maps.md to enable Mapbox.
  */
-export const activeMapProvider = 'maplibre' as const;
 const mapboxRequestedButUnavailable = ENV.mapProvider === 'mapbox';
 
 export const ZpotMap = forwardRef<ZpotMapHandle, ZpotMapProps>(function ZpotMap(props, ref) {

@@ -16,3 +16,4 @@ export { privacyApi } from './privacy.api';
 export { scoutsApi } from './scouts.api';
 export { detectionApi } from './detection.api';
 export * from './planning.api';
+export * from './paging';

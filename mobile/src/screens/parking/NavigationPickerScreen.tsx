@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { AppState, type NativeEventSubscription, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Banner, Icon, Screen, ScreenHeader } from '../../components/common';
 import type { RootScreenProps } from '../../navigation/types';
@@ -23,7 +23,15 @@ export function NavigationPickerScreen({ navigation, route }: RootScreenProps<'N
   const setHandoff = useSearchStore(s => s.setHandoff);
   const select = useSearchStore(s => s.select);
 
-  useEffect(() => { void availableApps(target).then(setInstalled); }, [latitude, longitude]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    let live = true;
+    void availableApps(target).then(a => { if (live) setInstalled(a); });
+    return () => { live = false; };
+  }, [latitude, longitude]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // One hand-off listener at a time, removed on unmount (M-06).
+  const returnSub = useRef<NativeEventSubscription | null>(null);
+  useEffect(() => () => returnSub.current?.remove(), []);
 
   const go = async (app: NavApp) => {
     setErr(null);
@@ -32,9 +40,13 @@ export function NavigationPickerScreen({ navigation, route }: RootScreenProps<'N
     setHandoff({ areaId: id, app, at: new Date().toISOString() });
     const ok = await openNavigation(app, target);
     if (!ok) { setHandoff(null); setErr(t('nav.openFailed', { app: t(`nav.${app}`) })); return; }
-    // When the user comes back to Zpot, show the "Welcome back" outcome screen.
-    const sub = AppState.addEventListener('change', s => {
-      if (s === 'active') { sub.remove(); navigation.replace('NavigationReturn'); }
+    // When the user comes back to Zpot, show the "Welcome back" outcome screen. Require a real trip to the
+    // background first: a system "Open in…?" prompt only makes the app briefly inactive.
+    returnSub.current?.remove();
+    let left = false;
+    returnSub.current = AppState.addEventListener('change', st => {
+      if (st === 'background') left = true;
+      else if (st === 'active' && left) { returnSub.current?.remove(); returnSub.current = null; navigation.replace('NavigationReturn'); }
     });
   };
 

@@ -61,8 +61,5 @@ export function formatDate(iso: string, locale: string): string {
   }
 }
 
-export function minutesBetween(a: string, b: string) {
-  return Math.round((new Date(b).getTime() - new Date(a).getTime()) / 60000);
-}
 
 export function hhmm(hour: number) { return `${pad(hour)}:00`; }

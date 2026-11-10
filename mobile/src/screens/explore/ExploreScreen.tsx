@@ -26,7 +26,7 @@ import { ExploreSheet, type SheetSnap } from './ExploreSheet';
 import { ResultsPanel } from './ResultsPanel';
 import { SelectedSpotPanel } from './SelectedSpotPanel';
 import { useNearbyVacancies, VacancyCard, vacancyMarkers } from './VerificationPanel';
-import { useNotifications } from '../../hooks/useAccount';
+import { useAuthed, useNotifications } from '../../hooks/useAccount';
 import type { Observation } from '../../types/contracts';
 
 export function ExploreScreen() {
@@ -49,14 +49,22 @@ export function ExploreScreen() {
   const [layersOpen, setLayersOpen] = useState(false);
   const [mapFailed, setMapFailed] = useState(false);
   const [vacancy, setVacancy] = useState<Observation | null>(null);
-  const unread = useNotifications().data?.unread_count ?? 0;
+  const authed = useAuthed();
+  const notifs = useNotifications();
+  const unread = authed ? notifs.data?.unread_count ?? 0 : 0;
   const [panCenter, setPanCenter] = useState<RegionChange['center'] | null>(null);
 
   // Device position (only when permitted). Declined location never blocks guest use.
   useFocusEffect(useCallback(() => {
     if (!locOn) { setOrigin(null); return; }
     let live = true;
-    getCurrentPosition().then(p => live && setOrigin({ latitude: p.latitude, longitude: p.longitude })).catch(() => undefined);
+    getCurrentPosition().then(p => {
+      if (!live) return;
+      // Ignore GPS jitter: a new origin re-keys searches and recentres the map, so only accept a real move.
+      const prev = useSearchStore.getState().origin;
+      if (prev && haversineMeters(prev, p) < 50) return;
+      setOrigin({ latitude: p.latitude, longitude: p.longitude });
+    }).catch(() => undefined);
     return () => { live = false; };
   }, [locOn, setOrigin]));
 
@@ -80,7 +88,8 @@ export function ExploreScreen() {
   // Map/list sync: fly to a selection made outside the map (list "View on map", details screen)
   const lastFlown = useRef<number | null>(null);
   useEffect(() => {
-    if (selectedId === null || lastFlown.current === selectedId) return;
+    if (selectedId === null) { lastFlown.current = null; return; }
+    if (lastFlown.current === selectedId) return;
     const f = features.find(x => x.properties.id === selectedId);
     if (f) { lastFlown.current = selectedId; map.current?.flyTo({ latitude: f.properties.latitude, longitude: f.properties.longitude }); }
   }, [selectedId, features]);

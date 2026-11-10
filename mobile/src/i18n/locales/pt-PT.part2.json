@@ -556,6 +556,12 @@
       "Sex",
       "Sáb",
       "Dom"
-    ]
+    ],
+    "north": "Mover o pino para norte",
+    "south": "Mover o pino para sul",
+    "east": "Mover o pino para este",
+    "west": "Mover o pino para oeste",
+    "minus": "{{n}} minutos mais cedo",
+    "plus": "{{n}} minutos mais tarde"
   }
 }

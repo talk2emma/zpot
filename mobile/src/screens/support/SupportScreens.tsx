@@ -8,7 +8,9 @@ import {
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { PhotoField } from '../../components/forms/PhotoField';
-import { useAuthed, useFeatures } from '../../hooks/useAccount';
+import { APP } from '../../constants/app';
+import { useAuthed } from '../../hooks/useAccount';
+import { usePaged } from '../../hooks/usePaged';
 import type { RootScreenProps } from '../../navigation/types';
 import { authApi, detectionApi, parkingApi, privacyApi, scoutsApi, supportApi } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
@@ -79,7 +81,7 @@ export function ContactSupportScreen({ navigation, route }: RootScreenProps<'Con
     mutationFn: async () => {
       const ticket = await supportApi.create({ category: category!, description: desc.trim(), contact_email: authed ? undefined : email.trim(),
         include_context: ctx, context: ctx ? { area_id: areaId ?? selected ?? undefined, search: destination?.name, platform: Platform.OS,
-          language: i18n.language, app_version: '0.2.0' } : {} });
+          language: i18n.language, app_version: APP.version } : {} });
       if (shot) await supportApi.attach(ticket.id, shot).catch(() => undefined);
       return ticket;
     },
@@ -117,8 +119,8 @@ export function ContactSupportScreen({ navigation, route }: RootScreenProps<'Con
 
 export function SupportTicketsScreen({ navigation }: RootScreenProps<'SupportTickets'>) {
   const { t, i18n } = useTranslation();
-  const q = useQuery({ queryKey: ['tickets'], queryFn: supportApi.tickets });
-  const items = q.data?.results ?? [];
+  const q = usePaged(['tickets'], supportApi.tickets);
+  const items = q.items;
   return (
     <Screen testID="support-tickets-screen" header={<ScreenHeader title={t('support.myRequests')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState skeleton={2} /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
@@ -127,6 +129,8 @@ export function SupportTicketsScreen({ navigation }: RootScreenProps<'SupportTic
         <ListRow key={tk.id} icon="mail" label={t(`support.t_${tk.category}`)} sub={`${tk.reference} · ${formatDate(tk.created_at, i18n.language)}`}
           value={t(`support.status_${tk.status}`)} onPress={() => navigation.navigate('SupportTicket', { id: tk.id })} testID={`ticket-${tk.reference}`} />
       ))}
+      {q.hasNextPage ? <ZpotButton variant="small" label={t('common.loadMore')} loading={q.isFetchingNextPage}
+        onPress={() => void q.fetchNextPage()} testID="tickets-load-more" /> : null}
     </Screen>
   );
 }
@@ -198,7 +202,9 @@ export function PrivacyScreen({ navigation }: RootScreenProps<'Privacy'>) {
 
 export function PrivacyRequestsScreen({ navigation }: RootScreenProps<'PrivacyRequests'>) {
   const { t, i18n } = useTranslation();
-  const q = useQuery({ queryKey: ['privacy-requests'], queryFn: privacyApi.requests, refetchInterval: 10_000 });
+  // Poll only while a request is still being prepared.
+  const q = useQuery({ queryKey: ['privacy-requests'], queryFn: privacyApi.requests,
+    refetchInterval: x => ((x.state.data ?? []).some(r => r.status === 'received' || r.status === 'processing') ? 10_000 : false) });
   const share = async (id: string, ref: string) => {
     try { const text = await privacyApi.download(id); await Share.share({ title: `zpot-export-${ref}.json`, message: text }); }
     catch { toast(t('common.somethingWrong')); }
@@ -401,7 +407,6 @@ export function ZEventScreen({ navigation, route }: RootScreenProps<'ZEvent'>) {
 export function ProScreen({ navigation }: RootScreenProps<'Pro'>) {
   const { t } = useTranslation();
   const authed = useAuthed();
-  const { on } = useFeatures();
   return (
     <Screen testID="pro-screen" header={<ScreenHeader title={t('pro.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}
       footer={<ZpotButton label={t('pro.cta')} disabled testID="pro-cta" />}>
@@ -411,7 +416,6 @@ export function ProScreen({ navigation }: RootScreenProps<'Pro'>) {
       <SummaryRow k={t('pro.monthly')} v="" />
       <Banner tone="warn" testID="pro-unavailable">{t('pro.unavailable')}</Banner>
       {authed ? <ZpotButton variant="tertiary" label={t('sub.restore')} onPress={() => navigation.navigate('ManageSubscription')} testID="pro-restore" /> : null}
-      {!on('pro') ? <Text style={[typography.small, { color: palette.slate500 }]}>feature flag: pro = off</Text> : null}
     </Screen>
   );
 }

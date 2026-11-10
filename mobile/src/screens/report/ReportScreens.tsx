@@ -13,6 +13,7 @@ import { ZpotMap } from '../../components/maps/ZpotMap';
 import { ENV } from '../../constants/env';
 import { useRequireAuth } from '../../features/shared';
 import { qk, useAuthed } from '../../hooks/useAccount';
+import { usePaged } from '../../hooks/usePaged';
 import { useAreaDetail, useSearchParams } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
 import { reportsApi } from '../../services/api';
@@ -90,13 +91,13 @@ export function ReportLocationScreen({ navigation }: RootScreenProps<'ReportLoca
         <Text style={[typography.meta, { color: colors.textMuted }]}>{t('report.fineTune')}</Text>
         <View style={styles.pad} accessibilityLabel={t('report.fineTune')}>
           <View />
-          <Arrow icon="chevronUp" onPress={() => nudge(0, -1)} testID="nudge-up" label="North" />
+          <Arrow icon="chevronUp" onPress={() => nudge(0, -1)} testID="nudge-up" label={t('p3.north')} />
           <View />
-          <Arrow icon="chevronLeft" onPress={() => nudge(-1, 0)} testID="nudge-left" label="West" />
+          <Arrow icon="chevronLeft" onPress={() => nudge(-1, 0)} testID="nudge-left" label={t('p3.west')} />
           <View style={styles.center}><Icon name="crosshair" color={colors.textMuted} /></View>
-          <Arrow icon="chevronRight" onPress={() => nudge(1, 0)} testID="nudge-right" label="East" />
+          <Arrow icon="chevronRight" onPress={() => nudge(1, 0)} testID="nudge-right" label={t('p3.east')} />
           <View />
-          <Arrow icon="chevronDown" onPress={() => nudge(0, 1)} testID="nudge-down" label="South" />
+          <Arrow icon="chevronDown" onPress={() => nudge(0, 1)} testID="nudge-down" label={t('p3.south')} />
           <View />
         </View>
         {moved ? <Text style={[typography.meta, { color: colors.textBody }]} testID="report-moved">{t('report.moved', { m: moved })}</Text> : null}
@@ -274,8 +275,8 @@ export function ReportSuccessScreen({ navigation, route }: RootScreenProps<'Repo
 export function MyReportsScreen({ navigation }: RootScreenProps<'MyReports'>) {
   const { t, i18n } = useTranslation();
   const authed = useAuthed();
-  const q = useQuery({ queryKey: qk.myReports, queryFn: reportsApi.mine });
-  const items = q.data?.results ?? [];
+  const q = usePaged(qk.myReports, reportsApi.mine);
+  const items = q.items;
   return (
     <Screen testID="my-reports-screen" header={<ScreenHeader title={t('report.myReports')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!authed ? <Banner tone="info">{t('report.guestNote')}</Banner> : null}
@@ -286,6 +287,8 @@ export function MyReportsScreen({ navigation }: RootScreenProps<'MyReports'>) {
           sub={`${r.reference} · ${formatDate(r.created_at, i18n.language)} ${formatTime(r.created_at)}`}
           value={t(`report.st_${r.status}`)} onPress={() => navigation.navigate('ReportDetail', { id: r.id })} />
       ))}
+      {q.hasNextPage ? <ZpotButton variant="small" label={t('common.loadMore')} loading={q.isFetchingNextPage}
+        onPress={() => void q.fetchNextPage()} testID="reports-load-more" /> : null}
     </Screen>
   );
 }

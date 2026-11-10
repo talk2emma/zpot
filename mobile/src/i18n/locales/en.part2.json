@@ -556,6 +556,12 @@
       "Fri",
       "Sat",
       "Sun"
-    ]
+    ],
+    "north": "Move pin north",
+    "south": "Move pin south",
+    "east": "Move pin east",
+    "west": "Move pin west",
+    "minus": "{{n}} minutes earlier",
+    "plus": "{{n}} minutes later"
   }
 }

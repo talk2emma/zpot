@@ -47,8 +47,9 @@ export function SearchScreen({ navigation }: RootScreenProps<'Search'>) {
     } catch { setMsg(t('location.unavailable.body')); }
   };
 
-  const Row = ({ p, icon, testID }: { p: PlaceResult | RecentPlace; icon: 'pin' | 'clock'; testID: string }) => (
-    <Pressable onPress={() => pick(p)} accessibilityRole="button" accessibilityLabel={`${p.name}, ${p.subtitle}`}
+  // A render function, not a component defined in render: rows would otherwise remount on every keystroke (M-18).
+  const row = (key: string, p: PlaceResult | RecentPlace, icon: 'pin' | 'clock', testID: string) => (
+    <Pressable key={key} onPress={() => pick(p)} accessibilityRole="button" accessibilityLabel={`${p.name}, ${p.subtitle}`}
       style={[styles.li, { borderBottomColor: colors.divider }]} testID={testID}>
       <Icon name={icon} color={colors.text} />
       <View style={styles.flex}>
@@ -94,15 +95,15 @@ export function SearchScreen({ navigation }: RootScreenProps<'Search'>) {
             {ac.isFetching && !ac.data ? <LoadingState /> : null}
             {ac.error ? <Banner tone="error">{t('search.error')}</Banner> : null}
             {ac.data?.length === 0 ? <Text style={[typography.meta, { color: colors.textMuted }]} testID="search-none">{t('search.none', { q: q.trim() })}</Text> : null}
-            {ac.data?.map(p => <Row key={p.id} p={p} icon="pin" testID={`suggestion-${p.id}`} />)}
+            {ac.data?.map(p => row(p.id, p, 'pin', `suggestion-${p.id}`))}
           </>
         ) : (
           <>
             {recents.length ? <SectionLabel>{t('search.recent')}</SectionLabel> : null}
-            {recents.map(p => <Row key={`r-${p.id}`} p={p} icon="clock" testID={`recent-${p.id}`} />)}
+            {recents.map(p => row(`r-${p.id}`, p, 'clock', `recent-${p.id}`))}
             <SectionLabel>{t('search.popular')}</SectionLabel>
             {popular.isLoading ? <LoadingState /> : null}
-            {popular.data?.map(p => <Row key={`p-${p.id}`} p={p} icon="pin" testID={`popular-${p.id}`} />)}
+            {popular.data?.map(p => row(`p-${p.id}`, p, 'pin', `popular-${p.id}`))}
           </>
         )}
       </View>

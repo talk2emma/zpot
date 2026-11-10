@@ -60,7 +60,7 @@ export function RegisterScreen({ navigation, route }: RootScreenProps<'Register'
         <View>
           <Pressable style={styles.terms} onPress={() => field.onChange(!field.value)} accessibilityRole="checkbox"
             accessibilityState={{ checked: field.value }} testID="register-terms">
-            <View style={[styles.box, { borderColor: colors.borderStrong, backgroundColor: field.value ? palette.navy900 : colors.surface }]}>
+            <View testID="register-terms-box" style={[styles.box, { borderColor: colors.borderStrong, backgroundColor: field.value ? palette.navy900 : colors.surface }]}>
               {field.value ? <Icon name="check" size={16} color={palette.white} /> : null}
             </View>
             <Text style={[typography.meta, styles.flex, { color: colors.textBody }]}>

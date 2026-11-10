@@ -16,13 +16,34 @@ import type { ZpotMapHandle, ZpotMapProps } from '../types';
 const MARKER_MIN_ZOOM = 14;
 const CLUSTER_FONT = 'Noto Sans Bold';
 
+// Style objects are module constants so React never sends "changed" props to native layers on re-render (M-11).
+const COLOR = ['match', ['get', 'category'],
+  'free', parkingColors.free.line, 'free_time_limited', parkingColors.free_time_limited.line,
+  'paid', parkingColors.paid.line, 'restricted', parkingColors.restricted.line, parkingColors.unknown.line];
+const WIDTH = ['case', ['==', ['get', 'selected'], 1], 11, 8];
+const FILL_FILTER = ['==', ['geometry-type'], 'Polygon'];
+const FILL_PAINT = { 'fill-color': COLOR, 'fill-opacity': 0.35 };
+const LINE_FILTER = ['all', ['==', ['geometry-type'], 'LineString'], ['!', ['in', ['get', 'category'], ['literal', ['restricted', 'unknown']]]]];
+const LINE_LAYOUT = { 'line-cap': 'round', 'line-join': 'round' };
+const LINE_PAINT = { 'line-color': COLOR, 'line-width': WIDTH };
+const DASH_FILTER = ['all', ['==', ['geometry-type'], 'LineString'], ['in', ['get', 'category'], ['literal', ['restricted', 'unknown']]]];
+const DASH_LAYOUT = { 'line-cap': 'butt' };
+const DASH_PAINT = { 'line-color': COLOR, 'line-width': WIDTH, 'line-dasharray': [1.2, 0.8] };
+const CLUSTER_FILTER = ['has', 'point_count'];
+const CLUSTER_PAINT = { 'circle-color': palette.navy900, 'circle-radius': ['step', ['get', 'point_count'], 16, 10, 20, 25, 26],
+  'circle-stroke-color': palette.white, 'circle-stroke-width': 2 };
+// must be a font the style's glyph server hosts (OpenFreeMap: Noto Sans)
+const COUNT_LAYOUT = { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13, 'text-allow-overlap': true, 'text-font': [CLUSTER_FONT] };
+const COUNT_PAINT = { 'text-color': palette.white };
+
 /** MapLibre Native implementation (open-source, no access token required). */
 export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function MapLibreMapView(props, ref) {
   const { styleUrl, center, initialZoom = 15, features, layers, selectedId, destination, showUserLocation,
     markerLabel, onSelect, onRegionChange, onMapError, bottomInset = 0, testID, extraMarkers } = props;
   const camera = useRef<CameraRef>(null);
   const zoomRef = useRef(initialZoom);
-  const [zoom, setZoom] = useState(initialZoom);
+  // Only the marker threshold matters to React: re-render on crossing it, not on every pan/zoom (M-10).
+  const [showMarkers, setShowMarkers] = useState(initialZoom >= MARKER_MIN_ZOOM);
 
   useImperativeHandle(ref, () => ({
     flyTo: (c, z) => camera.current?.flyTo({ center: [c.longitude, c.latitude], zoom: z ?? Math.max(zoomRef.current, 15),
@@ -49,10 +70,6 @@ export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function 
       geometry: { type: 'Point', coordinates: [f.properties.longitude, f.properties.latitude] } })),
   }), [visible]);
 
-  const color: unknown = ['match', ['get', 'category'],
-    'free', parkingColors.free.line, 'free_time_limited', parkingColors.free_time_limited.line,
-    'paid', parkingColors.paid.line, 'restricted', parkingColors.restricted.line, parkingColors.unknown.line];
-
   return (
     <View style={styles.flex} testID={testID}>
       <Map
@@ -67,7 +84,7 @@ export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function 
         onRegionDidChange={e => {
           const v = e.nativeEvent;
           zoomRef.current = v.zoom;
-          setZoom(v.zoom);
+          setShowMarkers(v.zoom >= MARKER_MIN_ZOOM);
           onRegionChange?.({ center: { longitude: v.center[0], latitude: v.center[1] }, zoom: v.zoom, bounds: v.bounds,
             userInteraction: v.userInteraction });
         }}>
@@ -78,31 +95,19 @@ export const MapLibreMapView = forwardRef<ZpotMapHandle, ZpotMapProps>(function 
           const id = e.nativeEvent.features?.[0]?.properties?.id;
           if (typeof id === 'number') onSelect(id);
         }}>
-          <Layer type="fill" id="zpot-carparks" filter={['==', ['geometry-type'], 'Polygon']}
-            paint={{ 'fill-color': color as never, 'fill-opacity': 0.35 }} />
-          <Layer type="line" id="zpot-lines" filter={['all', ['==', ['geometry-type'], 'LineString'],
-            ['!', ['in', ['get', 'category'], ['literal', ['restricted', 'unknown']]]]]}
-            layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-            paint={{ 'line-color': color as never, 'line-width': ['case', ['==', ['get', 'selected'], 1], 11, 8] }} />
-          <Layer type="line" id="zpot-lines-dashed" filter={['all', ['==', ['geometry-type'], 'LineString'],
-            ['in', ['get', 'category'], ['literal', ['restricted', 'unknown']]]]}
-            layout={{ 'line-cap': 'butt' }}
-            paint={{ 'line-color': color as never, 'line-width': ['case', ['==', ['get', 'selected'], 1], 11, 8],
-              'line-dasharray': [1.2, 0.8] }} />
+          <Layer type="fill" id="zpot-carparks" filter={FILL_FILTER as never} paint={FILL_PAINT as never} />
+          <Layer type="line" id="zpot-lines" filter={LINE_FILTER as never} layout={LINE_LAYOUT as never} paint={LINE_PAINT as never} />
+          <Layer type="line" id="zpot-lines-dashed" filter={DASH_FILTER as never} layout={DASH_LAYOUT as never} paint={DASH_PAINT as never} />
         </GeoJSONSource>
 
         <GeoJSONSource id="zpot-clusters" data={points} cluster clusterRadius={44} clusterMaxZoom={MARKER_MIN_ZOOM - 1}>
-          <Layer type="circle" id="zpot-cluster-circles" filter={['has', 'point_count']} maxzoom={MARKER_MIN_ZOOM}
-            paint={{ 'circle-color': palette.navy900, 'circle-radius': ['step', ['get', 'point_count'], 16, 10, 20, 25, 26],
-              'circle-stroke-color': palette.white, 'circle-stroke-width': 2 }} />
-          <Layer type="symbol" id="zpot-cluster-count" filter={['has', 'point_count']} maxzoom={MARKER_MIN_ZOOM}
-            layout={{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13, 'text-allow-overlap': true,
-              // must be a font the style's glyph server hosts (OpenFreeMap: Noto Sans)
-              'text-font': [CLUSTER_FONT] }}
-            paint={{ 'text-color': palette.white }} />
+          <Layer type="circle" id="zpot-cluster-circles" filter={CLUSTER_FILTER as never} maxzoom={MARKER_MIN_ZOOM}
+            paint={CLUSTER_PAINT as never} />
+          <Layer type="symbol" id="zpot-cluster-count" filter={CLUSTER_FILTER as never} maxzoom={MARKER_MIN_ZOOM}
+            layout={COUNT_LAYOUT as never} paint={COUNT_PAINT as never} />
         </GeoJSONSource>
 
-        {zoom >= MARKER_MIN_ZOOM && visible.map(f => (
+        {showMarkers && visible.map(f => (
           <Marker key={f.properties.id} id={`mk-${f.properties.id}`} lngLat={[f.properties.longitude, f.properties.latitude]}
             anchor="bottom" onPress={() => onSelect(f.properties.id)}>
             <Pressable accessibilityRole="button" testID={`map-marker-${f.properties.id}`}

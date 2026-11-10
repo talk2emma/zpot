@@ -4,13 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { type TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
-  Banner, ConfirmDialog, EmptyState, ErrorState, FilterChip, ListRow, LoadingState, Screen, ScreenHeader, SectionLabel,
+  Banner, ConfirmDialog, EmptyState, errorMessage, ErrorState, FilterChip, ListRow, LoadingState, Screen, ScreenHeader, SectionLabel,
   Stepper, SummaryRow, Title, Toggle, Wrap, ZpotButton, ZpotCard, ZpotTextField,
 } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
 import { fmtDur, requestNotifPermission } from '../../features/shared';
 import { qk } from '../../hooks/useAccount';
+import { usePaged } from '../../hooks/usePaged';
 import { useAreaDetail } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
 import { sessionsApi } from '../../services/api';
@@ -102,7 +103,7 @@ export function StartSessionScreen({ navigation, route }: RootScreenProps<'Start
           <SectionLabel>{t('session.plannedDeparture')}</SectionLabel>
           <Stepper value={`${formatTime(end)} · ${fmtDur(minutes)}`} testID="start-session-duration"
             onMinus={() => setMinutes(m => Math.max(15, m - 15))} onPlus={() => setMinutes(m => Math.min(24 * 60, m + 15))}
-            minusLabel="−15 min" plusLabel="+15 min" />
+            minusLabel={t('p3.minus', { n: 15 })} plusLabel={t('p3.plus', { n: 15 })} />
           <Text style={[typography.meta, { color: colors.textMuted }]}>{t('session.yourPlan', { dur: fmtDur(minutes) })}</Text>
           <View style={[styles.deadline, { borderColor: over ? palette.red500 : colors.border }]} testID="start-session-deadline">
             <Text style={[typography.label, { color: colors.textMuted }]}>{t('session.deadlineTitle')}</Text>
@@ -118,7 +119,8 @@ export function StartSessionScreen({ navigation, route }: RootScreenProps<'Start
           <Text style={[typography.meta, { color: colors.textMuted }]}>{t('session.remindNote')}</Text>
           {err?.code === 'active_session_exists' ? (
             <Banner tone="warn" testID="start-session-already" action={{ label: t('notif.open'), onPress: async () => {
-              const s = await sessionsApi.active(); if (s) navigation.replace('Session', { id: s.id });
+              try { const s = await sessionsApi.active(); if (s) navigation.replace('Session', { id: s.id }); }
+              catch (e) { toast(errorMessage(e, t)); }
             } }}>{t('session.alreadyActive')}</Banner>
           ) : start.error ? <ErrorState error={start.error} testID="start-session-error" /> : null}
           <Text style={[typography.small, { color: colors.textSubtle }]}>{formatDate(new Date().toISOString(), i18n.language)}</Text>
@@ -133,7 +135,9 @@ export function StartSessionScreen({ navigation, route }: RootScreenProps<'Start
 }
 
 function useSession(id: string) {
-  return useQuery({ queryKey: qk.session(id), queryFn: () => sessionsApi.get(id), refetchInterval: 30_000 });
+  // Poll only while the session is active (time left / rule changes); finished sessions don't change.
+  return useQuery({ queryKey: qk.session(id), queryFn: () => sessionsApi.get(id),
+    refetchInterval: q => (q.state.data?.status === 'active' ? 30_000 : false) });
 }
 
 function ruleLabel(s: Session, t: TFunction, lang: string) {
@@ -217,6 +221,7 @@ export function EditSessionScreen({ navigation, route }: RootScreenProps<'EditSe
     onSuccess: res => {
       qc.setQueryData(qk.session(id), res.session);
       void qc.invalidateQueries({ queryKey: qk.activeSession });
+      void qc.invalidateQueries({ queryKey: qk.sessions });
       setWarnings(res.warnings);
       toast(t('session.updated'));
       if (!res.warnings.length) navigation.goBack();
@@ -234,7 +239,7 @@ export function EditSessionScreen({ navigation, route }: RootScreenProps<'EditSe
           onPress={() => save.mutate(s)} testID="edit-session-save" />}>
       <SectionLabel>{t('session.plannedDeparture')}</SectionLabel>
       <Stepper value={`${formatTime(newEnd)} · ${fmtDur(total)}`} testID="edit-session-duration"
-        onMinus={() => setDelta(d => (total - 15 >= 15 ? d - 15 : d))} onPlus={() => setDelta(d => d + 15)} minusLabel="−15 min" plusLabel="+15 min" />
+        onMinus={() => setDelta(d => (total - 15 >= 15 ? d - 15 : d))} onPlus={() => setDelta(d => d + 15)} minusLabel={t('p3.minus', { n: 15 })} plusLabel={t('p3.plus', { n: 15 })} />
       <SummaryRow k={t('session.deadlineLegal')} v={s.restriction_deadline ? formatTime(s.restriction_deadline) : t('session.noDeadline')} />
       {over ? <Banner tone="error" testID="edit-session-over">{t('session.overDeadline')}</Banner> : null}
       <ReminderPicker value={reminder ?? s.reminder_minutes ?? 0} onChange={setReminder} />
@@ -264,6 +269,8 @@ export function EndSessionScreen({ navigation, route }: RootScreenProps<'EndSess
       void qc.invalidateQueries({ queryKey: qk.activeSession });
       void qc.invalidateQueries({ queryKey: qk.sessions });
       void qc.invalidateQueries({ queryKey: qk.myReports });
+      void qc.invalidateQueries({ queryKey: qk.contributions });
+      void qc.invalidateQueries({ queryKey: ['insights'] });
       qc.setQueryData(qk.session(id), res.session);
       navigation.replace('SessionSummary', { id, reportRef: res.session.shared_departure ? 'shared' : undefined });
     },
@@ -328,8 +335,8 @@ export function SessionSummaryScreen({ navigation, route }: RootScreenProps<'Ses
 /** SCR: Parking history. */
 export function SessionHistoryScreen({ navigation }: RootScreenProps<'SessionHistory'>) {
   const { t, i18n } = useTranslation();
-  const q = useQuery({ queryKey: qk.sessions, queryFn: () => sessionsApi.list() });
-  const items = q.data?.results ?? [];
+  const q = usePaged(qk.sessions, () => sessionsApi.list());
+  const items = q.items;
   return (
     <Screen testID="session-history-screen" header={<ScreenHeader title={t('session.historyTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState skeleton={3} /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
@@ -340,6 +347,8 @@ export function SessionHistoryScreen({ navigation }: RootScreenProps<'SessionHis
           value={t(`session.${s.status === 'active' ? 'active' : s.status === 'expired' ? 'expired' : 'ended'}`)}
           onPress={() => navigation.navigate('Session', { id: s.id })} />
       ))}
+      {q.hasNextPage ? <ZpotButton variant="small" label={t('common.loadMore')} loading={q.isFetchingNextPage}
+        onPress={() => void q.fetchNextPage()} testID="history-load-more" /> : null}
     </Screen>
   );
 }

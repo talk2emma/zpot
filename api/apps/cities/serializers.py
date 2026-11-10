@@ -3,11 +3,6 @@ from rest_framework import serializers
 from .models import City, SupportedArea
 
 
-class PointSerializer(serializers.Serializer):
-    latitude = serializers.FloatField()
-    longitude = serializers.FloatField()
-
-
 class CitySerializer(serializers.ModelSerializer):
     center = serializers.SerializerMethodField()
     bbox = serializers.SerializerMethodField()

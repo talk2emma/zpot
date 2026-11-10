@@ -1,6 +1,6 @@
 {
   "common": {
-    "continue": "Continuar", "next": "Seguinte", "back": "Voltar", "skip": "Saltar", "cancel": "Cancelar", "close": "Fechar",
+    "loadMore": "Carregar mais", "continue": "Continuar", "next": "Seguinte", "back": "Voltar", "skip": "Saltar", "cancel": "Cancelar", "close": "Fechar",
     "apply": "Aplicar", "reset": "Repor", "retry": "Tentar de novo", "done": "Concluído", "save": "Guardar", "change": "Alterar",
     "notNow": "Agora não", "loading": "A carregar…", "sampleData": "Dados de exemplo", "minWalk": "{{count}} min a pé",
     "hours_one": "{{count}} hora", "hours_other": "{{count}} horas", "min": "{{count}} min",

@@ -11,6 +11,7 @@ import {
 import { toast } from '../../components/common/Toast';
 import { ParkingStatusBadge } from '../../components/parking/ParkingStatusBadge';
 import { fmtDur, requestNotifPermission, syncNotifPermission } from '../../features/shared';
+import { usePaged } from '../../hooks/usePaged';
 import { qk, useActiveSession, useAuthed, useContributions, useFeatures, useHasRole, useNotifications } from '../../hooks/useAccount';
 import type { RootScreenProps } from '../../navigation/types';
 import { notificationsApi, savedApi } from '../../services/api';
@@ -276,21 +277,22 @@ export function NotificationsScreen({ navigation }: RootScreenProps<'Notificatio
   const { colors } = useTheme();
   const qc = useQueryClient();
   const authed = useAuthed();
-  const q = useNotifications();
+  const q = useNotifications(); // unread count (shared with the Explore bell)
+  const list = usePaged(qk.notifications, notificationsApi.list, authed);
   const perm = usePrefsStore(s => s.notifPermission);
   const readAll = useMutation({ mutationFn: notificationsApi.readAll, onSuccess: () => void qc.invalidateQueries({ queryKey: qk.notifications }) });
   const open = async (n: AppNotification) => {
     if (!n.is_read) { await notificationsApi.read(n.id).catch(() => undefined); void qc.invalidateQueries({ queryKey: qk.notifications }); }
     openTarget(n, navigation.navigate as unknown as (r: string, p?: object) => void);
   };
-  const items = q.data?.results ?? [];
+  const items = authed ? list.items : []; // never render a previous user's cached inbox
   return (
     <Screen testID="notifications-screen" header={<ScreenHeader title={t('notif.title')} onBack={navigation.goBack} backLabel={t('common.back')}
       right={authed ? <ZpotButton variant="tertiary" label={t('notif.settings')} onPress={() => navigation.navigate('NotificationPrefs')} testID="notif-settings" /> : null} />}>
       {!authed ? <Banner tone="info" action={{ label: t('p2.signIn'), onPress: () => navigation.navigate('SignIn', { context: 'notifications' }) }}>{t('notif.guest')}</Banner> : null}
       {authed && perm !== 'granted' ? <Banner tone="info" testID="notif-perm-off">{t('notif.permOff')}</Banner> : null}
       {authed && (q.data?.unread_count ?? 0) > 0 ? <ZpotButton variant="small" label={t('notif.markAll')} onPress={() => readAll.mutate()} testID="notif-read-all" /> : null}
-      {authed && q.isLoading ? <LoadingState skeleton={3} /> : authed && q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+      {authed && list.isLoading ? <LoadingState skeleton={3} /> : authed && list.isError ? <ErrorState error={list.error} onRetry={() => void list.refetch()} />
         : authed && items.length === 0 ? <EmptyState icon="bell" title={t('notif.title')} body={t('notif.empty')} testID="notif-empty" /> : null}
       {items.map(n => (
         <ListRow key={n.id} icon={n.is_read ? 'bell' : 'info'} label={n.title} testID={`notif-${n.template ?? n.id}`}
@@ -298,6 +300,8 @@ export function NotificationsScreen({ navigation }: RootScreenProps<'Notificatio
           right={!n.is_read ? <View style={[styles.dot, { backgroundColor: palette.green700 }]} accessibilityLabel="unread" /> : null}
           onPress={() => void open(n)} />
       ))}
+      {list.hasNextPage ? <ZpotButton variant="small" label={t('common.loadMore')} loading={list.isFetchingNextPage}
+        onPress={() => void list.fetchNextPage()} testID="notif-load-more" /> : null}
       <Text style={[typography.small, { color: colors.textSubtle }]}>{t('notif.pushSub')}</Text>
     </Screen>
   );

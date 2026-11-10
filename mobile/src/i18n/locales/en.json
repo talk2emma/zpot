@@ -1,6 +1,6 @@
 {
   "common": {
-    "continue": "Continue", "next": "Next", "back": "Back", "skip": "Skip", "cancel": "Cancel", "close": "Close",
+    "loadMore": "Load more", "continue": "Continue", "next": "Next", "back": "Back", "skip": "Skip", "cancel": "Cancel", "close": "Close",
     "apply": "Apply", "reset": "Reset", "retry": "Retry", "done": "Done", "save": "Save", "change": "Change",
     "notNow": "Not now", "loading": "Loading…", "sampleData": "Sample data", "minWalk": "{{count}} min walk",
     "hours_one": "{{count}} hour", "hours_other": "{{count}} hours", "min": "{{count}} min",

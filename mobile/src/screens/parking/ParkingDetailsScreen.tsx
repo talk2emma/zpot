@@ -55,7 +55,8 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
     : a.leave_by_reason ? `${a.leave_by_reason.label} · ${d.limitText}` : undefined;
   const navTo = () => navigation.navigate('NavigationPicker', { id: a.id, name: a.name, latitude: a.location.latitude, longitude: a.location.longitude });
   const share = () => void Share.share({ message: `${a.name} — Zpot\nzpot://parking/${a.id}\nhttps://maps.google.com/?q=${a.location.latitude},${a.location.longitude}` });
-  const viewOnMap = () => { select(a.id); setView('map'); navigation.navigate('Main', { screen: 'Explore' }); };
+  // setView clears the selection, so switch view first, then select (M-02)
+  const viewOnMap = () => { setView('map'); select(a.id); navigation.navigate('Main', { screen: 'Explore' }); };
 
   return (
     <Screen testID="details-screen" padded={false}

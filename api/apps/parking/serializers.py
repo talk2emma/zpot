@@ -146,12 +146,6 @@ class CompareQuerySerializer(StayParamsSerializer):
         return list(dict.fromkeys(ids))
 
 
-class ReasonSerializer(serializers.Serializer):
-    code = serializers.CharField()
-    label = serializers.CharField()
-    at = serializers.DateTimeField(allow_null=True)
-
-
 class EvaluationSerializer(serializers.Serializer):
     area_id = serializers.IntegerField()
     arrival_at = serializers.DateTimeField()

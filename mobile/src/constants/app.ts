@@ -1,5 +1,6 @@
 export const APP = {
   name: 'Zpot',
+  version: '0.2.0', // keep in sync with package.json "version"
   slogan: 'Park smarter. Spend less.',
   deepLinkScheme: 'zpot://',
   lisbon: { latitude: 38.7223, longitude: -9.1393 },

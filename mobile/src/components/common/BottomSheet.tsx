@@ -34,7 +34,6 @@ export function BottomSheet({ visible, onClose, title, children, testID, closeLa
   );
 }
 
-export const ZpotModal = BottomSheet;
 
 export function ConfirmDialog({ visible, title, body, confirmLabel, cancelLabel, onConfirm, onCancel, destructive, testID }: {
   visible: boolean; title: string; body?: string; confirmLabel: string; cancelLabel: string; onConfirm: () => void;

@@ -12,10 +12,11 @@ import { fmtDur } from '../../features/shared';
 import { useAutocomplete } from '../../hooks/useAutocomplete';
 import { useAreaDetail } from '../../hooks/useParking';
 import type { RootScreenProps } from '../../navigation/types';
-import { billingApi, commuteApi, insightsApi, type Vehicle, vehiclesApi } from '../../services/api';
+import { authApi, billingApi, commuteApi, insightsApi, type Vehicle, vehiclesApi } from '../../services/api';
+import { usePrefsStore } from '../../store/prefsStore';
 import { useSearchStore } from '../../store/searchStore';
 import { palette, radius, typography, useTheme } from '../../theme';
-import type { PlaceResult } from '../../types/api';
+import type { PlaceResult, VehicleClass } from '../../types/api';
 import { formatEuro } from '../../utils/format';
 import { formatDate, formatTime } from '../../utils/time';
 
@@ -63,10 +64,10 @@ export function CommuteScreen({ navigation }: RootScreenProps<'Commute'>) {
           ))}</Wrap>
           <SectionLabel>{t('commute.arrive')}</SectionLabel>
           <Stepper value={hhmmOf(arrive)} onMinus={() => setArrive(a => Math.max(0, a - 30))} onPlus={() => setArrive(a => Math.min(23 * 60 + 30, a + 30))}
-            minusLabel="−30 min" plusLabel="+30 min" testID="commute-arrive" />
+            minusLabel={t('p3.minus', { n: 30 })} plusLabel={t('p3.plus', { n: 30 })} testID="commute-arrive" />
           <SectionLabel>{t('commute.stay')}</SectionLabel>
           <Stepper value={fmtDur(stay)} onMinus={() => setStay(s => Math.max(30, s - 30))} onPlus={() => setStay(s => Math.min(1440, s + 30))}
-            minusLabel="−30 min" plusLabel="+30 min" testID="commute-stay" />
+            minusLabel={t('p3.minus', { n: 30 })} plusLabel={t('p3.plus', { n: 30 })} testID="commute-stay" />
           {touched && err ? <Banner tone="error" testID="commute-error">{err}</Banner> : null}
           {create.error ? <ErrorState error={create.error} /> : null}
         </View>
@@ -135,11 +136,19 @@ export function VehiclesScreen({ navigation }: RootScreenProps<'Vehicles'>) {
   const ent = useQuery({ queryKey: ['entitlement'], queryFn: billingApi.entitlement });
   const [edit, setEdit] = useState<Vehicle | null>(null);
   const [remove, setRemove] = useState<Vehicle | null>(null);
+  const setParking = usePrefsStore(st => st.setParking);
+  /** Searches read the vehicle/permit from the local prefs store, so mirror the server's active vehicle (M-07). */
+  const applyVehicle = (v: Vehicle | null) => {
+    if (v?.is_active) setParking({ vehicleClass: v.vehicle_class as VehicleClass, permitType: v.permit_type ?? null });
+  };
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['vehicles'] }); void qc.invalidateQueries({ queryKey: ['preferences'] }); };
   const save = useMutation({ mutationFn: (v: Vehicle) => vehiclesApi.update(v.id, { label: v.label, vehicle_class: v.vehicle_class, permit_type: v.permit_type ?? null }),
-    onSuccess: () => { refresh(); setEdit(null); toast(t('vehicles.saved')); } });
-  const del = useMutation({ mutationFn: (id: number) => vehiclesApi.remove(id), onSuccess: () => { refresh(); setRemove(null); } });
-  const act = useMutation({ mutationFn: (id: number) => vehiclesApi.activate(id), onSuccess: refresh });
+    onSuccess: v => { applyVehicle(v); refresh(); setEdit(null); toast(t('vehicles.saved')); } });
+  const del = useMutation({ mutationFn: (id: number) => vehiclesApi.remove(id), onSuccess: async () => {
+    refresh(); setRemove(null);
+    try { const p = await authApi.preferences(); setParking({ vehicleClass: p.vehicle_class, permitType: p.permit_type }); } catch { /* next prefs load syncs */ }
+  } });
+  const act = useMutation({ mutationFn: (id: number) => vehiclesApi.activate(id), onSuccess: v => { applyVehicle(v); refresh(); } });
   const items = q.data ?? [];
   const max = (ent.data?.limits as { vehicles?: number } | undefined)?.vehicles ?? 1;
   return (
@@ -166,6 +175,7 @@ export function VehiclesScreen({ navigation }: RootScreenProps<'Vehicles'>) {
       {items.length > 1 ? null : items.length === 1 && items[0] && !edit ? (
         <ZpotButton variant="tertiary" icon="trash" label={t('vehicles.remove')} onPress={() => setRemove(items[0]!)} testID="vehicle-remove" />
       ) : null}
+      {del.error || act.error ? <ErrorState error={del.error ?? act.error} testID="vehicles-error" /> : null}
       {items.length >= max ? <Banner tone="info" testID="vehicles-limit">{`${t('vehicles.freeLimit')} ${t('vehicles.proOnly')}`}</Banner> : null}
       <ConfirmDialog visible={!!remove} title={t('vehicles.removeQ', { name: remove?.label ?? '' })} confirmLabel={t('vehicles.remove')} destructive
         cancelLabel={t('common.cancel')} onCancel={() => setRemove(null)} onConfirm={() => remove && del.mutate(remove.id)} testID="vehicle-remove-dialog" />

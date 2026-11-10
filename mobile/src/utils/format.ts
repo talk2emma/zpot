@@ -7,7 +7,3 @@ export function formatEuro(value: string | number | null | undefined, locale = '
     return `€${n.toFixed(2)}`;
   }
 }
-
-export function formatDistance(m: number): string {
-  return m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`;
-}

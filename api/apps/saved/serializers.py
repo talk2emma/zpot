@@ -74,11 +74,6 @@ class ImportSerializer(serializers.Serializer):
     items = ImportItemSerializer(many=True, max_length=100)
 
 
-class LocationField(serializers.Serializer):
-    latitude = serializers.FloatField(min_value=-90, max_value=90)
-    longitude = serializers.FloatField(min_value=-180, max_value=180)
-
-
 class SavedDestinationSerializer(serializers.ModelSerializer):
     latitude = serializers.FloatField(write_only=True, min_value=-90, max_value=90)
     longitude = serializers.FloatField(write_only=True, min_value=-180, max_value=180)

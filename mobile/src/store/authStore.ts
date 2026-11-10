@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { queryClient } from '../services/queryClient';
 import { usePrefsStore } from './prefsStore';
 import { authApi, authSession, savedApi } from '../services/api';
 import { tokenStorage } from '../services/auth/tokenStorage';
@@ -47,6 +48,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   async completeAuth(res) {
+    queryClient.clear(); // never show the previous identity's cached data
     authSession.set(res.tokens);
     await tokenStorage.save(res.tokens);
     set({ status: 'authenticated', user: res.user, sessionExpired: false });
@@ -59,6 +61,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await get().clearLocalSession(false);
   },
   async clearLocalSession(expired = false) {
+    queryClient.clear(); // sign-out, expiry and deletion: drop every cached server response of this user
     authSession.set(null);
     await tokenStorage.clear();
     set({ status: 'guest', user: null, sessionExpired: expired });
