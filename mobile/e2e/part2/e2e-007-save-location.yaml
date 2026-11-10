@@ -1,6 +1,6 @@
 # E2E-007 Details → save → Saved tab → open → remove → empty state
 appId: pt.zpot.app
-env: { AREA: "1" }
+env: { AREA: "18" }   # clock-independent free area
 ---
 - runFlow: _common/signin.yaml
 - runFlow: _common/open-area.yaml
@@ -8,12 +8,12 @@ env: { AREA: "1" }
 - assertVisible: { text: "Saved" }
 - tapOn: { id: "details-back" }
 - tapOn: { id: "tab-saved" }
-- extendedWaitUntil: { visible: { id: "saved-1" }, timeout: 10000 }
+- extendedWaitUntil: { visible: { id: "saved-18" }, timeout: 10000 }
 - takeScreenshot: e2e007-saved
-- tapOn: { id: "saved-check-1" }
+- tapOn: { id: "saved-check-18" }
 - assertVisible: { id: "details-name" }
 - tapOn: { id: "details-back" }
-- tapOn: { id: "saved-remove-1" }
+- tapOn: { id: "saved-remove-18" }
 - tapOn: { id: "remove-dialog-confirm" }
 - extendedWaitUntil: { visible: { id: "saved-empty" }, timeout: 10000 }
 - takeScreenshot: e2e007-removed

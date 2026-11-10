@@ -1,6 +1,6 @@
 # E2E-008 Reminder (dispatched by Celery beat) → notifications → open → active session → read
 appId: pt.zpot.app
-env: { AREA: "1" }
+env: { AREA: "18" }   # Rua do Açúcar: free, no time-window restrictions (clock-independent)
 ---
 - runFlow: _common/signin.yaml
 - runFlow: _common/open-area.yaml
@@ -22,7 +22,7 @@ env: { AREA: "1" }
 - tapOn: { id: "notif-session_reminder" }
 - extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 10000 }
 - tapOn: { id: "header-back" }
-- assertNotVisible: { id: "notif-read-all" }
+- assertNotVisible: { id: "notif-unread-session_reminder" }   # the opened reminder is now read (other alerts may be unread)
 - tapOn: { id: "notif-session_reminder" }
 - tapOn: { id: "session-end" }
 - tapOn: { id: "end-session-confirm" }

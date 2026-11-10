@@ -1,0 +1,4 @@
+PASS e2e-004-session-lifecycle
+PASS e2e-007-save-location
+PASS e2e-008-notification
+PASS=3 FAIL=0

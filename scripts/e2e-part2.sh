@@ -6,6 +6,7 @@ set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 PLATFORM="${1:?ios|android}"; GLOB="${2:-e2e-*}"
 MAESTRO="${MAESTRO:-$(command -v maestro || echo "$HOME/Downloads/maestro/bin/maestro")}"
+export MAESTRO_DRIVER_STARTUP_TIMEOUT="${MAESTRO_DRIVER_STARTUP_TIMEOUT:-180000}"  # XCTest driver can be slow to boot
 [ -x "$MAESTRO" ] || die "maestro not found (set MAESTRO=/path/to/maestro)"
 api_up || die "API not reachable on :8000 — scripts/start-api.sh --seed"
 FLOWS="$MOBILE/e2e/part2"; OUT="$ROOT/docs/e2e-results/$PLATFORM"; mkdir -p "$OUT"

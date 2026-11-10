@@ -3,13 +3,20 @@ appId: pt.zpot.app
 ---
 - launchApp:
     clearState: true
-- tapOn:                           # Android 17 debug builds only: React Native's dev manifest requests local-network
-    text: "Allow"                  # access (Metro). Release builds don't declare ACCESS_LOCAL_NETWORK.
-    optional: true
+- repeat:                          # Android 17 debug builds only: React Native's dev manifest requests local-network
+    while:                         # access (Metro); the prompt can appear late. Release builds don't declare it.
+      notVisible: { id: "language-screen" }
+    times: 10
+    commands:
+      - tapOn: { text: "Allow", optional: true }
+      - waitForAnimationToEnd
 - extendedWaitUntil: { visible: { id: "language-screen" }, timeout: 20000 }
 - tapOn: { id: "lang-en" }
 - waitForAnimationToEnd
-- tapOn: { id: "language-continue", retryTapIfNoChange: true }
+- tapOn: { id: "language-continue" }
+- runFlow:                          # re-tap only if the first tap was swallowed (a blind retry hits the next screen)
+    when: { visible: { id: "language-screen" } }
+    commands: [ { tapOn: { id: "language-continue" } } ]
 - extendedWaitUntil: { visible: { id: "welcome-find" }, timeout: 10000 }
 - tapOn: { id: "welcome-find" }
 - tapOn: { id: "location-manual" }

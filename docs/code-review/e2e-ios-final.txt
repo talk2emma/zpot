@@ -4,11 +4,11 @@ PASS e2e-004-session-lifecycle
 PASS e2e-005-community-report
 PASS e2e-006-verification
 PASS e2e-007-save-location
-PASS e2e-008-notification
+FAIL e2e-008-notification
 PASS e2e-009-account-settings
 PASS e2e-010a
 PASS e2e-010b
 PASS e2e-010c
 PASS e2e-011-no-free
 PASS e2e-012-rule-change
-PASS=13 FAIL=0
+PASS=12 FAIL=1

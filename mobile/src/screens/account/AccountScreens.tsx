@@ -298,7 +298,8 @@ export function NotificationsScreen({ navigation }: RootScreenProps<'Notificatio
       {items.map(n => (
         <ListRow key={n.id} icon={n.is_read ? 'bell' : 'info'} label={n.title} testID={`notif-${n.template ?? n.id}`}
           sub={`${t(`notif.cat_${n.category}`)} · ${formatDate(n.created_at, i18n.language)} ${formatTime(n.created_at)}`}
-          right={!n.is_read ? <View style={[styles.dot, { backgroundColor: palette.green700 }]} accessibilityLabel="unread" /> : null}
+          right={!n.is_read ? <View style={[styles.dot, { backgroundColor: palette.green700 }]} accessibilityLabel="unread"
+            testID={`notif-unread-${n.template ?? n.id}`} /> : null}
           onPress={() => void open(n)} />
       ))}
       {list.hasNextPage ? <ZpotButton variant="small" label={t('common.loadMore')} loading={list.isFetchingNextPage}

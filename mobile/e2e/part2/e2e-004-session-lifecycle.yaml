@@ -1,6 +1,6 @@
 # E2E-004 Find parking → start session → edit departure → reminder → end → summary
 appId: pt.zpot.app
-env: { AREA: "1" }
+env: { AREA: "18" }   # Rua do Açúcar: free, no time-window restrictions (clock-independent)
 ---
 - runFlow: _common/signin.yaml
 - runFlow: _common/open-area.yaml
