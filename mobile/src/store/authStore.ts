@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { queryClient } from '../services/queryClient';
 import { usePrefsStore } from './prefsStore';
@@ -24,6 +25,8 @@ interface AuthState {
   setPendingReturn(p: PendingReturn | null): void;
 }
 
+const INSTALL_MARKER = 'zpot.installed.v1';
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   status: 'loading',
   user: null,
@@ -31,6 +34,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   pendingReturn: null,
   lastImport: 0,
   async bootstrap() {
+    // iOS keeps Keychain items across uninstall/reinstall, so a fresh install would open signed in as the previous
+    // user (privacy risk on shared or resold phones). App data (AsyncStorage) *is* wiped, so its absence marks a
+    // first launch: drop any inherited tokens then.
+    if (!(await AsyncStorage.getItem(INSTALL_MARKER))) {
+      await tokenStorage.clear();
+      await AsyncStorage.setItem(INSTALL_MARKER, new Date().toISOString());
+    }
     const tokens = await tokenStorage.load();
     if (!tokens) { set({ status: 'guest' }); return; }
     authSession.set(tokens);

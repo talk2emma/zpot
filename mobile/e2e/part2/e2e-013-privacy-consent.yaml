@@ -32,11 +32,18 @@ appId: pt.zpot.app
 - extendedWaitUntil: { visible: { id: "explore-screen" }, timeout: 10000 }
 - tapOn: { id: "tab-profile", retryTapIfNoChange: true }
 - extendedWaitUntil: { visible: { id: "profile-screen" }, timeout: 10000 }
+- runFlow:                         # iOS keeps Keychain tokens across clearState: start as a guest
+    when: { notVisible: { id: "profile-signin" } }
+    commands:
+      - scrollUntilVisible: { element: { id: "profile-signout" }, direction: DOWN }
+      - tapOn: { id: "profile-signout" }
+      - tapOn: { id: "signout-dialog-confirm" }
+      - scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }
 - swipe: { start: "50%, 30%", end: "50%, 75%" }       # pull to refresh
 - assertVisible: { id: "profile-screen" }
 - scrollUntilVisible: { element: { id: "profile-privacy" }, direction: DOWN }
 - tapOn: { id: "profile-privacy" }
-- assertVisible: { text: "Analytics: on · Ads: off · Emails: off" }
+- assertVisible: { text: ".*Analytics: on · Ads: off · Emails: off.*" }   # row label = title + summary
 - takeScreenshot: e2e013-choices
 - tapOn: { id: "header-back" }
 - scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }

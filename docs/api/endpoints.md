@@ -193,7 +193,7 @@ Availability is always reported separately from legality: a free spot is not a l
 
 | Method | Path | Notes |
 |---|---|---|
-| GET / PATCH | `/privacy/consents/` | Append-only consent ledger. Terms/privacy cannot be withdrawn here (`use_deletion_request`). |
+| GET / PATCH | `/privacy/consents/` | Append-only consent ledger. PATCH `{analytics?, personalised_ads?, marketing?, source?}` where `source` is `consent_prompt` or `privacy_settings` (default). Each record is stamped server-side with the current document version (`/config/` → `legal`). Terms/privacy cannot be withdrawn here (`use_deletion_request`). |
 | POST | `/privacy/data-export/` | `202`. Celery builds a JSON export (expires after 7 days). |
 | POST | `/privacy/deletion-request/` | `{confirm: "DELETE"}`. Reports are anonymised and the account deleted (audited). |
 | GET | `/privacy/requests/` | |

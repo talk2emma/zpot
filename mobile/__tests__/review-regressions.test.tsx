@@ -59,3 +59,22 @@ it('M-08: long inboxes are not silently cut at the first page', async () => {
   expect(next).toHaveBeenCalledWith('http://localhost/api/v1/notifications/?cursor=abc');
   expect(screen.queryByTestId('notif-load-more')).toBeNull();
 });
+
+it('a fresh install never inherits a previous sign-in left in the Keychain (iOS keeps it across uninstall)', async () => {
+  const AsyncStorage = require('@react-native-async-storage/async-storage');
+  const { tokenStorage } = require('../src/services/auth/tokenStorage');
+  await AsyncStorage.clear(); // = app data wiped by uninstall / clearState
+  const clear = jest.spyOn(tokenStorage, 'clear');
+  let stored: unknown = { access: 'old', refresh: 'old' }; // still valid for the server
+  jest.spyOn(tokenStorage, 'load').mockImplementation(async () => stored);
+  clear.mockImplementation(async () => { stored = null; });
+  const me = jest.spyOn(require('../src/services/api').authApi, 'me').mockResolvedValue({ id: '9', email: 'previous@owner.pt' });
+  await useAuthStore.getState().bootstrap();
+  expect(clear).toHaveBeenCalled();
+  expect(me).not.toHaveBeenCalled();
+  expect(useAuthStore.getState().status).toBe('guest');
+  // later launches keep the session as normal
+  stored = { access: 'new', refresh: 'new' };
+  await useAuthStore.getState().bootstrap();
+  expect(useAuthStore.getState().status).toBe('authenticated');
+});
