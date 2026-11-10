@@ -2,7 +2,7 @@
 
 ## Open the project
 
-1. Run `./scripts/tools/pod-install.sh`. It wraps `pod install` and pre-downloads React Native's ~95 MB prebuilt core with resume support, because CocoaPods' own download gives up on slow connections. CocoaPods comes from Homebrew (`brew install cocoapods`). MapLibre is added through Swift Package Manager by the `$MLRN.post_install` hook in the `Podfile`.
+1. Run `./scripts/tools/pod-install.sh`. It wraps `pod install` and pre-downloads React Native's ~95 MB prebuilt core with resume support, because CocoaPods' own download gives up on slow connections. CocoaPods comes from Homebrew (`brew install cocoapods`). The Mapbox Maps SDK comes from CocoaPods through `@rnmapbox/maps` (`$RNMapboxMaps.pre_install`/`post_install` in the `Podfile`; no secret token needed).
 2. Open **`mobile/ios/Zpot.xcworkspace`**. Always use the workspace, never `.xcodeproj`.
 3. Start Metro: `cd mobile && npm start`.
 4. Select the **Zpot** scheme and an iPhone simulator (iOS 27 runtime installed), then press **⌘R**.

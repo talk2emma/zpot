@@ -36,28 +36,14 @@ PODS:
   - hermes-engine (250829098.0.17):
     - hermes-engine/Pre-built (= 250829098.0.17)
   - hermes-engine/Pre-built (250829098.0.17)
-  - MapLibreReactNative (11.5.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-bridging
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
+  - MapboxCommon (24.33.0):
+    - Turf (= 4.0.0)
+  - MapboxCoreMaps (11.33.0):
+    - MapboxCommon (= 24.33.0)
+  - MapboxMaps (11.33.0):
+    - MapboxCommon (= 24.33.0)
+    - MapboxCoreMaps (= 11.33.0)
+    - Turf (= 4.0.0)
   - RCT-Folly (2024.11.18.00):
     - RCT-Folly/Default (= 2024.11.18.00)
     - ReactNativeDependencies
@@ -1849,6 +1835,37 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - rnmapbox-maps (10.3.17):
+    - MapboxMaps (= 11.33.0)
+    - React
+    - React-Core
+    - rnmapbox-maps/DynamicLibrary (= 10.3.17)
+    - Turf
+  - rnmapbox-maps/DynamicLibrary (10.3.17):
+    - hermes-engine
+    - MapboxMaps (= 11.33.0)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Turf
+    - Yoga
   - RNPermissions (5.6.2):
     - hermes-engine
     - RCTRequired
@@ -1965,6 +1982,7 @@ PODS:
     - Yoga
   - SocketRocket (0.7.1):
     - ReactNativeDependencies
+  - Turf (4.0.0)
   - Yoga (0.0.0):
     - React-Core-prebuilt
 
@@ -1977,7 +1995,6 @@ DEPENDENCIES:
   - fmt (from `build/rndeps-facades/fmt`)
   - glog (from `build/rndeps-facades/glog`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - "MapLibreReactNative (from `../node_modules/@maplibre/maplibre-react-native`)"
   - RCT-Folly (from `build/rndeps-facades/RCT-Folly`)
   - RCTDeprecation (from `build/rncore-facades/RCTDeprecation`)
   - RCTRequired (from `build/rncore-facades/RCTRequired`)
@@ -2062,11 +2079,19 @@ DEPENDENCIES:
   - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNLocalize (from `../node_modules/react-native-localize`)
+  - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
   - Yoga (from `build/rncore-facades/Yoga`)
+
+SPEC REPOS:
+  trunk:
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
+    - Turf
 
 EXTERNAL SOURCES:
   AsyncStorage:
@@ -2086,8 +2111,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v250829098.0.17
-  MapLibreReactNative:
-    :path: "../node_modules/@maplibre/maplibre-react-native"
   RCT-Folly:
     :path: build/rndeps-facades/RCT-Folly
   RCTDeprecation:
@@ -2254,6 +2277,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
+  rnmapbox-maps:
+    :path: "../node_modules/@rnmapbox/maps"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -2274,7 +2299,9 @@ SPEC CHECKSUMS:
   fmt: ba0886e864ebb21d14c98b2e12e164b8002f5b93
   glog: 3cf7cb46f743c4bc758ae3e6d9c15bd1b4cfd6d4
   hermes-engine: 63c5db7d529c36335fada6582fd293ae2a105d77
-  MapLibreReactNative: 2667f2809096c895d3f033240c38a38daeab777a
+  MapboxCommon: 9f471eccffbe98965d33d2319a6073061c92c6b4
+  MapboxCoreMaps: ec985e76b6ff82a7774b0bcfa37570ff5a744725
+  MapboxMaps: e1e644ad247b20ce7e3f3c17784bd67a7cb04be2
   RCT-Folly: 82921e585c0400eda46fac1068297aa9dfb035e4
   RCTDeprecation: 5cc865306ce4974b7a57ddbc575fd1f3fef41957
   RCTRequired: ea6f2c41f2670961ce9a48a4bf17a190dd53e493
@@ -2358,12 +2385,14 @@ SPEC CHECKSUMS:
   RNBootSplash: 81eb95e5104c058316ce59f9e28ba321b1090013
   RNKeychain: adb06962df5ecb5253ad8265de3b2cec95edab56
   RNLocalize: 294dafe569e94074123dd287fe562b9c5b09a248
+  rnmapbox-maps: ccbdcba6e314f0fd16109884130244cb3f4e0c1d
   RNPermissions: b12c4d197c85ebc30b8064d2969cf341c14837af
   RNScreens: fd649b2059b4c136530f10e8001464b69cb634f4
   RNSVG: b63b54506f92434f6c62b34b17458e521fa47ea9
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
+  Turf: c9eb11a65d96af58cac523460fd40fec5061b081
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
-PODFILE CHECKSUM: 4bd63e20e09b21be4da16c42ce0ba2fdbe65b8a4
+PODFILE CHECKSUM: b9345af21ad732098468b1c21ea23b64e1e5a9a8
 
 COCOAPODS: 1.17.0

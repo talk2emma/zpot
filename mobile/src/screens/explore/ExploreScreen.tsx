@@ -129,7 +129,7 @@ export function ExploreScreen() {
         <ZpotMap ref={map} styleUrl={ENV.mapStyleUrl} center={center ?? APP.lisbon} initialZoom={center ? APP.defaultZoom : 12.5}
           features={features} layers={layers} selectedId={selectedId} showUserLocation={locOn}
           destination={destination ? { label: destination.name, coordinate: destination } : null}
-          markerLabel={label} bottomInset={heights[snap]} extraMarkers={extra}
+          markerLabel={label} bottomInset={heights[snap]} ornamentOffset={ORNAMENT_ABOVE_FABS} extraMarkers={extra}
           onSelect={id => { select(id); if (id !== null && sheet === 'peek') setSheet('half'); }}
           onRegionChange={r => { if (r.userInteraction) setPanCenter(r.center); }}
           onMapError={() => { setMapFailed(true); toast(t('explore.mapFail')); }} testID="explore-map" />
@@ -208,6 +208,9 @@ export function ExploreScreen() {
     </View>
   );
 }
+
+// Map logo/attribution sit above the Report FAB and map controls (bottom + 16, 44 tall) so they stay visible.
+const ORNAMENT_ABOVE_FABS = 16 + 44 + 6;
 
 const styles = StyleSheet.create({
   vacancy: { position: 'absolute', left: 12, right: 12 },

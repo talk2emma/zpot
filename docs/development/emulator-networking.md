@@ -31,3 +31,40 @@ The app's Profile screen shows the API version (or "unreachable"). In dev builds
 * **Network error banner everywhere**: the API isn't running (`docker compose ps`), or the base URL is wrong for this runtime (see the table).
 * **Works on iOS, not on Android**: `localhost` is set in `.env` without `adb reverse`.
 * **Emulator restarted**: `adb reverse` rules are lost on reboot. Re-run `scripts/start-android.sh`.
+
+## "Cannot connect to Metro … URL: 10.0.2.2:8081 … Error: undefined" after backgrounding (Android 15+)
+
+**Symptom.** In a debug build, Zpot goes to the background, for example on the Navigate hand-off to Google Maps or
+Waze, or by pressing Home. When it comes back, a LogBox warning says "Cannot connect to Metro" with `Error: undefined`,
+and "Fast Refresh disconnected" shows. Metro is still running. This isn't a crash, and release builds aren't affected.
+
+**Root cause** (reproduced on 2026-11-10, Pixel_10_Pro emulator, API 37):
+
+1. When the app leaves the foreground, `NetworkPolicyManager` marks its UID
+   `blocked_state={blocked=APP_BACKGROUND, effective=APP_BACKGROUND}` (`adb shell dumpsys netpolicy | grep UID=<uid>`).
+2. About 5–7 s later, `ConnectivityService` destroys the UID's live TCP sockets. logcat shows
+   `InetDiagMessage: Destroyed live tcp sockets for uids={<uid>}`.
+3. The Fast Refresh WebSocket fails with `Software caused connection abort`. The exception has no message, so Metro's
+   `HMRClient` reports `Error: undefined`. React Native's `HMRClient` never reconnects ("Reload app to reconnect").
+   The dev-support packager link does retry, but it can't reconnect while the app is still in the background.
+
+In the foreground the warning never appears (a 60 s control run showed 0 warnings). Changing `10.0.2.2` to
+`localhost` with `adb reverse` doesn't help either, because every socket of the UID is destroyed.
+
+**Fix (local development).** `scripts/start-android.sh` calls `allow_dev_background_network` (`scripts/lib.sh`). That
+puts `pt.zpot.app` on the power-save allowlist, which exempts it from the background network block:
+
+```bash
+adb shell cmd deviceidle whitelist +pt.zpot.app     # what the script does
+adb shell cmd deviceidle whitelist -pt.zpot.app     # undo
+```
+
+Verified: after 60 s in the background, 0 sockets were destroyed and there was no warning. On return, the app still
+had 3 established connections to `10.0.2.2:8081`. `adb shell cmd connectivity
+set-background-networking-enabled-for-uid` does **not** work, because NetworkPolicyManager resets that bit on the next
+process-state change.
+
+**Not applied to E2E runs, on purpose.** `scripts/e2e-part2.sh` keeps production behaviour: real users' apps lose
+network and sockets in the background. The app recovers through React Query's refetch-on-focus and the API client's
+retry of idempotent GETs, and the E2E flows that background the app (navigation hand-off and return) pass that way.
+The allowlist is a device setting that persists. It doesn't change the APK or any app code.

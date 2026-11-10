@@ -29,6 +29,6 @@ if docker info >/dev/null 2>&1; then
 else warn "Docker not running — start Docker Desktop and re-run"; fi
 
 head1 "6/6 Credentials"
-warn "Mapbox: not required. MapLibre + OpenFreeMap tiles work without tokens (docs/development/maps.md)."
+warn "Mapbox: set a public token (ZPOT_MAPBOX_PUBLIC_TOKEN=pk.…) in mobile/.env, or the map shows as unavailable (docs/development/maps.md)."
 warn "Seeded dev users and their generated passwords are printed above — store them yourself."
 ok "Done. Next: scripts/start-android.sh or scripts/start-ios.sh"

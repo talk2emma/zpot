@@ -68,7 +68,7 @@
     "hiddenPaid_one": "{{count}} opção paga oculta — ative nos Filtros", "hiddenPaid_other": "{{count}} opções pagas ocultas — ative nos Filtros",
     "hiddenUnknown": "{{count}} por confirmar ocultas pelo filtro",
     "unsupported": "O Zpot ainda não está disponível aqui. O piloto cobre só Lisboa.",
-    "mapFail": "Mapa indisponível — a mostrar a lista.", "layers": "Camadas e legenda", "recenter": "Centrar",
+    "mapFail": "Mapa indisponível — a mostrar a lista.", "mapNotConfigured": "O mapa não está configurado nesta versão. Os resultados continuam disponíveis na lista.", "layers": "Camadas e legenda", "recenter": "Centrar",
     "zoomIn": "Aproximar", "zoomOut": "Afastar", "report": "Reportar", "you": "Você", "loadError": "Não foi possível carregar o estacionamento.",
     "availabilityNotConfirmed": "Disponibilidade não confirmada", "sampleBanner": "Dados de desenvolvimento — regras de exemplo, não regulamentos reais." },
   "category": { "free": "Grátis", "free_time_limited": "Grátis · com horário", "paid": "Pago", "unknown": "Regras por confirmar",

@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-10 04:44 UTC",
+  "generated_at": "2026-11-10 09:49 UTC",
   "part": 2,
   "git": {
     "branch": "main",
-    "commit": "a3dbd9a628422ec4b49341c71687865aff13bf22",
+    "commit": "571704e062086bf4baa4798d89659ff3b27ee47e",
     "uncommitted_changes": true
   },
   "status_vocabulary": [
@@ -1435,7 +1435,7 @@
     {
       "id": "FEAT-015",
       "name": "Mapbox provider",
-      "status": "not-started"
+      "status": "partial"
     },
     {
       "id": "FEAT-016",

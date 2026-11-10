@@ -25,6 +25,10 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+# Mapbox Maps SDK v11 for @rnmapbox/maps (CocoaPods; no secret download token needed any more).
+$RNMapboxMapsImpl = 'mapbox'
+$RNMapboxMapsVersion = '= 11.33.0'
+
 target 'Zpot' do
   config = use_native_modules!
 
@@ -34,9 +38,12 @@ target 'Zpot' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pre_install do |installer|
+    $RNMapboxMaps.pre_install(installer)
+  end
+
   post_install do |installer|
-    # MapLibre Native iOS is added via Swift Package Manager (open source, no access token needed)
-    $MLRN.post_install(installer)
+    $RNMapboxMaps.post_install(installer)
     react_native_post_install(
       installer,
       config[:reactNativePath],

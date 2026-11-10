@@ -68,7 +68,7 @@
     "hiddenPaid_one": "{{count}} paid option hidden — turn on in Filters", "hiddenPaid_other": "{{count}} paid options hidden — turn on in Filters",
     "hiddenUnknown": "{{count}} unconfirmed hidden by your filter",
     "unsupported": "Zpot isn’t available here yet. The pilot covers Lisbon only.",
-    "mapFail": "Map unavailable — showing the list instead.", "layers": "Map layers & legend", "recenter": "Recentre",
+    "mapFail": "Map unavailable — showing the list instead.", "mapNotConfigured": "The map isn’t configured in this build. Parking results are still available in the list.", "layers": "Map layers & legend", "recenter": "Recentre",
     "zoomIn": "Zoom in", "zoomOut": "Zoom out", "report": "Report", "you": "You", "loadError": "We couldn’t load parking right now.",
     "availabilityNotConfirmed": "Availability not confirmed", "sampleBanner": "Development data — sample rules, not live regulations." },
   "category": { "free": "Free", "free_time_limited": "Free · time rules", "paid": "Paid", "unknown": "Rules unconfirmed",

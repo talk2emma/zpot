@@ -53,5 +53,12 @@ The full list is in `docs/code-review/REMEDIATION_LOG.md`.
 * **No automatic face or number-plate redaction:** photos are re-encoded, which strips EXIF/GPS, and users are told to avoid capturing faces and plates.
 * **No automated GDPR compliance:** the privacy rights tools exist, but lawful bases and retention periods await legal review.
 * **Seed data is a development fixture**, not real Lisbon regulations.
+* **Maps moved to Mapbox; stability pass (2026-11-10, FEAT-015 `partial`):** `@rnmapbox/maps` 10.3.17 with Mapbox Maps SDK 11.33. MapLibre was removed (duplicate `NativeMapViewModule` symbol). Results:
+  * **No Zpot crash on Android or iOS** in the Mapbox-build runs: 0 fatal exceptions, native crashes, ANRs or low-memory kills in about 90 min of Android logcat, and no new iOS crash reports. The two iOS crash reports from 2026-11-09 (missing UIScene adoption, iOS 27) were already fixed in `a8b8c65`.
+  * Android: Part 2 E2E **14/14** (twice) plus E2E-001. iOS: 13/14 and 11/13 in full runs; every failed flow then passed on rerun (e2e-011 5/6 after the render-loop fix). Today's iOS flake rate fell from 29% (MapLibre build) to 17% (Mapbox build).
+  * Fixed: a map **render loop** (idle → state → markers → idle) that starved the JS thread and dropped taps on iOS; added a **60-marker budget** (the API returns up to 500 areas). See `docs/development/maps.md`.
+  * Measured (release, Android emulator): 114 MB without map, **208 MB** on Explore with map, cold start about 0.5 s. A debug build adds about 170 MB. No leak over repeated details → back cycles.
+  * "Cannot connect to Metro … Error: undefined" (debug only) is Android's background network block destroying the Fast Refresh socket. Dev fix in `scripts/start-android.sh`; root cause in `docs/development/emulator-networking.md`.
+  * **Open:** Mapbox still sends usage and billing events to `events.mapbox.com`, which the privacy policy must disclose. The release APK is 187 MB because it bundles all CPU architectures (ship an AAB or ABI splits). The map hasn't been checked on a physical phone.
 * **Not measured:** device performance (startup, FPS, memory). Universal/App Links, a connection pooler and a statement timeout are not configured. See `docs/code-review/TECHNICAL_DEBT_REGISTER.md`.
 * **Not production-ready by these checks alone:** deployment, monitoring, a push provider, billing (if Pro launches), legal review and production data are outstanding.

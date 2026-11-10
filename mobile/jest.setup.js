@@ -41,16 +41,24 @@ jest.mock('react-native-svg', () => {
   const C = ({ children }) => React.createElement(View, null, children);
   return { __esModule: true, default: C, Svg: C, Circle: C, Line: C, Path: C, Polyline: C, Rect: C };
 });
-// ---- MapLibre: native map replaced by inert views; markers stay pressable for map-selection tests
-jest.mock('@maplibre/maplibre-react-native', () => {
+
+// ---- Build env: fixed values so tests never depend on a developer's mobile/.env (fake public token, not a real one)
+jest.mock('./src/constants/env.generated', () => ({ GENERATED_ENV: { ZPOT_API_URL_ANDROID: '', ZPOT_API_URL_IOS: '',
+  ZPOT_MAPBOX_STYLE_URL: 'mapbox://styles/mapbox/streets-v12', ZPOT_MAPBOX_PUBLIC_TOKEN: 'pk.test-token',
+  ZPOT_REQUEST_TIMEOUT_MS: '12000', ZPOT_SHOW_DEV_TOOLS: 'false' } }));
+// ---- Mapbox (@rnmapbox/maps): native map replaced by inert views; markers stay pressable for map-selection tests
+jest.mock('@rnmapbox/maps', () => {
   const React = require('react');
   const { View } = require('react-native');
   const Pass = ({ children }) => React.createElement(View, null, children);
   const Camera = React.forwardRef((_p, ref) => {
-    React.useImperativeHandle(ref, () => ({ flyTo: jest.fn(), zoomTo: jest.fn(), fitBounds: jest.fn(), jumpTo: jest.fn(), easeTo: jest.fn() }));
+    React.useImperativeHandle(ref, () => ({ setCamera: jest.fn(), flyTo: jest.fn(), zoomTo: jest.fn(), fitBounds: jest.fn(), moveTo: jest.fn() }));
     return null;
   });
-  return { Map: Pass, Camera, GeoJSONSource: Pass, Layer: () => null, Marker: Pass, UserLocation: () => null };
+  const Null = () => null;
+  const api = { setAccessToken: jest.fn(async () => null), setTelemetryEnabled: jest.fn() };
+  return { __esModule: true, default: api, ...api, MapView: Pass, Camera, ShapeSource: Pass, FillLayer: Null, LineLayer: Null,
+    CircleLayer: Null, SymbolLayer: Null, MarkerView: Pass, LocationPuck: Null };
 });
 
 jest.mock('react-native-image-picker', () => ({

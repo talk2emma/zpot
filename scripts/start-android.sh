@@ -23,4 +23,5 @@ adb reverse tcp:8081 tcp:8081 >/dev/null || true
 ensure_metro
 ABI=$(adb shell getprop ro.product.cpu.abi | tr -d '\r')
 (cd "$MOBILE" && npx react-native run-android --no-packager --active-arch-only) || die "Android build failed — see output above"
+allow_dev_background_network   # keeps Fast Refresh connected when the app is backgrounded (see lib.sh)
 ok "Zpot launched (ABI $ABI)"

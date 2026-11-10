@@ -52,7 +52,7 @@ screen("forgot","SCR-011","Reset password","Request link → (deep link) new pas
 screen("legal","SCR-012","Legal & data sources","Terms / privacy / sources / disclaimer (draft)","support","screens/profile/SettingsScreens.tsx#LegalScreen","P1","implemented",[],"manual",entry="register links; profile",exit_="back")
 screen("explore","SCR-013","Explore (map + results sheet)","Map, overlays, search bar, chips, controls, sheet, list view, selected spot","parking","screens/explore/ExploreScreen.tsx (+ExploreSheet, ResultsPanel, SelectedSpotPanel)","P1","implemented",
        ["GET /parking/options/","GET /parking/map-layers/","GET /parking/areas/{id}/","GET /places/reverse-geocode/"],"unit:"+T_PK+"; contract",
-       "Map: MapLibre Native (Mapbox requires credentials not available). Community vacancy pins/voting (selVac) and 'Report' FAB route to Part 2. Sponsored ad card (monetisation concept) not shipped.",
+       "Map: Mapbox Maps SDK v11 via @rnmapbox/maps (pk.* token; without one the map reports unavailable and the list view is used). Community vacancy pins/voting (selVac) and 'Report' FAB route to Part 2. Sponsored ad card (monetisation concept) not shipped.",
        entry="tabs; search; plan; filters", exit_="search, plan, filters, details, navPick, layers, notifications(P2), report(P2)")
 screen("search","SCR-014","Destination search","Autocomplete, recents, popular, current location, unsupported-city message","parking","screens/explore/SearchScreen.tsx","P1","implemented",["GET /places/autocomplete/"],"unit:"+T_PK+"; contract",inputs="query",entry="explore search bar",exit_="explore | plan")
 screen("plan","SCR-015","When are you parking?","Arrival day/time, duration, walk, free-only, paid, permit","parking","screens/explore/PlanScreen.tsx (+forms/DateTimeSelector)","P1","implemented",["(feeds GET /parking/options/ params)"],"unit:__tests__/searchParams.test.tsx",
@@ -233,7 +233,7 @@ def main():
         L.append(f"| {oid} | `{k}` | {name} | {rn} | **{st}** | {len(by_screen.get(k, []))} |")
     L.append("\n## Prototype-only controls\n\nThe artboard's *Prototype controls* panel (demo clock, journeys, world events, flags) "
              f"has {len(by_screen.get('dev-panel', []))} bindings. It simulates the world and is **not** part of the app; equivalents are "
-             "real (offline via NetInfo, map failure via MapLibre `onDidFailLoadingMap`, language in Profile, rule changes via server re-evaluation, report review via Django admin).")
+             "real (offline via NetInfo, map failure via Mapbox `onMapLoadingError`, language in Profile, rule changes via server re-evaluation, report review via Django admin).")
     open(os.path.join(DOCS, "migration/screen-inventory.md"), "w").write("\n".join(L) + "\n")
 
     # ---------------- interaction inventory

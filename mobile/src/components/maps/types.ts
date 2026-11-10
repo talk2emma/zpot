@@ -35,5 +35,7 @@ export interface ZpotMapProps {
   onRegionChange?: (r: RegionChange) => void;
   onMapError?: () => void;
   bottomInset?: number;
+  /** Extra lift for the logo/attribution above bottomInset, so floating buttons never cover them (Mapbox ToS). */
+  ornamentOffset?: number;
   testID?: string;
 }

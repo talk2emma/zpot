@@ -51,4 +51,4 @@ Run `docker compose exec api python manage.py seed_zpot_lisbon --with-users`. It
 * **`postgis/postgis` "no matching manifest for arm64".** Compose uses `imresamu/postgis:17-3.5`, a multi-arch build of the same image.
 * **Gradle wrapper download timeouts.** `networkTimeout` is raised to 120 s in `gradle-wrapper.properties`.
 * **The first Android build downloads the NDK (~1 GB) and build-tools 37.** Expect a long first build.
-* **The first `pod install` downloads React Native prebuilt binaries and MapLibre (via Swift Package Manager from GitHub).**
+* **The first `pod install` downloads React Native prebuilt binaries and the Mapbox Maps SDK (CocoaPods; no secret token needed).**

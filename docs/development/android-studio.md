@@ -25,7 +25,7 @@ The app loads JavaScript from Metro on `localhost:8081`. Run `adb reverse tcp:80
 | Deep links | `AndroidManifest.xml` | `zpot://` intent filter |
 | Navigation hand-off | `<queries>` | `google.navigation`, `waze`, `geo`, `https` |
 | Cleartext HTTP | `usesCleartextTraffic` placeholder | Enabled for debug builds only (local API) |
-| Map | MapLibre Native (Maven Central) | No token required |
+| Map | Mapbox Maps SDK 11.33 (Mapbox Maven repo, no download token) | Public `pk.*` token in `mobile/.env` |
 
 ## Command line equivalents
 
@@ -41,5 +41,5 @@ adb shell am start -n pt.zpot.app/.MainActivity
 ## Debugging
 
 * JS: press `j` in Metro to open React Native DevTools, or shake the device for the Dev Menu.
-* Native: Logcat filtered by `pt.zpot.app`. MapLibre logs under the `Mbgl` tags.
+* Native: Logcat filtered by `pt.zpot.app`. Mapbox logs under the `Mapbox` / `RNMBX` tags.
 * Network: the API base URL is shown at the bottom of Profile in debug builds.

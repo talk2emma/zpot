@@ -54,7 +54,7 @@ head1 "Project"
 [ -f "$ROOT/api/.env" ] && ok "api/.env present" || { warn "api/.env missing (bootstrap creates it from .env.example)"; WARN=$((WARN+1)); }
 [ -f "$MOBILE/.env" ] && ok "mobile/.env present" || { warn "mobile/.env missing (defaults are used)"; WARN=$((WARN+1)); }
 grep -q "^ZPOT_MAPBOX_PUBLIC_TOKEN=pk\." "$MOBILE/.env" 2>/dev/null && ok "Mapbox public token configured" \
-  || warn "No Mapbox token — MapLibre (no token required) is used. See docs/development/maps.md"
+  || { warn "No Mapbox public token — the map shows as unavailable. Set ZPOT_MAPBOX_PUBLIC_TOKEN=pk.… in mobile/.env (docs/development/maps.md)"; WARN=$((WARN+1)); }
 
 head1 "Summary"
 if [ "$MISSING" -eq 0 ]; then ok "No blocking problems found ($WARN warning(s))"; else fail "$MISSING blocking problem(s), $WARN warning(s)"; fi

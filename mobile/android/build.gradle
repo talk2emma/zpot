@@ -6,6 +6,8 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.2.0"
+        RNMapboxMapsImpl = "mapbox"
+        RNMapboxMapsVersion = "11.33.0"
     }
     repositories {
         google()
@@ -19,3 +21,18 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Mapbox Maps SDK (@rnmapbox/maps). The Mapbox Maven repo no longer needs a secret download token;
+// a token is only sent if one is configured locally (never commit it).
+allprojects {
+    repositories {
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            def token = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: System.getenv('RNMAPBOX_MAPS_DOWNLOAD_TOKEN')
+            if (token) {
+                authentication { basic(BasicAuthentication) }
+                credentials { username = 'mapbox'; password = token }
+            }
+        }
+    }
+}

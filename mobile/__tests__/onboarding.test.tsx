@@ -50,6 +50,27 @@ describe('onboarding', () => {
     const i18n = require('../src/i18n').default;
     await act(async () => { await i18n.changeLanguage('en'); });
   });
+  it('previews the picked language without switching the app until Continue', async () => {
+    const i18n = require('../src/i18n').default;
+    await renderScreen('Language', LanguageScreen, undefined, ALL_ROUTES);
+    expect(screen.getByText('Free · time rules')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('lang-pt-PT'));
+    // the screen and its sample parking card are now Portuguese…
+    expect(screen.getByText('Continuar')).toBeTruthy();
+    expect(screen.getByTestId('language-preview-sample')).toHaveTextContent('Grátis durante o horário escolhido');
+    expect(screen.queryByText('Free · time rules')).toBeNull();
+    // …but nothing app-wide has changed or been stored yet
+    expect(i18n.language).toBe('en');
+    expect(usePrefsStore.getState().language).toBeNull();
+  });
+  it('backing out of the settings picker leaves the language untouched', async () => {
+    const i18n = require('../src/i18n').default;
+    usePrefsStore.setState({ language: 'en' });
+    await renderScreen('Language', LanguageScreen, { fromSettings: true }, ALL_ROUTES);
+    await fireEvent.press(screen.getByTestId('lang-pt-PT'));
+    expect(i18n.language).toBe('en');
+    expect(usePrefsStore.getState().language).toBe('en');
+  });
   it('steps through the 3-page introduction and can skip', async () => {
     await renderScreen('Onboarding', OnboardingScreen, undefined, ALL_ROUTES);
     expect(screen.getByText('Search for your destination')).toBeTruthy();
