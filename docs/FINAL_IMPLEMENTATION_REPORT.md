@@ -31,8 +31,8 @@
 | Live API contract (`npm run test:contract`) | **11 passed** |
 | iOS build (`xcodebuild`, iPhone 18 Pro sim, iOS 27.0) | Built and run |
 | Android build (`gradlew assembleDebug`, Pixel_10_Pro, API 37) | Built and run (rebuilt after the deep-link fix) |
-| Maestro E2E, iOS | E2E-001 (Part 1) ✓; E2E-002…012: see `docs/e2e-results/ios/summary.txt` and `docs/code-review/e2e-ios-final.txt` |
-| Maestro E2E, Android | E2E-001 and E2E-002…012: see `docs/e2e-results/android/summary.txt` |
+| Maestro E2E, iOS | **E2E-001 ✓ and E2E-002…012: 13/13 flows passed** in one uninterrupted run (`docs/code-review/e2e-ios-final.txt`) |
+| Maestro E2E, Android | **E2E-001 ✓ and E2E-002…012: 13/13 flows passed** in one uninterrupted run (`docs/code-review/e2e-android-final.txt`) |
 
 All E2E runs use the real local API and seed data (no mocks): the reminder is dispatched by Celery beat, the email link is read from Mailpit, and the API container is really stopped for the network-error journey.
 

@@ -1490,58 +1490,73 @@
   ],
   "tests": {
     "backend": {
-      "command": "pytest",
-      "passed": 77,
+      "command": "docker compose exec api pytest -q",
+      "passed": 170,
       "failed": 0,
-      "suites": {
-        "test_engine.py": 24,
-        "test_auth.py": 18,
-        "test_parking_api.py": 35
-      }
+      "note": "includes 19 code-review regression tests; clock-independent (verified during a Tuesday 07-09 restriction window)"
     },
     "backend_lint": "ruff: clean",
     "migrations_check": "clean",
-    "openapi": "0 errors, 2 enum-naming warnings",
+    "openapi": "0 errors (drf-spectacular --validate)",
     "mobile_typecheck": "tsc strict: 0 errors",
-    "mobile_lint": "eslint: 0 errors, 30 warnings",
+    "mobile_lint": "eslint: 0 errors (no-inline-styles warnings only)",
     "mobile_unit_component": {
-      "command": "jest",
-      "passed": 49,
+      "command": "npx jest",
+      "passed": 75,
       "failed": 0
     },
     "api_contract": {
       "command": "npm run test:contract",
-      "passed": 5,
+      "passed": 11,
       "failed": 0
     },
+    "api_audit": {
+      "operations": 117,
+      "response_schema": 117,
+      "backend_tests": 117,
+      "documented": 117,
+      "mobile_client": 106
+    },
     "e2e": {
-      "flow": "mobile/e2e/part1-core-journey.yaml",
-      "ios_simulator": "passed (iPhone 18 Pro, iOS 27.0)",
-      "android_emulator": "passed (Pixel_10_Pro, API 37)",
       "tool": "Maestro 2.11.0",
-      "real_api": true
+      "real_api": true,
+      "ios_simulator": {
+        "device": "iPhone 18 Pro, iOS 27.0",
+        "E2E-001": "passed",
+        "E2E-002..012": "13/13 flows passed (single uninterrupted run)"
+      },
+      "android_emulator": {
+        "device": "Pixel_10_Pro, API 37",
+        "E2E-001": "passed",
+        "E2E-002..012": "13/13 flows passed (single uninterrupted run)"
+      },
+      "runner": "scripts/e2e-part2.sh ios|android"
     }
   },
   "builds": {
     "android": {
       "status": "built-and-run",
-      "command": "./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a",
-      "artifact": "mobile/android/app/build/outputs/apk/debug/app-debug.apk"
+      "command": "./gradlew app:assembleDebug -PreactNativeArchitectures=arm64-v8a",
+      "notes": "rebuilt after adding the zpot:// intent filter"
     },
     "ios": {
       "status": "built-and-run",
       "command": "xcodebuild -workspace Zpot.xcworkspace -scheme Zpot -sdk iphonesimulator",
-      "notes": "UIScene lifecycle adopted for iOS 27"
+      "notes": "UIScene lifecycle; image-picker + permissions pods"
     },
     "backend": {
       "status": "running",
       "services": [
         "postgis 17-3.5",
-        "redis 7.4",
+        "redis",
         "mailpit",
         "api",
-        "celery worker"
+        "celery worker",
+        "celery beat"
       ]
-    }
+    },
+    "not_measured": [
+      "device startup/FPS/memory profiling (TD-11)"
+    ]
   }
 }

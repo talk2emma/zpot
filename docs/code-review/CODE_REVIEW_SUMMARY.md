@@ -36,7 +36,7 @@ The review found and fixed **real defects in every layer**. Most could not have 
 | Database | 3 indexes added (forward-only migrations); spatial plans verified at 20,000 areas (GiST used, under 4 ms SQL) |
 | Benchmarks | Real before/after, in-process, with a rollback-only harness (`PERFORMANCE_BENCHMARKS.md`) |
 | API audit | 117 operations: 117/117 with response schema, backend tests and documentation |
-| Tests now | Backend **170** pytest · mobile **75** Jest + **11** live contract · E2E: see below |
+| Tests now | Backend **170** pytest · mobile **75** Jest + **11** live contract · E2E **13/13 + E2E-001 on iOS and Android** |
 
 ## Final review matrix
 
@@ -58,7 +58,16 @@ Statuses: Passed · Fixed · Remaining (see the technical debt register) · Not 
 
 ## E2E (Maestro, real local API, no mocks)
 
-See the final runs recorded below and `docs/e2e-results/<platform>/summary.txt`.
+| Platform | E2E-001 (Part 1) | E2E-002…012 (13 flows) | Evidence |
+|---|---|---|---|
+| iOS 27.0, iPhone 18 Pro simulator | Passed | **13/13 passed** in one uninterrupted run | `e2e-ios-final.txt` |
+| Android API 37, Pixel_10_Pro emulator | Passed | **13/13 passed** in one uninterrupted run | `e2e-android-final.txt` |
+
+* **Baseline before the review:** iOS 9/13; Android not run.
+* **Before reaching a clean run**, every failure was diagnosed from screenshots and logs. App defects were fixed in code: NAV-1, UX-1b, UX-3 and the M-08 inbox regression. Harness defects were fixed in the flows.
+* **Two failures were the app working correctly against the real clock:** Tuesday's street-cleaning ban at the seeded test street made it correctly refuse to start a session. The flows now use an area with no time-window bans.
+
+**Test-suite defect found the same way (fixed):** 8 backend tests and 1 contract test started sessions at `s1` against the real clock, so they failed every Tuesday 07:00–09:00. They now use areas with no time windows, or ask for restricted results explicitly. 170/170 pass inside that window.
 
 ## Unresolved risks (top 5)
 

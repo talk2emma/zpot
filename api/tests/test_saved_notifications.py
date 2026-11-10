@@ -36,9 +36,9 @@ def test_saved_location_flags_rule_change(seeded, make_client):
     from apps.regulations.models import TemporaryClosure
 
     c = make_client()
-    c.post("/api/v1/saved/locations/", {"area_id": area_id("s1")}, format="json")
+    c.post("/api/v1/saved/locations/", {"area_id": area_id("m1")}, format="json")
     TemporaryClosure.objects.create(
-        area_id=area_id("s1"),
+        area_id=area_id("m1"),
         reason="Works (test)",
         starts_at=timezone.now() - timedelta(hours=1),
         ends_at=timezone.now() + timedelta(days=2),

@@ -51,7 +51,12 @@ def test_leaving_report_publishes_short_lived_observation(seeded, make_client):
     # the area now shows a recent availability signal in search
     s = c.get(
         "/api/v1/parking/options/",
-        {"destination_latitude": 38.7347, "destination_longitude": -9.145, "max_walk_minutes": 30},
+        {
+            "destination_latitude": 38.7347,
+            "destination_longitude": -9.145,
+            "max_walk_minutes": 30,
+            "include_restricted": True,
+        },  # s1 is restricted on Tuesdays 07–09; availability must still be attached
     ).json()
     hit = next(x for x in s["results"] if x["id"] == loc("s1")["area_id"])
     assert hit["availability_status"] == "recently_reported_available"

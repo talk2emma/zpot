@@ -29,8 +29,9 @@ d('Part 2 API contract (live)', () => {
     token = reg.body.tokens.access;
   });
 
+  // Area 18 (Rua do Açúcar) has no time-window bans, so this never depends on the wall clock.
   it('session lifecycle', async () => {
-    const start = await call('POST', '/sessions/', { area_id: 1, duration_minutes: 60, reminder_minutes: 15 });
+    const start = await call('POST', '/sessions/', { area_id: 18, duration_minutes: 60, reminder_minutes: 15 });
     expect(start.status).toBe(201);
     const s = sessionWithWarningsSchema.parse(start.body).session;
     sessionSchema.parse((await call('GET', '/sessions/active/')).body);

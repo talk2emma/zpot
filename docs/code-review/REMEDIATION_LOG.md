@@ -57,6 +57,12 @@
 | NAV-1 | High | (Found by the Android E2E run) **No `zpot://` intent filter on Android**: email verification, password reset, shared parking links and notification deep links never opened the app on Android. The Android Studio guide wrongly said the filter existed | `android/app/src/main/AndroidManifest.xml` | VIEW + DEFAULT + BROWSABLE intent filter for `zpot` | `adb am start zpot://parking/1` → `Status: ok`; E2E | Universal/App Links (https) not configured (TD-19) |
 | UX-3 | Medium | (Found by E2E-003) After verifying the email, Continue went back into the completed sign-up form, and the pending journey was dropped before verification | `features/auth/useAuthActions.ts`, `screens/auth/VerifyEmailScreen.tsx` | Pending journey kept through verification; Continue resumes it (or the main tabs) | `auth.test.tsx` new test ✓; E2E-003 ✓ | — |
 
+## Test suite
+
+| ID | Sev | Root cause | Files | Fix | Verification |
+|---|---|---|---|---|---|
+| T-01 | Medium | 8 backend tests and 1 live contract test started sessions or searches at `s1` against the real clock. `s1` has a Tuesday 07:00–09:00 street-cleaning ban, so the suite failed for two hours every week. The same applied to E2E-004/007/008 | `api/tests/*`, `mobile/__tests__/contract/part2.contract.test.ts`, `mobile/e2e/part2/*` | Use areas with no time-window bans (`m1` / area 18), or request `include_restricted` where the assertion is about availability | Backend 170/170 and contract 11/11 **run inside the ban window** (Tue 08:20 Lisbon) |
+
 ## Investigated, not a defect
 
 * **"Allow Zpot to find… nearby devices" prompt on Android 17.** It comes from `ACCESS_LOCAL_NETWORK`, which only React Native's **debug** manifest declares, for the Metro dev server. Release builds don't request it. The E2E launch accepts it.

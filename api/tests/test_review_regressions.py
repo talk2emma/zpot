@@ -1,4 +1,7 @@
-"""Regression tests for defects confirmed in the 2026-11 code review (docs/code-review/REMEDIATION_LOG.md)."""
+"""Regression tests for defects confirmed in the 2026-11 code review (docs/code-review/REMEDIATION_LOG.md).
+
+Sessions use area m1 (free, no time windows) so the tests never depend on the wall clock: s1 has a Tuesday
+07:00–09:00 street-cleaning ban, during which starting a session there is (correctly) refused."""
 
 from datetime import timedelta
 from unittest import mock
@@ -26,7 +29,7 @@ def test_a01_lists_are_newest_first_not_uuid_order(seeded, make_client):
     titles = [x["title"] for x in c.get("/api/v1/notifications/").json()["results"] if x["title"].startswith("n")]
     assert titles == [f"n{i}" for i in reversed(range(6))]
     for i in range(4):
-        s = c.post("/api/v1/sessions/", {"area_id": area_id("s1"), "duration_minutes": 60}, format="json").json()[
+        s = c.post("/api/v1/sessions/", {"area_id": area_id("m1"), "duration_minutes": 60}, format="json").json()[
             "session"
         ]
         ParkingSession.objects.filter(pk=s["id"]).update(started_at=now - timedelta(days=4 - i))
@@ -37,10 +40,10 @@ def test_a01_lists_are_newest_first_not_uuid_order(seeded, make_client):
 
 def test_a02_concurrent_start_race_is_a_409_not_a_500(seeded, make_client):
     c = make_client()
-    assert c.post("/api/v1/sessions/", {"area_id": area_id("s1")}, format="json").status_code == 201
+    assert c.post("/api/v1/sessions/", {"area_id": area_id("m1")}, format="json").status_code == 201
     # Simulate the race: the pre-check sees no active session, the partial unique constraint fires on insert.
     with mock.patch.object(QuerySet, "exists", return_value=False):
-        r = c.post("/api/v1/sessions/", {"area_id": area_id("s1")}, format="json")
+        r = c.post("/api/v1/sessions/", {"area_id": area_id("m1")}, format="json")
     assert r.status_code == 409 and r.json()["error"]["code"] == "active_session_exists"
 
 
@@ -54,7 +57,7 @@ def test_a02_any_integrity_error_uses_the_error_envelope(seeded, make_client):
 def test_a03_ending_a_session_never_fails_because_the_departure_share_is_rejected(seeded, make_client):
     c = make_client()
     for _ in range(2):  # second share at the same spot within 10 min is a duplicate report
-        sid = c.post("/api/v1/sessions/", {"area_id": area_id("s1")}, format="json").json()["session"]["id"]
+        sid = c.post("/api/v1/sessions/", {"area_id": area_id("m1")}, format="json").json()["session"]["id"]
         r = c.post(f"/api/v1/sessions/{sid}/end/", {"share_departure": True}, format="json")
         assert r.status_code == 200, r.content
         assert r.json()["session"]["status"] == "ended"
@@ -147,7 +150,7 @@ def test_a10_import_skips_unknown_or_inactive_areas(seeded, make_client):
 
 def test_a12_reading_my_sessions_does_not_touch_other_users(seeded, make_client):
     a, b = make_client(), make_client()
-    sid = a.post("/api/v1/sessions/", {"area_id": area_id("s1")}, format="json").json()["session"]["id"]
+    sid = a.post("/api/v1/sessions/", {"area_id": area_id("m1")}, format="json").json()["session"]["id"]
     ParkingSession.objects.filter(pk=sid).update(
         planned_end_at=timezone.now() - timedelta(hours=30), started_at=timezone.now() - timedelta(hours=31)
     )
@@ -187,7 +190,7 @@ def test_a17_insights_query_count_is_bounded(seeded, make_client, django_assert_
 
 def test_a18_editing_the_plan_keeps_custom_reminders(seeded, make_client):
     c = make_client()
-    sid = c.post("/api/v1/sessions/", {"area_id": area_id("s1"), "duration_minutes": 180}, format="json").json()[
+    sid = c.post("/api/v1/sessions/", {"area_id": area_id("m1"), "duration_minutes": 180}, format="json").json()[
         "session"
     ]["id"]
     c.post(f"/api/v1/sessions/{sid}/reminders/", {"minutes_before": 45}, format="json")

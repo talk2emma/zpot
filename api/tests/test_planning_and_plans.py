@@ -87,7 +87,7 @@ def test_insights_only_count_entered_costs(seeded, make_client):
     i0 = c.get("/api/v1/sessions/insights/").json()
     assert i0["sessions"] == 0 and i0["estimated_savings_total"] is None
     for cost in (None, "0.00"):
-        sid = c.post("/api/v1/sessions/", {"area_id": area_id("s1"), "duration_minutes": 60}, format="json").json()[
+        sid = c.post("/api/v1/sessions/", {"area_id": area_id("m1"), "duration_minutes": 60}, format="json").json()[
             "session"
         ]["id"]
         c.post(f"/api/v1/sessions/{sid}/end/", {"cost_paid": cost} if cost else {}, format="json")
