@@ -36,7 +36,9 @@ def _save(user, area_id, label):
 
     from apps.parking.selectors import areas_with_regulations
 
-    area = areas_with_regulations().get(pk=area_id)
+    area = areas_with_regulations().filter(pk=area_id, is_active=True).first()
+    if area is None:
+        raise ZpotAPIError("Parking area not found.", code="not_found", status_code=404)
     cat = evaluate(area_spec(area), timezone.now(), 120).category.value
     obj, created = SavedParkingLocation.objects.get_or_create(
         user=user, area=area, defaults={"label": (label or area.name)[:80], "category_at_save": cat}
@@ -79,7 +81,10 @@ class SavedLocationImportView(GenericAPIView):
         s.is_valid(raise_exception=True)
         imported = existing = 0
         for it in s.validated_data["items"][:100]:
-            _, created = _save(request.user, it["area_id"], it.get("label"))
+            try:
+                _, created = _save(request.user, it["area_id"], it.get("label"))
+            except ZpotAPIError:  # area removed since the guest saved it: skip it, keep the rest
+                continue
             imported += created
             existing += not created
         return Response({"imported": imported, "already_saved": existing})

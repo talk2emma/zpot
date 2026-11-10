@@ -31,13 +31,13 @@ from .openapi import (
 )
 from .selectors import areas_with_regulations
 from .serializers import (
+    AreaDetailQuerySerializer,
     CompareQuerySerializer,
     EvidenceSerializer,
     MapLayersQuerySerializer,
     ParkingAreaListSerializer,
     ParkingOptionSerializer,
     SearchQuerySerializer,
-    StayParamsSerializer,
     area_geometry,
     driver_from_params,
     parse_arrival,
@@ -242,18 +242,16 @@ class ParkingAreaDetailView(APIView):
 
     @extend_schema(
         parameters=[
-            StayParamsSerializer,
-            OpenApiParameter("latitude", float, required=False),
-            OpenApiParameter("longitude", float, required=False),
+            AreaDetailQuerySerializer,
         ],
         responses=ParkingAreaDetailDocSerializer,
     )
     def get(self, request, pk):
         area = _get_area(pk)
-        s = StayParamsSerializer(data=request.query_params)
+        s = AreaDetailQuerySerializer(data=request.query_params)
         s.is_valid(raise_exception=True)
-        q = request.query_params
-        option = _single_option(area, s.validated_data, q.get("latitude"), q.get("longitude"))
+        d = s.validated_data
+        option = _single_option(area, d, d.get("latitude"), d.get("longitude"))
         data = ParkingOptionSerializer(option).data
         data.update(
             {

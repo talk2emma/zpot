@@ -14,6 +14,7 @@ env: { AREA: "1" }
 - runFlow: _common/primer.yaml
 - extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 15000 }
 - tapOn: { id: "header-back" }
+- tapOn: { id: "details-back", optional: true }     # session was opened from parking details
 - tapOn: { id: "tab-explore", optional: true }
 - tapOn: { id: "explore-bell" }
 - extendedWaitUntil: { visible: { id: "notif-session_reminder" }, timeout: 120000 }

@@ -49,7 +49,7 @@ class EvaluateView(APIView):
         s = EvaluateRequestSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         d = s.validated_data
-        area = areas_with_regulations().filter(pk=d["area_id"]).first()
+        area = areas_with_regulations().filter(pk=d["area_id"], is_active=True).first()
         if area is None:
             raise ZpotAPIError("Parking area not found.", code="not_found", status_code=404)
         arrival = parse_arrival(d.get("arrival_at"), area.city.timezone)

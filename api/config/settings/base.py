@@ -82,6 +82,7 @@ TEMPLATES = [
 DATABASES = {"default": env.db("DATABASE_URL", default="postgis://zpot:zpot@localhost:5432/zpot")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True  # persistent connections survive a DB restart/failover
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
@@ -176,10 +177,18 @@ CELERY_RESULT_BACKEND = None
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=not bool(REDIS_URL))
 CELERY_TASK_EAGER_PROPAGATES = True
 CELERY_TIMEZONE = "UTC"
+# A stuck task must not hold a worker forever (all Zpot tasks are short and idempotent).
+CELERY_TASK_SOFT_TIME_LIMIT = env.int("CELERY_TASK_SOFT_TIME_LIMIT", default=240)
+CELERY_TASK_TIME_LIMIT = env.int("CELERY_TASK_TIME_LIMIT", default=300)
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_BEAT_SCHEDULE = {
     # Reminders are persisted rows; this dispatcher is idempotent (row locks + status), so a missed
     # tick only delays delivery — it never loses or duplicates a reminder.
-    "dispatch-due-reminders": {"task": "apps.sessions.tasks.dispatch_due_reminders", "schedule": 30.0},
+    "dispatch-due-reminders": {
+        "task": "apps.sessions.tasks.dispatch_due_reminders",
+        "schedule": 30.0,
+        "options": {"expires": 25},  # a backlog of stale ticks is pointless: the next tick covers them
+    },
     "expire-stale-sessions": {"task": "apps.sessions.tasks.expire_stale_sessions", "schedule": 300.0},
     "purge-expired-observations": {"task": "apps.availability.tasks.purge_expired_observations", "schedule": 900.0},
     "retention-cleanup": {"task": "apps.privacy.tasks.retention_cleanup", "schedule": 3600.0},
@@ -229,6 +238,7 @@ ZPOT = {
     "PRIVACY_EXPORT_TTL_DAYS": 7,
     "SEARCH_HISTORY_RETENTION_DAYS": 90,
     "SESSION_RETENTION_DAYS": 365,
+    "ZTRIGGER_EVENT_RETENTION_DAYS": 30,
     "PUSH_PROVIDER": env("PUSH_PROVIDER", default="none"),  # none = inbox only (no APNs/FCM credentials)
     "FEATURES": {
         "guest_search": True,

@@ -55,7 +55,17 @@ def _reference():
     return f"ZD-{secrets.randbelow(900000) + 100000}"
 
 
+STALE_AFTER = timedelta(hours=1)
+
+
 def request_export(user):
+    # A worker crash must not block exports forever: an unfinished request older than STALE_AFTER is failed.
+    DataPrivacyRequest.objects.filter(
+        user=user,
+        kind=RequestKind.EXPORT,
+        status__in=[RequestStatus.RECEIVED, RequestStatus.PROCESSING],
+        created_at__lt=timezone.now() - STALE_AFTER,
+    ).update(status=RequestStatus.FAILED, error="timed out")
     if DataPrivacyRequest.objects.filter(
         user=user, kind=RequestKind.EXPORT, status__in=[RequestStatus.RECEIVED, RequestStatus.PROCESSING]
     ).exists():
@@ -71,9 +81,12 @@ def request_export(user):
 
 
 def build_export(user):
+    from apps.accounts.models import DeviceRegistration, Vehicle
+    from apps.community.models import ContributorTrustEvent, ReportVerification
+    from apps.detection.models import ParkingEvent
     from apps.notifications.models import Notification
     from apps.reports.models import CommunityReport
-    from apps.saved.models import SavedDestination, SavedParkingLocation, SearchHistory
+    from apps.saved.models import CommutePlan, SavedDestination, SavedParkingLocation, SearchHistory
     from apps.sessions.models import ParkingSession
     from apps.support.models import SupportTicket
 
@@ -140,16 +153,57 @@ def build_export(user):
             {"reference": t.reference, "category": t.category, "status": t.status}
             for t in SupportTicket.objects.filter(user=user)
         ],
+        "vehicles": [
+            {
+                "label": v.label,
+                "vehicle_class": v.vehicle_class,
+                "permit": v.permit_type.code if v.permit_type_id else None,
+            }
+            for v in Vehicle.objects.filter(user=user).select_related("permit_type")
+        ],
+        "commute_plans": [
+            {
+                "label": c.label,
+                "destination": c.name,
+                "latitude": c.location.y,
+                "longitude": c.location.x,
+                "days": c.days,
+                "arrival_minute": c.arrival_minute,
+                "duration_minutes": c.duration_minutes,
+            }
+            for c in CommutePlan.objects.filter(user=user)
+        ],
+        "z_trigger_events": [
+            {"detected_at": dt(e.detected_at), "latitude": e.location.y, "longitude": e.location.x, "status": e.status}
+            for e in ParkingEvent.objects.filter(user=user)
+        ],
+        "availability_votes": [
+            {"answer": v.answer, "created_at": dt(v.created_at)} for v in ReportVerification.objects.filter(voter=user)
+        ],
+        "contributor_trust_events": [
+            {"reason": t.reason, "delta": t.delta, "created_at": dt(t.created_at)}
+            for t in ContributorTrustEvent.objects.filter(user=user)
+        ],
+        "devices": [
+            {"platform": d.platform, "registered_at": dt(d.created_at)}
+            for d in DeviceRegistration.objects.filter(user=user)
+        ],
+        "privacy_requests": [
+            {"reference": r.reference, "kind": r.kind, "status": r.status, "created_at": dt(r.created_at)}
+            for r in DataPrivacyRequest.objects.filter(user=user)
+        ],
         "note": "Device location is not stored continuously by Zpot; only locations you submitted are included.",
     }
 
 
 def process(request_id):
-    r = DataPrivacyRequest.objects.select_related("user").filter(pk=request_id).first()
-    if r is None or r.status not in (RequestStatus.RECEIVED, RequestStatus.FAILED):
+    # Atomic claim: only one worker can move a request from RECEIVED/FAILED to PROCESSING.
+    claimed = DataPrivacyRequest.objects.filter(
+        pk=request_id, status__in=[RequestStatus.RECEIVED, RequestStatus.FAILED]
+    ).update(status=RequestStatus.PROCESSING)
+    if not claimed:
         return None
-    r.status = RequestStatus.PROCESSING
-    r.save(update_fields=["status"])
+    r = DataPrivacyRequest.objects.select_related("user").get(pk=request_id)
     try:
         if r.kind == RequestKind.EXPORT:
             data = json.dumps(build_export(r.user), indent=2, ensure_ascii=False).encode()
@@ -187,9 +241,20 @@ def request_deletion(user, confirm):
         status=RequestStatus.PROCESSING,
     )
     from apps.accounts.services import delete_account
-    from apps.reports.models import CommunityReport
+    from apps.core.models import AuditEvent
+    from apps.reports.models import CommunityReport, ReportAttachment
+    from apps.support.models import SupportAttachment, SupportTicket
 
-    CommunityReport.objects.filter(reporter=user).update(reporter=None, description="")
+    # Community reports stay (anonymised) as part of the shared data record; photos and free text are personal.
+    for a in ReportAttachment.objects.filter(report__reporter=user):
+        a.file.delete(save=False)
+        a.delete()
+    CommunityReport.objects.filter(reporter=user).update(reporter=None, description="", client_token="")
+    for a in SupportAttachment.objects.filter(ticket__user=user):
+        a.file.delete(save=False)
+        a.delete()
+    SupportTicket.objects.filter(user=user).update(contact_email="", description="[deleted at the user's request]")
+    AuditEvent.objects.filter(actor=user).update(ip_address=None)
     delete_account(user)
     r.user = None  # the account row no longer exists; the email keeps the request auditable
     r.status, r.completed_at = RequestStatus.COMPLETED, timezone.now()
@@ -211,6 +276,11 @@ def retention_cleanup(now=None):
         r.status = RequestStatus.EXPIRED
         r.save(update_fields=["file", "status"])
     out["exports_expired"] = len(exp)
+    from apps.detection.models import ParkingEvent
+
+    out["z_trigger_events"] = ParkingEvent.objects.filter(
+        detected_at__lt=now - timedelta(days=z.get("ZTRIGGER_EVENT_RETENTION_DAYS", 30))
+    ).delete()[0]
     out["search_history"] = SearchHistory.objects.filter(
         searched_at__lt=now - timedelta(days=z["SEARCH_HISTORY_RETENTION_DAYS"])
     ).delete()[0]

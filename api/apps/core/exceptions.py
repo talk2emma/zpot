@@ -1,6 +1,9 @@
 """Uniform error envelope: {"error": {"code", "message", "details", "request_id"}}."""
 
+import logging
+
 from django.core.exceptions import PermissionDenied
+from django.db import IntegrityError
 from django.http import Http404
 from rest_framework import exceptions, status
 from rest_framework.response import Response
@@ -33,7 +36,16 @@ _CODES = {
 }
 
 
+log = logging.getLogger("zpot.errors")
+
+
 def zpot_exception_handler(exc, context):
+    if isinstance(exc, IntegrityError):
+        # A uniqueness race lost to a concurrent request: a conflict, never an HTML 500. Details stay in the log only.
+        log.warning("integrity conflict on %s: %s", getattr(context.get("request"), "path", "?"), exc)
+        exc = ZpotAPIError(
+            "This change conflicts with another request. Please try again.", code="conflict", status_code=409
+        )
     if isinstance(exc, Http404):
         exc = exceptions.NotFound()
     elif isinstance(exc, PermissionDenied):

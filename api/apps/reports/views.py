@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 
 from apps.core.exceptions import ZpotAPIError
+from apps.core.features import FeatureGateMixin
 from apps.core.permissions import IsReviewer, client_token, has_role
 from apps.core.uploads import sanitise_image
 
@@ -40,7 +41,9 @@ def _get_visible(request, pk):
     return r, reviewer
 
 
-class ReportListCreateView(ListAPIView):
+class ReportListCreateView(FeatureGateMixin, ListAPIView):
+    feature_flag = "community_reports"
+    cursor_ordering = ("-created_at", "-id")
     """GET: moderation queue (reviewers only). POST: submit a report (guests may share vacancy signals)."""
 
     serializer_class = ReviewerReportSerializer
@@ -70,6 +73,7 @@ class ReportListCreateView(ListAPIView):
 
 
 class MyReportsView(ListAPIView):
+    cursor_ordering = ("-created_at", "-id")
     serializer_class = ReportSerializer
     permission_classes = [AllowAny]
 
@@ -115,7 +119,8 @@ class ReportDetailView(GenericAPIView):
         return Response((ReviewerReportSerializer if reviewer else ReportSerializer)(_qs().get(pk=r.pk)).data)
 
 
-class ReportAttachmentView(GenericAPIView):
+class ReportAttachmentView(FeatureGateMixin, GenericAPIView):
+    feature_flag = "community_reports"
     serializer_class = AttachmentSerializer
     permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
@@ -151,7 +156,8 @@ class ReportAttachmentDownloadView(GenericAPIView):
         return FileResponse(a.file.open("rb"), content_type=a.content_type)
 
 
-class ReportVerificationView(GenericAPIView):
+class ReportVerificationView(FeatureGateMixin, GenericAPIView):
+    feature_flag = "community_reports"
     serializer_class = VerificationSerializer
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
@@ -192,7 +198,8 @@ class ReportVerificationView(GenericAPIView):
         )
 
 
-class ReportAppealView(GenericAPIView):
+class ReportAppealView(FeatureGateMixin, GenericAPIView):
+    feature_flag = "community_reports"
     serializer_class = AppealSerializer
     permission_classes = [IsAuthenticated]
 

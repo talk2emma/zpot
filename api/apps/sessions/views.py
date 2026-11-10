@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.core.exceptions import ZpotAPIError
+from apps.core.features import FeatureGateMixin
 from apps.core.permissions import client_token
 
 from . import services
@@ -33,14 +34,16 @@ def _qs(user):
     return ParkingSession.objects.filter(user=user).select_related("area", "area__city").prefetch_related("reminders")
 
 
-class SessionListCreateView(ListAPIView):
+class SessionListCreateView(FeatureGateMixin, ListAPIView):
+    feature_flag = "parking_sessions"
+    cursor_ordering = ("-started_at", "-id")
     permission_classes = [IsAuthenticated]
     serializer_class = SessionSerializer
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):  # schema generation
             return ParkingSession.objects.none()
-        services.expire_stale()
+        services.expire_stale(user=self.request.user)
         qs = _qs(self.request.user)
         st = self.request.query_params.get("status")
         return qs.filter(status=st) if st else qs
@@ -60,7 +63,7 @@ class ActiveSessionView(GenericAPIView):
 
     @extend_schema(responses={200: SessionDetailSerializer, 204: None})
     def get(self, request):
-        services.expire_stale()
+        services.expire_stale(user=request.user)
         s = _qs(request.user).prefetch_related("events").filter(status=SessionStatus.ACTIVE).first()
         if s is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -129,7 +132,8 @@ class SessionSummaryView(GenericAPIView):
         return Response(self.get_serializer(services.summary(s)).data)
 
 
-class SessionRemindersView(GenericAPIView):
+class SessionRemindersView(FeatureGateMixin, GenericAPIView):
+    feature_flag = "parking_sessions"
     permission_classes = [IsAuthenticated]
     serializer_class = ReminderSerializer
 

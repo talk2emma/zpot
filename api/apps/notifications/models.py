@@ -45,7 +45,10 @@ class Notification(models.Model):
     class Meta:
         ordering = ["-created_at"]
         constraints = [models.UniqueConstraint(fields=["user", "dedupe_key"], name="notification_dedupe")]
-        indexes = [models.Index(fields=["user", "read_at"])]
+        indexes = [
+            models.Index(fields=["user", "read_at"]),
+            models.Index(fields=["user", "-created_at"], name="notif_user_created"),
+        ]
 
     def __str__(self):
         return f"{self.category}: {self.title}"

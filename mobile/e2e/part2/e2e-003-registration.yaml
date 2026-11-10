@@ -20,7 +20,7 @@ appId: pt.zpot.app
 - tapOn: { id: "register-password2" }
 - inputText: ${PASSWORD}
 - tapOn: { text: "Confirm password" }
-- tapOn: { id: "register-terms" }
+- tapOn: { id: "register-terms-box" }
 - tapOn: { id: "register-submit" }
 - tapOn: { text: "Not Now", optional: true }
 - extendedWaitUntil: { visible: { id: "verify-email-screen" }, timeout: 15000 }

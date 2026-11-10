@@ -30,6 +30,11 @@ def sanitise_image(upload, *, max_side=2048):
         img.verify()
         upload.seek(0)
         img = Image.open(upload)
+        # Pillow only raises DecompressionBombError above 2× MAX_IMAGE_PIXELS; reject before decoding anything.
+        if img.width * img.height > Image.MAX_IMAGE_PIXELS:
+            raise Image.DecompressionBombError("image has too many pixels")
+        if img.format == "JPEG":
+            img.draft("RGB", (max_side * 2, max_side * 2))  # decode large photos at reduced scale (less memory)
         img.load()
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as exc:
         raise ZpotAPIError("File is not a valid image.", code="invalid_image", status_code=400) from exc

@@ -223,6 +223,9 @@ def verify_observation(*, observation_id, answer, user, client_token):
         raise ZpotAPIError("You can't verify your own report.", code="own_observation", status_code=403)
     if not authed and not client_token:
         raise ZpotAPIError("Missing client token.", code="client_token_required", status_code=400)
+    rep = getattr(obs, "report", None)
+    if not authed and rep is not None and rep.client_token and rep.client_token == client_token:
+        raise ZpotAPIError("You can't verify your own report.", code="own_observation", status_code=403)
     try:
         with transaction.atomic():
             ReportVerification.objects.create(
@@ -235,7 +238,10 @@ def verify_observation(*, observation_id, answer, user, client_token):
         raise ZpotAPIError("You already answered for this spot.", code="already_verified", status_code=409) from exc
     if answer == VerificationAnswer.STILL_AVAILABLE and obs.kind != ObservationKind.OCCUPIED:
         obs.confirmations += 1
-        extend_on_confirm(obs, now)
+        # Only signed-in confirmations extend the expiry: guest tokens are free to rotate, so they can't be allowed
+        # to keep a vacancy alive indefinitely.
+        if authed:
+            extend_on_confirm(obs, now)
         delta_reason = "confirmed_by_others"
     elif answer == VerificationAnswer.TAKEN:
         obs.contradictions += 1
@@ -279,6 +285,8 @@ TRANSITIONS = {
 
 @transaction.atomic
 def moderate(report, *, moderator, decision, reason=""):
+    # Re-read under a row lock so two reviewers can't apply the same decision twice.
+    report = CommunityReport.objects.select_for_update().get(pk=report.pk)
     allowed, to = TRANSITIONS[decision]
     if report.status not in allowed:
         raise ZpotAPIError(

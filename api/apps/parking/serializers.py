@@ -108,6 +108,11 @@ class SearchQuerySerializer(StayParamsSerializer):
         return attrs
 
 
+class AreaDetailQuerySerializer(StayParamsSerializer):
+    latitude = serializers.FloatField(required=False, min_value=-90, max_value=90)
+    longitude = serializers.FloatField(required=False, min_value=-180, max_value=180)
+
+
 class MapLayersQuerySerializer(StayParamsSerializer):
     bbox = serializers.CharField(help_text="min_lon,min_lat,max_lon,max_lat (WGS84)")
 
@@ -174,10 +179,19 @@ class EvaluationSerializer(serializers.Serializer):
         return obj.blocking_reason.as_dict() if obj.blocking_reason else None
 
 
+GEOJSON_DECIMALS = 6  # ≈ 0.11 m — ample for rendering; full float precision roughly doubled map payloads
+
+
+def _round_coords(c):
+    return round(c, GEOJSON_DECIMALS) if isinstance(c, float) else [_round_coords(x) for x in c]
+
+
 def area_geometry(area):
     if area.geometry is not None:
-        return json.loads(area.geometry.geojson)
-    return {"type": "Point", "coordinates": [area.location.x, area.location.y]}
+        g = json.loads(area.geometry.geojson)
+        g["coordinates"] = _round_coords(g["coordinates"])
+        return g
+    return {"type": "Point", "coordinates": _round_coords([area.location.x, area.location.y])}
 
 
 def source_dict(area):

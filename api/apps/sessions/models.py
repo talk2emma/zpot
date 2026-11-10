@@ -46,7 +46,12 @@ class ParkingSession(TimeStampedModel):
 
     class Meta:
         ordering = ["-started_at"]
-        indexes = [models.Index(fields=["user", "status"]), models.Index(fields=["status", "planned_end_at"])]
+        indexes = [
+            models.Index(fields=["user", "status"]),
+            models.Index(fields=["status", "planned_end_at"]),
+            models.Index(fields=["user", "-started_at"], name="session_user_started"),
+            models.Index(fields=["ended_at"], name="session_ended_at"),
+        ]
         constraints = [
             models.CheckConstraint(condition=Q(planned_end_at__gt=F("started_at")), name="session_plan_after_start"),
             models.CheckConstraint(

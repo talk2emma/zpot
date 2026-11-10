@@ -1,0 +1,14 @@
+PASS e2e-002-location-denied
+FAIL e2e-003-registration
+PASS e2e-004-session-lifecycle
+FAIL e2e-005-community-report
+FAIL e2e-006-verification
+PASS e2e-007-save-location
+FAIL e2e-008-notification
+PASS e2e-009-account-settings
+PASS e2e-010a
+PASS e2e-010b
+PASS e2e-010c
+PASS e2e-011-no-free
+PASS e2e-012-rule-change
+PASS=9 FAIL=4

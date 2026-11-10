@@ -53,6 +53,11 @@ class CommutePlanSerializer(serializers.ModelSerializer):
     def get_location(self, o) -> dict:
         return {"latitude": o.location.y, "longitude": o.location.x}
 
+    def validate(self, attrs):
+        if ("latitude" in attrs) != ("longitude" in attrs):
+            raise serializers.ValidationError({"latitude": ["Send latitude and longitude together."]})
+        return attrs
+
     def validate_days(self, v):
         return sorted(set(v))
 

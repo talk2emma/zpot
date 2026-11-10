@@ -2,12 +2,13 @@ from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.measure import D
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 
+from apps.core.features import FeatureGateMixin
 from apps.core.permissions import client_token
 from apps.reports import services as report_services
 
@@ -50,7 +51,25 @@ class NearbyAvailabilityView(GenericAPIView):
         )
 
 
-class ObservationListCreateView(ListAPIView):
+class ObservationFilterSerializer(serializers.Serializer):
+    area = serializers.IntegerField(required=False, min_value=1)
+    bbox = serializers.CharField(required=False, help_text="min_lon,min_lat,max_lon,max_lat (WGS84)")
+
+    def validate_bbox(self, value):
+        try:
+            parts = [float(x) for x in value.split(",")]
+        except ValueError as exc:
+            raise serializers.ValidationError("bbox must be four numbers.") from exc
+        if len(parts) != 4:
+            raise serializers.ValidationError("bbox must be four numbers.")
+        x1, y1, x2, y2 = parts
+        if not (-180 <= x1 < x2 <= 180 and -90 <= y1 < y2 <= 90) or (x2 - x1) > 0.2 or (y2 - y1) > 0.2:
+            raise serializers.ValidationError("bbox is not a valid extent (max 0.2° per side).")
+        return (x1, y1, x2, y2)
+
+
+class ObservationListCreateView(FeatureGateMixin, ListAPIView):
+    feature_flag = "community_reports"
     permission_classes = [AllowAny]
     serializer_class = ObservationSerializer
     pagination_class = None
@@ -61,12 +80,15 @@ class ObservationListCreateView(ListAPIView):
 
     def get_queryset(self):
         qs = live_observations().select_related("area", "report")
-        p = self.request.query_params
-        if p.get("area"):
-            qs = qs.filter(area_id=p["area"])
-        if p.get("bbox"):
-            x1, y1, x2, y2 = (float(v) for v in p["bbox"].split(","))
-            qs = qs.filter(location__intersects=Polygon.from_bbox((x1, y1, x2, y2)))
+        if getattr(self, "swagger_fake_view", False) or self.request.method != "GET":
+            return qs
+        f = ObservationFilterSerializer(data=self.request.query_params)
+        f.is_valid(raise_exception=True)
+        d = f.validated_data
+        if d.get("area"):
+            qs = qs.filter(area_id=d["area"])
+        if d.get("bbox"):
+            qs = qs.filter(location__intersects=Polygon.from_bbox(d["bbox"]))
         return qs
 
     def list(self, request, *args, **kwargs):

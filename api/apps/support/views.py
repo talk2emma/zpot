@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 
 from apps.core.exceptions import ZpotAPIError
+from apps.core.features import FeatureGateMixin
 from apps.core.uploads import sanitise_image
 
 from . import services
@@ -33,7 +34,9 @@ class HelpArticleDetailView(RetrieveAPIView):
     queryset = HelpArticle.objects.filter(published=True)
 
 
-class TicketListCreateView(ListAPIView):
+class TicketListCreateView(FeatureGateMixin, ListAPIView):
+    feature_flag = "support"
+    cursor_ordering = ("-created_at", "-id")
     serializer_class = TicketSerializer
     throttle_scope = "support"
 
@@ -64,7 +67,8 @@ class TicketDetailView(RetrieveAPIView):
         return SupportTicket.objects.filter(user=self.request.user)
 
 
-class TicketAttachmentView(GenericAPIView):
+class TicketAttachmentView(FeatureGateMixin, GenericAPIView):
+    feature_flag = "support"
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser]
     serializer_class = None

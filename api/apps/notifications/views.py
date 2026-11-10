@@ -14,6 +14,7 @@ from .services import prefs_for
 
 
 class NotificationListView(ListAPIView):
+    cursor_ordering = ("-created_at", "-id")
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
 

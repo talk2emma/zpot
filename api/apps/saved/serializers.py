@@ -63,8 +63,15 @@ class RenameSerializer(serializers.Serializer):
         return v.strip()
 
 
+class ImportItemSerializer(serializers.Serializer):
+    """No existence check here: a place removed since the guest saved it is skipped, not a reason to reject all."""
+
+    area_id = serializers.IntegerField(min_value=1)
+    label = serializers.CharField(max_length=80, required=False, allow_blank=True)
+
+
 class ImportSerializer(serializers.Serializer):
-    items = CreateSavedLocationSerializer(many=True)
+    items = ImportItemSerializer(many=True, max_length=100)
 
 
 class LocationField(serializers.Serializer):

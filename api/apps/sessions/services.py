@@ -5,7 +5,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.conf import settings
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 
 from apps.core.exceptions import ZpotAPIError
@@ -80,7 +80,12 @@ def _get_area(area_id):
 
 
 def _rebuild_reminders(session, now):
-    session.reminders.filter(status=ReminderStatus.SCHEDULED).update(status=ReminderStatus.CANCELLED)
+    scheduled = session.reminders.filter(status=ReminderStatus.SCHEDULED)
+    # The driver's own extra reminders follow the new plan instead of being dropped.
+    for r in scheduled.filter(kind=ReminderKind.CUSTOM):
+        r.fire_at = max(session.planned_end_at - timedelta(minutes=r.minutes_before), now)
+        r.save(update_fields=["fire_at"])
+    scheduled.exclude(kind=ReminderKind.CUSTOM).update(status=ReminderStatus.CANCELLED)
     wanted = []
     if session.reminder_minutes:
         wanted.append(
@@ -167,7 +172,15 @@ def start_session(
             status_code=409,
             details={"blocking_reason": session.evaluation.get("blocking_reason")},
         )
-    session.save()
+    try:
+        with transaction.atomic():  # savepoint: the partial unique constraint settles a concurrent start
+            session.save()
+    except IntegrityError as exc:
+        raise ZpotAPIError(
+            "You already have an active parking session. End it before starting another.",
+            code="active_session_exists",
+            status_code=409,
+        ) from exc
     ParkingSessionEvent.objects.create(
         session=session,
         kind="started",
@@ -250,27 +263,44 @@ def end_session(user, session_id, *, cost_paid=None, outcome="", share_departure
     if share_departure:
         from apps.reports.services import create_report
 
-        create_report(
-            user=user,
-            client_token=client_token,
-            type="leaving",
-            area_id=s.area_id,
-            latitude=s.area.location.y,
-            longitude=s.area.location.x,
-            details={"confirm": True, "from_session": str(s.id)},
-            device_latitude=s.area.location.y,
-            device_longitude=s.area.location.x,
-        )
+        # Best-effort: a rejected share (duplicate nearby, unsupported area…) must never stop the session ending.
+        try:
+            with transaction.atomic():
+                create_report(
+                    user=user,
+                    client_token=client_token,
+                    type="leaving",
+                    area_id=s.area_id,
+                    latitude=s.area.location.y,
+                    longitude=s.area.location.x,
+                    details={"confirm": True, "from_session": str(s.id)},
+                    device_latitude=s.area.location.y,
+                    device_longitude=s.area.location.x,
+                )
+        except ZpotAPIError as exc:
+            s.shared_departure = False
+            s.save(update_fields=["shared_departure", "updated_at"])
+            ParkingSessionEvent.objects.create(session=s, kind="share_skipped", data={"code": exc.error_code})
     record_audit("session.ended", actor=user, target=s)
     return s, False
 
 
-def expire_stale(now=None):
-    """Sessions left active long after their plan are closed as EXPIRED (not 'ended')."""
+@transaction.atomic
+def expire_stale(now=None, user=None):
+    """Sessions left active long after their plan are closed as EXPIRED (not 'ended').
+
+    Rows are locked (SKIP LOCKED) so a concurrent end_session or a parallel beat run can't be overwritten.
+    Request paths pass `user` so a read only ever touches the caller's own sessions.
+    """
     now = now or timezone.now()
     cutoff = now - timedelta(hours=settings.ZPOT["SESSION_EXPIRE_AFTER_HOURS"])
+    qs = ParkingSession.objects.select_for_update(skip_locked=True).filter(
+        status=SessionStatus.ACTIVE, planned_end_at__lt=cutoff
+    )
+    if user is not None:
+        qs = qs.filter(user=user)
     n = 0
-    for s in ParkingSession.objects.filter(status=SessionStatus.ACTIVE, planned_end_at__lt=cutoff):
+    for s in qs:
         s.status = SessionStatus.EXPIRED
         s.ended_at = s.planned_end_at
         s.save(update_fields=["status", "ended_at", "updated_at"])
@@ -303,39 +333,43 @@ def dispatch_due(now=None, limit=200):
                 r.save(update_fields=["status", "attempts"])
                 continue
             try:
-                tz = s.area.city.timezone
-                from zoneinfo import ZoneInfo
+                with transaction.atomic():  # savepoint: one failing reminder never aborts the batch
+                    tz = s.area.city.timezone
+                    from zoneinfo import ZoneInfo
 
-                if r.kind == ReminderKind.RESTRICTION_DEADLINE:
-                    t = s.restriction_deadline.astimezone(ZoneInfo(tz)).strftime("%H:%M")
-                    n = notify(
-                        s.user,
-                        Category.RESTRICTION,
-                        "restriction_deadline",
-                        {"time": t, "place": s.area.name, "reason": s.restriction_reason or "restriction"},
-                        dedupe_key=f"reminder:{r.id}",
-                        target={"route": "Session", "id": str(s.id)},
+                    if r.kind == ReminderKind.RESTRICTION_DEADLINE:
+                        t = s.restriction_deadline.astimezone(ZoneInfo(tz)).strftime("%H:%M")
+                        n = notify(
+                            s.user,
+                            Category.RESTRICTION,
+                            "restriction_deadline",
+                            {"time": t, "place": s.area.name, "reason": s.restriction_reason or "restriction"},
+                            dedupe_key=f"reminder:{r.id}",
+                            target={"route": "Session", "id": str(s.id)},
+                        )
+                    else:
+                        t = s.planned_end_at.astimezone(ZoneInfo(tz)).strftime("%H:%M")
+                        n = notify(
+                            s.user,
+                            Category.SESSION_REMINDER,
+                            "session_reminder",
+                            {
+                                "left": _fmt_minutes((s.planned_end_at - now).total_seconds() / 60),
+                                "place": s.area.name,
+                                "time": t,
+                            },
+                            dedupe_key=f"reminder:{r.id}",
+                            target={"route": "Session", "id": str(s.id)},
+                        )
+                    r.status, r.sent_at, r.notification = ReminderStatus.SENT, now, n
+                    ParkingSessionEvent.objects.create(
+                        session=s, kind="reminder_sent", data={"reminder": r.id, "kind": r.kind}
                     )
-                else:
-                    t = s.planned_end_at.astimezone(ZoneInfo(tz)).strftime("%H:%M")
-                    n = notify(
-                        s.user,
-                        Category.SESSION_REMINDER,
-                        "session_reminder",
-                        {
-                            "left": _fmt_minutes((s.planned_end_at - now).total_seconds() / 60),
-                            "place": s.area.name,
-                            "time": t,
-                        },
-                        dedupe_key=f"reminder:{r.id}",
-                        target={"route": "Session", "id": str(s.id)},
-                    )
-                r.status, r.sent_at, r.notification = ReminderStatus.SENT, now, n
-                ParkingSessionEvent.objects.create(
-                    session=s, kind="reminder_sent", data={"reminder": r.id, "kind": r.kind}
-                )
-                sent += 1
+                    sent += 1
             except Exception as exc:  # noqa: BLE001 - record and retry on next tick
+                if sent and r.status == ReminderStatus.SENT:
+                    sent -= 1
+                r.status, r.sent_at, r.notification = ReminderStatus.SCHEDULED, None, None  # savepoint rolled back
                 r.last_error = str(exc)[:240]
                 if r.attempts >= 5:
                     r.status = ReminderStatus.FAILED
