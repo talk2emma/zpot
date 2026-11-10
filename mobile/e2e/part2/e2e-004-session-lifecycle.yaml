@@ -16,6 +16,7 @@ env: { AREA: "1" }
 - tapOn: { id: "session-edit" }
 - tapOn: { id: "edit-session-duration-minus" }
 - tapOn: { id: "edit-session-save" }
+- tapOn: { id: "edit-session-done", optional: true }   # shown when the server returns warnings (e.g. a rule deadline today)
 - extendedWaitUntil: { visible: { id: "session-timer" }, timeout: 10000 }
 - tapOn: { id: "session-end" }
 - tapOn: { id: "end-session-cost" }

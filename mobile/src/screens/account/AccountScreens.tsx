@@ -278,7 +278,8 @@ export function NotificationsScreen({ navigation }: RootScreenProps<'Notificatio
   const qc = useQueryClient();
   const authed = useAuthed();
   const q = useNotifications(); // unread count (shared with the Explore bell)
-  const list = usePaged(qk.notifications, notificationsApi.list, authed);
+  // Inbox keeps polling while open (no push provider): new reminders must appear without reopening (regression fix).
+  const list = usePaged(qk.notifications, notificationsApi.list, authed, 30_000);
   const perm = usePrefsStore(s => s.notifPermission);
   const readAll = useMutation({ mutationFn: notificationsApi.readAll, onSuccess: () => void qc.invalidateQueries({ queryKey: qk.notifications }) });
   const open = async (n: AppNotification) => {

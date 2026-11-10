@@ -34,8 +34,7 @@ appId: pt.zpot.app
 - takeScreenshot: 05-plan
 - waitForAnimationToEnd
 - tapOn:
-    id: "plan-apply"
-    retryTapIfNoChange: true
+    id: "plan-apply"                          # no blind retry: a second tap after the sheet closes hits the tab bar
 - runFlow:                                   # Android: a tap next to the gesture-nav zone is occasionally swallowed
     when:
       visible: { id: "plan-apply" }
