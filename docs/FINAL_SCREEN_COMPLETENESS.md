@@ -2,7 +2,7 @@
 
 # Final screen completeness
 
-Source of truth: `docs/implementation-status.json` (commit `2b8a332`). **58 prototype screens**, **10 overlays**, **390 interaction bindings**.
+Source of truth: `docs/implementation-status.json` (commit `a3dbd9a`). **58 prototype screens**, **10 overlays**, **390 interaction bindings**.
 
 | Status | Screens |
 |---|---|

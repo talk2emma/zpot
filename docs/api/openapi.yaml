@@ -251,6 +251,11 @@ paths:
   /api/v1/availability/observations/:
     get:
       operationId: availability_observations_list
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       tags:
       - availability
       security:
@@ -267,6 +272,11 @@ paths:
           description: ''
     post:
       operationId: availability_observations_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       tags:
       - availability
       requestBody:
@@ -1080,11 +1090,15 @@ paths:
         schema:
           type: number
           format: double
+          maximum: 90
+          minimum: -90
       - in: query
         name: longitude
         schema:
           type: number
           format: double
+          maximum: 180
+          minimum: -180
       - in: query
         name: permit_type
         schema:
@@ -1850,8 +1864,11 @@ paths:
   /api/v1/reports/:
     get:
       operationId: reports_list
-      description: 'GET: moderation queue (reviewers only). POST: submit a report
-        (guests may share vacancy signals).'
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - name: cursor
         required: false
@@ -1878,8 +1895,11 @@ paths:
           description: ''
     post:
       operationId: reports_create
-      description: 'GET: moderation queue (reviewers only). POST: submit a report
-        (guests may share vacancy signals).'
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       tags:
       - reports
       requestBody:
@@ -1961,6 +1981,11 @@ paths:
   /api/v1/reports/{id}/appeals/:
     post:
       operationId: reports_appeals_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -1994,6 +2019,11 @@ paths:
   /api/v1/reports/{id}/attachments/:
     post:
       operationId: reports_attachments_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -2050,6 +2080,11 @@ paths:
   /api/v1/reports/{id}/verifications/:
     post:
       operationId: reports_verifications_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -2390,6 +2425,11 @@ paths:
   /api/v1/sessions/:
     get:
       operationId: sessions_list
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - name: cursor
         required: false
@@ -2416,6 +2456,11 @@ paths:
           description: ''
     post:
       operationId: sessions_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       tags:
       - sessions
       requestBody:
@@ -2526,6 +2571,11 @@ paths:
   /api/v1/sessions/{id}/reminders/:
     get:
       operationId: sessions_reminders_retrieve
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -2546,6 +2596,11 @@ paths:
           description: ''
     post:
       operationId: sessions_reminders_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -2704,6 +2759,11 @@ paths:
   /api/v1/support/tickets/:
     get:
       operationId: support_tickets_list
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - name: cursor
         required: false
@@ -2730,6 +2790,11 @@ paths:
           description: ''
     post:
       operationId: support_tickets_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       tags:
       - support
       requestBody:
@@ -2778,6 +2843,11 @@ paths:
   /api/v1/support/tickets/{id}/attachments/:
     post:
       operationId: support_tickets_attachments_create
+      description: |-
+        DRF view mixin: the server-side kill switch for a module.
+
+        Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+        finishing what you started (e.g. ending a session) keep working when a module is switched off.
       parameters:
       - in: path
         name: id
@@ -4040,13 +4110,26 @@ components:
       - slug
       - title
       - updated_at
+    ImportItemRequest:
+      type: object
+      description: 'No existence check here: a place removed since the guest saved
+        it is skipped, not a reason to reject all.'
+      properties:
+        area_id:
+          type: integer
+          minimum: 1
+        label:
+          type: string
+          maxLength: 80
+      required:
+      - area_id
     ImportRequest:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/CreateSavedLocationRequest'
+            $ref: '#/components/schemas/ImportItemRequest'
       required:
       - items
     ImportResult:

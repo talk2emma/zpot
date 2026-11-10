@@ -156,8 +156,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         get: operations["availability_observations_list"];
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["availability_observations_create"];
         delete?: never;
         options?: never;
@@ -920,10 +932,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description GET: moderation queue (reviewers only). POST: submit a report (guests may share vacancy signals). */
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         get: operations["reports_list"];
         put?: never;
-        /** @description GET: moderation queue (reviewers only). POST: submit a report (guests may share vacancy signals). */
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["reports_create"];
         delete?: never;
         options?: never;
@@ -956,6 +978,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["reports_appeals_create"];
         delete?: never;
         options?: never;
@@ -972,6 +1000,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["reports_attachments_create"];
         delete?: never;
         options?: never;
@@ -1004,6 +1038,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["reports_verifications_create"];
         delete?: never;
         options?: never;
@@ -1179,8 +1219,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         get: operations["sessions_list"];
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["sessions_create"];
         delete?: never;
         options?: never;
@@ -1227,8 +1279,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         get: operations["sessions_reminders_retrieve"];
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["sessions_reminders_create"];
         delete?: never;
         options?: never;
@@ -1345,8 +1409,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         get: operations["support_tickets_list"];
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["support_tickets_create"];
         delete?: never;
         options?: never;
@@ -1379,6 +1455,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * @description DRF view mixin: the server-side kill switch for a module.
+         *
+         *     Only *creating* new work is blocked (`feature_gated_methods`, POST by default); reading your own data and
+         *     finishing what you started (e.g. ending a session) keep working when a module is switched off.
+         */
         post: operations["support_tickets_attachments_create"];
         delete?: never;
         options?: never;
@@ -1925,8 +2007,13 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
+        /** @description No existence check here: a place removed since the guest saved it is skipped, not a reason to reject all. */
+        ImportItemRequest: {
+            area_id: number;
+            label?: string;
+        };
         ImportRequest: {
-            items: components["schemas"]["CreateSavedLocationRequest"][];
+            items: components["schemas"]["ImportItemRequest"][];
         };
         ImportResult: {
             imported: number;
