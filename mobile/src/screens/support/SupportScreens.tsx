@@ -16,6 +16,7 @@ import { authApi, detectionApi, parkingApi, privacyApi, scoutsApi, supportApi } 
 import { useAuthStore } from '../../store/authStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import type { DraftPhoto } from '../../store/reportDraftStore';
+import { useConsentStore } from '../../store/consentStore';
 import { useSearchStore } from '../../store/searchStore';
 import { palette, radius, typography, useTheme } from '../../theme';
 import type { ParkEvent, TicketCategory } from '../../types/contracts';
@@ -29,7 +30,7 @@ export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
   const q = useQuery({ queryKey: ['help', lang(i18n.language)], queryFn: () => supportApi.articles(lang(i18n.language)) });
   const authed = useAuthed();
   return (
-    <Screen testID="help-screen" header={<ScreenHeader title={t('support.helpCentre')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="help-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('support.helpCentre')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <SectionLabel>{t('support.faq')}</SectionLabel>
       {q.isLoading ? <LoadingState skeleton={3} /> : q.isError ? <ErrorState error={q.error} title={t('support.articleLoadError')} onRetry={() => void q.refetch()} /> : null}
       {(q.data ?? []).map(a => (
@@ -47,7 +48,7 @@ export function HelpArticleScreen({ navigation, route }: RootScreenProps<'HelpAr
   const { t, i18n } = useTranslation();
   const q = useQuery({ queryKey: ['help', route.params.id, lang(i18n.language)], queryFn: () => supportApi.article(route.params.id, lang(i18n.language)) });
   return (
-    <Screen testID="help-article-screen" header={<ScreenHeader onBack={navigation.goBack} backLabel={t('common.back')} />}
+    <Screen testID="help-article-screen" onRefresh={q.refetch} header={<ScreenHeader onBack={navigation.goBack} backLabel={t('common.back')} />}
       footer={<ZpotButton variant="secondary" label={t('support.contact')} onPress={() => navigation.navigate('ContactSupport', { mode: 'support' })} />}>
       {q.data ? (<><Title size="h2">{q.data.title}</Title>{q.data.body.split(/\n{2,}/).map((p, i) => <Body key={i}>{p}</Body>)}</>)
         : q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
@@ -122,7 +123,7 @@ export function SupportTicketsScreen({ navigation }: RootScreenProps<'SupportTic
   const q = usePaged(['tickets'], supportApi.tickets);
   const items = q.items;
   return (
-    <Screen testID="support-tickets-screen" header={<ScreenHeader title={t('support.myRequests')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="support-tickets-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('support.myRequests')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState skeleton={2} /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
         : items.length === 0 ? <EmptyState icon="mail" title={t('support.myRequests')} body={t('support.noRequests')} /> : null}
       {items.map(tk => (
@@ -140,7 +141,7 @@ export function SupportTicketScreen({ navigation, route }: RootScreenProps<'Supp
   const q = useQuery({ queryKey: ['ticket', route.params.id], queryFn: () => supportApi.ticket(route.params.id) });
   const tk = q.data;
   return (
-    <Screen testID="support-ticket-screen" header={<ScreenHeader title={tk?.reference} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="support-ticket-screen" onRefresh={q.refetch} header={<ScreenHeader title={tk?.reference} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!tk ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} />) : (
         <>
           <SummaryRow k={t('support.topic')} v={t(`support.t_${tk.category}`)} />
@@ -161,39 +162,33 @@ export function PrivacyScreen({ navigation }: RootScreenProps<'Privacy'>) {
   const authed = useAuthed();
   const status = usePrefsStore(s => s.locationStatus);
   const notif = usePrefsStore(s => s.notifPermission);
-  const consents = useQuery({ queryKey: ['consents'], queryFn: privacyApi.consents, enabled: authed });
   const prefs = useQuery({ queryKey: ['preferences'], queryFn: authApi.preferences, enabled: authed });
-  const setConsent = useMutation({ mutationFn: privacyApi.updateConsents, onSuccess: d => { qc.setQueryData(['consents'], d); void qc.invalidateQueries({ queryKey: ['preferences'] }); } });
+  const decision = useConsentStore(s => s.decision);
+  const onOff = (v?: boolean) => (v ? t('consent.on') : t('consent.off'));
   const setPref = useMutation({ mutationFn: (v: boolean) => authApi.updatePreferences({ personalised_results: v }), onSuccess: () => void qc.invalidateQueries({ queryKey: ['preferences'] }) });
   const exp = useMutation({ mutationFn: privacyApi.requestExport, onSuccess: r => { toast(t('privacy2.exportRequested', { ref: r.reference })); void qc.invalidateQueries({ queryKey: ['privacy-requests'] }); } });
-  const c = consents.data;
   return (
-    <Screen testID="privacy-screen" header={<ScreenHeader title={t('privacy2.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="privacy-screen" onRefresh={() => prefs.refetch()} header={<ScreenHeader title={t('privacy2.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <SectionLabel>{t('privacy2.permissions')}</SectionLabel>
       <ListRow icon="crosshair" label={t('privacy2.location')} sub={t(`loc.${status}`)} onPress={() => void Linking.openSettings()} testID="privacy-location" />
       <ListRow icon="bell" label={t('privacy2.notifications')} sub={notif === 'granted' ? t('notif.allowed') : notif === 'denied' ? t('notif.blocked') : t('notif.notAsked')}
         onPress={() => (authed ? navigation.navigate('NotificationPrefs') : navigation.navigate('NotificationsIntro'))} testID="privacy-notifs" />
       <ListRow icon="eye" label={t('privacy2.camera')} sub={t('privacy2.cameraSub')} onPress={() => void Linking.openSettings()} testID="privacy-camera" />
+      {/* Optional processing (the app's "cookie" choices): one place, recorded with the policy version. */}
+      <SectionLabel>{t('privacy2.consents')}</SectionLabel>
+      <ListRow icon="shield" label={t('consent.manage')} testID="privacy-choices"
+        sub={decision ? t('consent.summary', { a: onOff(decision.analytics), ads: onOff(decision.personalisedAds), m: onOff(decision.marketing) }) : t('consent.manageSub')}
+        onPress={() => useConsentStore.getState().setOpen(true)} />
       {authed ? (
         <>
-          <SectionLabel>{t('privacy2.consents')}</SectionLabel>
-          {c ? (
-            <>
-              <Toggle label={t('privacy2.analytics')} sub={t('privacy2.analyticsSub')} value={c.analytics?.granted ?? false}
-                onValueChange={v => setConsent.mutate({ analytics: v })} testID="privacy-analytics" />
-              <Toggle label={t('privacy2.ads')} sub={t('privacy2.adsSub')} value={c.personalised_ads?.granted ?? false}
-                onValueChange={v => setConsent.mutate({ personalised_ads: v })} testID="privacy-ads" />
-            </>
-          ) : consents.isLoading ? <LoadingState /> : <ErrorState error={consents.error} onRetry={() => void consents.refetch()} />}
           {prefs.data ? <Toggle label={t('privacy2.personalised')} value={prefs.data.personalised_results} onValueChange={v => setPref.mutate(v)} testID="privacy-personalised" /> : null}
-          {setConsent.error ? <ErrorState error={setConsent.error} /> : null}
           <SectionLabel>{t('privacy2.dataControls')}</SectionLabel>
           <ListRow icon="file" label={t('privacy2.export')} sub={t('privacy2.exportSub')} onPress={() => exp.mutate()} testID="privacy-export" />
           {exp.error ? <ErrorState error={exp.error} testID="privacy-export-error" /> : null}
           <ListRow icon="list" label={t('privacy2.requests')} onPress={() => navigation.navigate('PrivacyRequests')} testID="privacy-requests" />
         </>
       ) : null}
-      <ListRow icon="file" label={t('profile.privacyNotice')} onPress={() => navigation.navigate('Legal', { tab: 'privacy' })} />
+      <ListRow icon="file" label={t('policy.title')} onPress={() => navigation.navigate('PrivacyPolicy')} testID="privacy-policy" />
       <ListRow icon="trash" danger label={t('privacy2.deleteData')} onPress={() => navigation.navigate('DeleteAccount')} testID="privacy-delete" />
       <Text style={[typography.small, { color: palette.slate500 }]}>{t('privacy2.legalNote')}</Text>
     </Screen>
@@ -211,7 +206,7 @@ export function PrivacyRequestsScreen({ navigation }: RootScreenProps<'PrivacyRe
   };
   const items = q.data ?? [];
   return (
-    <Screen testID="privacy-requests-screen" header={<ScreenHeader title={t('privacy2.requests')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="privacy-requests-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('privacy2.requests')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
         : items.length === 0 ? <EmptyState icon="file" title={t('privacy2.requests')} body={t('privacy2.noRequests')} /> : null}
       {items.map(r => (
@@ -259,7 +254,7 @@ export function ScoutListScreen({ navigation }: RootScreenProps<'ScoutList'>) {
   const q = useQuery({ queryKey: ['scout-tasks'], queryFn: scoutsApi.list });
   const items = q.data ?? [];
   return (
-    <Screen testID="scout-list-screen" header={<ScreenHeader title={t('scout.tasks')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="scout-list-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('scout.tasks')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
         : items.length === 0 ? <EmptyState icon="flag" title={t('scout.tasks')} body={t('scout.empty')} /> : null}
       {items.map(a => (
@@ -290,7 +285,7 @@ export function ScoutTaskScreen({ navigation, route }: RootScreenProps<'ScoutTas
   if (!a) return <Screen header={<ScreenHeader onBack={navigation.goBack} />}>{q.isLoading ? <LoadingState /> : <ErrorState error={q.error} />}</Screen>;
   const open = a.status === 'assigned' || a.status === 'rejected';
   return (
-    <Screen testID="scout-task-screen" header={<ScreenHeader title={(a.area as { name: string }).name} onBack={navigation.goBack} backLabel={t('common.back')} />}
+    <Screen testID="scout-task-screen" onRefresh={q.refetch} header={<ScreenHeader title={(a.area as { name: string }).name} onBack={navigation.goBack} backLabel={t('common.back')} />}
       footer={open ? <ZpotButton label={t('scout.submit')} loading={submit.isPending} onPress={() => (errs.length ? setTouched(true) : submit.mutate())} testID="scout-submit" /> : undefined}>
       <SummaryRow k={t('scout.why')} v={a.reason} />
       <SectionLabel>{t('scout.onFile')}</SectionLabel>
@@ -333,7 +328,7 @@ export function ZTriggerScreen({ navigation }: RootScreenProps<'ZTrigger'>) {
     areaName: (e.area as { name?: string } | null)?.name, ...(e.location as { latitude: number; longitude: number }) });
   const enabled = !!cfg.data?.enabled;
   return (
-    <Screen testID="ztrigger-screen" header={<ScreenHeader title={t('z.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="ztrigger-screen" onRefresh={() => Promise.all([cfg.refetch(), hist.refetch()])} header={<ScreenHeader title={t('z.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <Title size="h2">{t('z.introTitle')}</Title>
       <Body>{t('z.introBody')}</Body>
       <Banner tone="warn" testID="ztrigger-native-note">{t('z.nativeNote')}</Banner>

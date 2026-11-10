@@ -67,7 +67,7 @@ export function RegisterScreen({ navigation, route }: RootScreenProps<'Register'
               {t('auth.acceptPrefix')}
               <Text style={styles.link} onPress={() => navigation.navigate('Legal', { tab: 'terms' })}>{t('auth.terms')}</Text>
               {t('auth.acceptMid')}
-              <Text style={styles.link} onPress={() => navigation.navigate('Legal', { tab: 'privacy' })}>{t('auth.privacy')}</Text>.
+              <Text style={styles.link} onPress={() => navigation.navigate('PrivacyPolicy')}>{t('auth.privacy')}</Text>.
             </Text>
           </Pressable>
           {errors.terms ? <Text style={[styles.err, { color: colors.danger }]}>{msg(errors.terms.message)}</Text> : null}

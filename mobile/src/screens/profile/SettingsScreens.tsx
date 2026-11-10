@@ -91,7 +91,9 @@ export function LegalScreen({ navigation, route }: RootScreenProps<'Legal'>) {
       ))}</Wrap>
       <Banner tone="warn">{t('legal.draft')}</Banner>
       <Text style={[typography.h2, { color: colors.text }]}>{t(`legal.${tab}Title`)}</Text>
-      {Array.isArray(paras) ? paras.map((p, i) => <Text key={i} style={[typography.body, { color: colors.textBody }]}>{p}</Text>) : null}
+      {tab === 'privacy' ? (
+        <ZpotButton label={t('consent.readPolicy')} onPress={() => navigation.navigate('PrivacyPolicy')} testID="legal-open-policy" />
+      ) : Array.isArray(paras) ? paras.map((p, i) => <Text key={i} style={[typography.body, { color: colors.textBody }]}>{p}</Text>) : null}
     </Screen>
   );
 }

@@ -17,6 +17,8 @@ appId: pt.zpot.app
 - extendedWaitUntil: { visible: { id: "language-screen" }, timeout: 20000 }
 - tapOn: { id: "lang-en" }
 - tapOn: { id: "language-continue" }
+- extendedWaitUntil: { visible: { id: "consent-sheet" }, timeout: 10000 }   # first-launch GDPR consent prompt
+- tapOn: { id: "consent-reject-all" }
 - tapOn: { id: "welcome-find" }
 - tapOn: { id: "location-enable" }
 - tapOn: { text: "Don.t [Aa]llow", optional: true }

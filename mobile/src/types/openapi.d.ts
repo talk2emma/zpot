@@ -1738,6 +1738,12 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /**
+         * @description * `consent_prompt` - consent_prompt
+         *     * `privacy_settings` - privacy_settings
+         * @enum {string}
+         */
+        ConsentsPatchSourceEnum: "consent_prompt" | "privacy_settings";
         Contributions: {
             /** Format: double */
             karma: number;
@@ -1790,8 +1796,15 @@ export interface components {
             /** Format: date-time */
             detected_at: string;
             /** @default bluetooth_disconnect */
-            source: components["schemas"]["SourceEnum"];
+            source: components["schemas"]["CreateEventSourceEnum"];
         };
+        /**
+         * @description * `bluetooth_disconnect` - bluetooth_disconnect
+         *     * `motion` - motion
+         *     * `manual_test` - manual_test
+         * @enum {string}
+         */
+        CreateEventSourceEnum: "bluetooth_disconnect" | "motion" | "manual_test";
         /**
          * @description * `available` - available
          *     * `leaving` - leaving
@@ -2554,6 +2567,7 @@ export interface components {
             analytics?: boolean;
             personalised_ads?: boolean;
             marketing?: boolean;
+            source?: components["schemas"]["ConsentsPatchSourceEnum"];
         };
         PatchedNotificationPreferenceRequest: {
             session_reminders?: boolean;
@@ -2692,6 +2706,9 @@ export interface components {
             };
             data_notice: string;
             features: unknown[];
+            legal: {
+                [key: string]: unknown;
+            };
         };
         /**
          * @description * `not_configured` - No push provider configured (inbox only)
@@ -3032,13 +3049,6 @@ export interface components {
             is_development_fixture: boolean;
             attribution: string;
         };
-        /**
-         * @description * `bluetooth_disconnect` - bluetooth_disconnect
-         *     * `motion` - motion
-         *     * `manual_test` - manual_test
-         * @enum {string}
-         */
-        SourceEnum: "bluetooth_disconnect" | "motion" | "manual_test";
         SourceMini: {
             id: number;
             name: string;

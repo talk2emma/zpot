@@ -33,6 +33,7 @@ import {
   ScoutListScreen, ScoutTaskScreen, SupportTicketScreen, SupportTicketsScreen, ZEventScreen, ZTriggerScreen,
 } from '../screens/support/SupportScreens';
 import { CommuteScreen, InsightsScreen, ManageSubscriptionScreen, PartnerScreen, VehiclesScreen } from '../screens/planning/PlanningScreens';
+import { PrivacyPolicyScreen } from '../screens/legal/PrivacyPolicyScreen';
 import { Part2Screen } from '../screens/shared/Part2Screen';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
@@ -99,6 +100,7 @@ export function RootNavigator() {
       <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="Legal" component={LegalScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
       <Stack.Screen name="ParkingPreferences" component={ParkingPreferencesScreen} />
       <Stack.Screen name="Privacy" component={PrivacyScreen} />

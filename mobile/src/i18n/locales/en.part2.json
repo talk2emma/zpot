@@ -563,5 +563,124 @@
     "west": "Move pin west",
     "minus": "{{n}} minutes earlier",
     "plus": "{{n}} minutes later"
+  },
+  "consent": {
+    "title": "Your privacy choices",
+    "intro": "Zpot stores some information on your phone to work, and could use optional technologies to improve the app. Nothing optional is used unless you agree. You can change this any time in Profile › Privacy & permissions.",
+    "essentialTitle": "Strictly necessary",
+    "essentialBody": "Keeps you signed in (stored securely in the Keychain or Keystore), remembers your language and preferences, and keeps a random install identifier so reports you send as a guest stay yours. Always on — the app can’t work without it.",
+    "alwaysOn": "Always on",
+    "analyticsTitle": "Usage analytics",
+    "analyticsBody": "Anonymous statistics about how the app is used, to fix problems and improve features.",
+    "adsTitle": "Personalised ads",
+    "adsBody": "Ads based on your use of Zpot. Ads never change parking results or the recommended option.",
+    "marketingTitle": "News and offers by email",
+    "marketingBody": "Occasional product news. Only for signed-in users.",
+    "noSdk": "This version doesn’t include any third-party analytics or advertising tools. Your choice is recorded now and applied if they are ever added — we’ll ask again if anything changes.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customise": "Choose",
+    "save": "Save my choices",
+    "readPolicy": "Read the privacy policy",
+    "saved": "Privacy choices saved",
+    "manage": "Privacy choices",
+    "manageSub": "Analytics, personalised ads, emails",
+    "summary": "Analytics: {{a}} · Ads: {{ads}} · Emails: {{m}}",
+    "on": "on",
+    "off": "off",
+    "updated": "Our privacy policy has changed. Please review your choices."
+  },
+  "policy": {
+    "title": "Privacy policy",
+    "draft": "Draft pending legal review. Items in [brackets] are to be completed before release.",
+    "meta": "Version {{v}}",
+    "sections": [
+      {
+        "h": "1. Who we are",
+        "p": [
+          "Zpot (“we”) is the controller of the personal data described here. [To be completed by the legal team]: legal name, registered address, company number and contact details.",
+          "Data protection contact: [To be completed by the legal team]."
+        ]
+      },
+      {
+        "h": "2. What we collect",
+        "p": [
+          "Account: email address, display name, password (stored only as a secure hash), language and parking preferences, vehicles and permits you add.",
+          "Location: only while you use the app and only if you allow it, to show parking near you and walking times. We don’t track your location in the background. Destinations you search and places you save are stored so you can find them again.",
+          "Parking sessions: the place, start and planned end times, reminders and — only if you enter it — what you paid.",
+          "Community reports: the report type, the location you confirm, your description and any photo. Photos are re-encoded, which removes location and camera metadata. We do not automatically blur faces or number plates — please don’t photograph them.",
+          "Support and privacy requests: what you write to us and, only if you choose, technical context such as the place and search time.",
+          "Device and technical data: a random install identifier, app version, platform, IP address and request identifiers in server logs, and your consent choices.",
+          "Experimental parking detection (Z-Trigger, off by default): if you enable it, the time and place of possible parking events. These are private and never shared as free spaces."
+        ]
+      },
+      {
+        "h": "3. Why we use it and our legal basis",
+        "p": [
+          "To provide the service you ask for — search, parking rules, sessions, reminders, saved places, your account (performance of a contract).",
+          "To keep Zpot safe and reliable — preventing abuse and spam, securing accounts, keeping community information accurate (legitimate interests).",
+          "To improve the app with usage analytics, show personalised ads or send marketing emails — only with your consent, which you can withdraw at any time.",
+          "To meet legal obligations, for example keeping records of your privacy requests and consents (legal obligation)."
+        ]
+      },
+      {
+        "h": "4. Storage on your device (“cookies” and similar technologies)",
+        "p": [
+          "Strictly necessary: sign-in tokens in the iOS Keychain / Android Keystore, your language, preferences, saved drafts and a random install identifier. These are needed for the app to work and don’t require consent.",
+          "Optional: usage analytics, personalised advertising and marketing — used only if you agree in “Your privacy choices”. This version contains no third-party analytics or advertising tools; we record your choice now and will ask again before anything changes.",
+          "Zpot doesn’t track you across other companies’ apps or websites."
+        ]
+      },
+      {
+        "h": "5. Who receives your data",
+        "p": [
+          "Service providers that host and operate Zpot for us under data processing agreements: [To be completed by the legal team] (hosting, email delivery).",
+          "Map tiles are loaded from OpenFreeMap, which receives your IP address and the map area being viewed.",
+          "When you choose “Navigate”, the destination is passed to the navigation app you pick (Apple Maps, Google Maps or Waze), which handles it under its own privacy policy.",
+          "Community reports are shown to other drivers without your name. We don’t sell your personal data."
+        ]
+      },
+      {
+        "h": "6. International transfers",
+        "p": [
+          "[To be completed by the legal team]: where any provider processes data outside the EEA, the safeguards used (for example the EU Standard Contractual Clauses)."
+        ]
+      },
+      {
+        "h": "7. How long we keep it",
+        "p": [
+          "Account data: until you delete your account.",
+          "Search history: 90 days. Parking sessions: 365 days. Community availability observations: 7 days after they expire. Data export files: 7 days. Experimental parking-detection events: 30 days.",
+          "When you delete your account, your community reports are kept without any link to you, because they form part of the shared parking information; their photos and free text are deleted.",
+          "Consent and privacy-request records: [To be completed by the legal team]."
+        ]
+      },
+      {
+        "h": "8. Automated decisions",
+        "p": [
+          "We calculate an explainable reliability score for community reports (based on past reports, distance and timing) to decide whether a short-lived availability report is shown immediately or reviewed first. It never affects your account, prices or legal rights, and verified parking rules always take precedence."
+        ]
+      },
+      {
+        "h": "9. Your rights",
+        "p": [
+          "You can access, correct, delete or download (portability) your data, restrict or object to processing, and withdraw consent at any time without affecting earlier processing.",
+          "In the app: Profile › Privacy & permissions — request a copy of your data, delete your account and data, or change your privacy choices.",
+          "You can also complain to the Portuguese data protection authority, the Comissão Nacional de Proteção de Dados (CNPD, www.cnpd.pt), or the authority where you live."
+        ]
+      },
+      {
+        "h": "10. Children",
+        "p": [
+          "Zpot is not intended for anyone under 16."
+        ]
+      },
+      {
+        "h": "11. Changes",
+        "p": [
+          "If we change this policy we will update the version above and, where your consent is involved, ask you again in the app."
+        ]
+      }
+    ]
   }
 }

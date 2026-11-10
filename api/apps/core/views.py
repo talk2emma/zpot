@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .features import feature_flags
+from .legal import legal_versions
 
 _STARTED = time.time()
 
@@ -95,6 +96,7 @@ class ConfigView(APIView):
                 "search_defaults": serializers.DictField(),
                 "data_notice": serializers.CharField(),
                 "features": serializers.ListField(),
+                "legal": serializers.DictField(),
             },
         )
     )
@@ -112,6 +114,7 @@ class ConfigView(APIView):
                 "search_defaults": z["SEARCH_DEFAULTS"],
                 "data_notice": "Parking rules in development builds are sample data, not verified live regulations.",
                 "features": feature_flags(),
+                "legal": legal_versions(),
             }
         )
 

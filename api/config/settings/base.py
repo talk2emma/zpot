@@ -239,6 +239,12 @@ ZPOT = {
     "SEARCH_HISTORY_RETENTION_DAYS": 90,
     "SESSION_RETENTION_DAYS": 365,
     "ZTRIGGER_EVENT_RETENTION_DAYS": 30,
+    # Versions of the legal documents shown in the app. Every consent record stores the version it was given
+    # against; bumping a version makes the app ask again. Documents are drafts pending legal review.
+    "LEGAL_VERSIONS": {
+        "privacy": env("PRIVACY_POLICY_VERSION", default="2026-11-10-draft"),
+        "terms": env("TERMS_VERSION", default="2026-11-10-draft"),
+    },
     "PUSH_PROVIDER": env("PUSH_PROVIDER", default="none"),  # none = inbox only (no APNs/FCM credentials)
     "FEATURES": {
         "guest_search": True,

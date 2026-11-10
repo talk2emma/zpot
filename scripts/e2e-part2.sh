@@ -29,6 +29,8 @@ ParkingSession.objects.filter(user__email='driver@zpot.dev', status='active').up
 SavedParkingLocation.objects.filter(user__email='driver@zpot.dev').delete()
 from apps.notifications.models import Notification
 Notification.objects.filter(user__email='driver@zpot.dev').delete()
+from apps.accounts.models import ConsentRecord
+ConsentRecord.objects.filter(user__email='driver@zpot.dev', source='consent_prompt').delete()
 for r in CommunityReport.objects.filter(client_token__startswith='e2e-'):
     o = r.observation; r.delete(); o and o.delete()
 CommunityReport.objects.filter(reporter__email='driver@zpot.dev', description__startswith='E2E').delete()

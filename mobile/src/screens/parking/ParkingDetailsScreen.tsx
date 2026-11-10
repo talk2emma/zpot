@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,6 +33,7 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
   const q = useAreaDetail(id, stay);
   const [verifOpen, setVerifOpen] = useState(false);
   const requireAuth = useRequireAuth();
+  const qc = useQueryClient();
   const saveLoc = useSaveLocation();
   const a = q.data;
 
@@ -60,6 +62,7 @@ export function ParkingDetailsScreen({ navigation, route }: RootScreenProps<'Par
 
   return (
     <Screen testID="details-screen" padded={false}
+      onRefresh={() => Promise.all([q.refetch(), qc.invalidateQueries({ queryKey: ['availability', 'area', a.id] })])}
       footer={<View style={styles.row}>
         <ZpotButton style={styles.flex} variant="secondary" label={t('details.parkedHere')} disabled={a.category === 'restricted'}
           onPress={() => requireAuth('StartSession', { areaId: a.id })} testID="details-parked" />

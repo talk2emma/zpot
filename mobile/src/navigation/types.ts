@@ -70,6 +70,7 @@ export type RootStackParamList = {
   Insights: undefined;
   Partner: { areaId: number };
   ManageSubscription: undefined;
+  PrivacyPolicy: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;

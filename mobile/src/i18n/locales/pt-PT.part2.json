@@ -563,5 +563,124 @@
     "west": "Mover o pino para oeste",
     "minus": "{{n}} minutos mais cedo",
     "plus": "{{n}} minutos mais tarde"
+  },
+  "consent": {
+    "title": "As suas escolhas de privacidade",
+    "intro": "O Zpot guarda algumas informações no seu telemóvel para funcionar e poderá usar tecnologias opcionais para melhorar a aplicação. Nada de opcional é usado sem o seu acordo. Pode alterar isto a qualquer momento em Perfil › Privacidade e permissões.",
+    "essentialTitle": "Estritamente necessárias",
+    "essentialBody": "Mantêm a sua sessão iniciada (guardada de forma segura no Keychain ou Keystore), lembram o idioma e as preferências e guardam um identificador aleatório de instalação para que os reportes que envia como convidado continuem a ser seus. Sempre ativas — a aplicação não funciona sem elas.",
+    "alwaysOn": "Sempre ativas",
+    "analyticsTitle": "Estatísticas de utilização",
+    "analyticsBody": "Estatísticas anónimas sobre a utilização da aplicação, para corrigir problemas e melhorar funcionalidades.",
+    "adsTitle": "Anúncios personalizados",
+    "adsBody": "Anúncios baseados na sua utilização do Zpot. Os anúncios nunca alteram os resultados de estacionamento nem a opção recomendada.",
+    "marketingTitle": "Novidades e ofertas por email",
+    "marketingBody": "Novidades ocasionais do produto. Apenas para utilizadores com sessão iniciada.",
+    "noSdk": "Esta versão não inclui ferramentas de estatística ou publicidade de terceiros. A sua escolha fica registada agora e será aplicada se alguma vez forem adicionadas — voltaremos a perguntar se algo mudar.",
+    "acceptAll": "Aceitar tudo",
+    "rejectAll": "Rejeitar tudo",
+    "customise": "Escolher",
+    "save": "Guardar as minhas escolhas",
+    "readPolicy": "Ler a política de privacidade",
+    "saved": "Escolhas de privacidade guardadas",
+    "manage": "Escolhas de privacidade",
+    "manageSub": "Estatísticas, anúncios personalizados, emails",
+    "summary": "Estatísticas: {{a}} · Anúncios: {{ads}} · Emails: {{m}}",
+    "on": "ativas",
+    "off": "desativadas",
+    "updated": "A nossa política de privacidade mudou. Reveja as suas escolhas."
+  },
+  "policy": {
+    "title": "Política de privacidade",
+    "draft": "Rascunho pendente de revisão jurídica. Os itens entre [parênteses retos] serão completados antes do lançamento.",
+    "meta": "Versão {{v}}",
+    "sections": [
+      {
+        "h": "1. Quem somos",
+        "p": [
+          "O Zpot («nós») é o responsável pelo tratamento dos dados pessoais aqui descritos. [A completar pela equipa jurídica]: denominação social, sede, número de pessoa coletiva e contactos.",
+          "Contacto para proteção de dados: [A completar pela equipa jurídica]."
+        ]
+      },
+      {
+        "h": "2. Que dados recolhemos",
+        "p": [
+          "Conta: endereço de email, nome a apresentar, palavra-passe (guardada apenas como hash seguro), idioma e preferências de estacionamento, veículos e dísticos que adicionar.",
+          "Localização: apenas enquanto usa a aplicação e só se o permitir, para mostrar estacionamento perto de si e tempos a pé. Não seguimos a sua localização em segundo plano. Os destinos que pesquisa e os locais que guarda ficam registados para os encontrar de novo.",
+          "Sessões de estacionamento: o local, as horas de início e de saída prevista, lembretes e — apenas se o indicar — quanto pagou.",
+          "Reportes da comunidade: o tipo de reporte, a localização que confirma, a sua descrição e eventual fotografia. As fotografias são recodificadas, o que remove metadados de localização e da câmara. Não desfocamos automaticamente rostos nem matrículas — por favor, não os fotografe.",
+          "Pedidos de apoio e de privacidade: o que nos escreve e, apenas se escolher, contexto técnico como o local e a hora da pesquisa.",
+          "Dados técnicos e do dispositivo: um identificador aleatório de instalação, versão da aplicação, plataforma, endereço IP e identificadores de pedido nos registos do servidor, e as suas escolhas de consentimento.",
+          "Deteção experimental de estacionamento (Z-Trigger, desativada por omissão): se a ativar, a hora e o local de possíveis eventos de estacionamento. São privados e nunca partilhados como lugares livres."
+        ]
+      },
+      {
+        "h": "3. Para que os usamos e com que fundamento",
+        "p": [
+          "Para prestar o serviço que pede — pesquisa, regras de estacionamento, sessões, lembretes, locais guardados, a sua conta (execução de contrato).",
+          "Para manter o Zpot seguro e fiável — prevenir abusos e spam, proteger contas, manter a informação da comunidade correta (interesses legítimos).",
+          "Para melhorar a aplicação com estatísticas de utilização, mostrar anúncios personalizados ou enviar emails de marketing — apenas com o seu consentimento, que pode retirar a qualquer momento.",
+          "Para cumprir obrigações legais, por exemplo manter registos dos seus pedidos de privacidade e consentimentos (obrigação legal)."
+        ]
+      },
+      {
+        "h": "4. Armazenamento no seu dispositivo («cookies» e tecnologias semelhantes)",
+        "p": [
+          "Estritamente necessárias: tokens de sessão no Keychain (iOS) / Keystore (Android), idioma, preferências, rascunhos e um identificador aleatório de instalação. São necessárias para a aplicação funcionar e não exigem consentimento.",
+          "Opcionais: estatísticas de utilização, publicidade personalizada e marketing — usadas apenas se concordar em «As suas escolhas de privacidade». Esta versão não contém ferramentas de estatística ou publicidade de terceiros; registamos a sua escolha agora e voltaremos a perguntar antes de algo mudar.",
+          "O Zpot não o segue em aplicações ou sites de outras empresas."
+        ]
+      },
+      {
+        "h": "5. Quem recebe os seus dados",
+        "p": [
+          "Prestadores de serviços que alojam e operam o Zpot por nossa conta, ao abrigo de acordos de tratamento de dados: [A completar pela equipa jurídica] (alojamento, envio de emails).",
+          "Os mosaicos do mapa são carregados a partir do OpenFreeMap, que recebe o seu endereço IP e a zona do mapa visualizada.",
+          "Quando escolhe «Navegar», o destino é passado à aplicação de navegação que escolher (Apple Maps, Google Maps ou Waze), que o trata segundo a sua própria política de privacidade.",
+          "Os reportes da comunidade são mostrados a outros condutores sem o seu nome. Não vendemos os seus dados pessoais."
+        ]
+      },
+      {
+        "h": "6. Transferências internacionais",
+        "p": [
+          "[A completar pela equipa jurídica]: se algum prestador tratar dados fora do EEE, as garantias aplicadas (por exemplo, as Cláusulas Contratuais-Tipo da UE)."
+        ]
+      },
+      {
+        "h": "7. Durante quanto tempo os guardamos",
+        "p": [
+          "Dados da conta: até eliminar a sua conta.",
+          "Histórico de pesquisa: 90 dias. Sessões de estacionamento: 365 dias. Observações de disponibilidade da comunidade: 7 dias após expirarem. Ficheiros de exportação de dados: 7 dias. Eventos experimentais de deteção de estacionamento: 30 dias.",
+          "Quando elimina a conta, os seus reportes da comunidade são mantidos sem qualquer ligação a si, porque fazem parte da informação partilhada de estacionamento; as fotografias e o texto livre são eliminados.",
+          "Registos de consentimento e de pedidos de privacidade: [A completar pela equipa jurídica]."
+        ]
+      },
+      {
+        "h": "8. Decisões automatizadas",
+        "p": [
+          "Calculamos uma pontuação de fiabilidade explicável para os reportes da comunidade (com base em reportes anteriores, distância e momento) para decidir se um reporte de disponibilidade de curta duração é mostrado de imediato ou revisto primeiro. Nunca afeta a sua conta, preços ou direitos, e as regras de estacionamento verificadas prevalecem sempre."
+        ]
+      },
+      {
+        "h": "9. Os seus direitos",
+        "p": [
+          "Pode aceder, retificar, apagar ou obter uma cópia (portabilidade) dos seus dados, limitar ou opor-se ao tratamento e retirar o consentimento a qualquer momento, sem afetar o tratamento anterior.",
+          "Na aplicação: Perfil › Privacidade e permissões — pedir uma cópia dos seus dados, eliminar a conta e os dados ou alterar as suas escolhas de privacidade.",
+          "Pode também apresentar reclamação à Comissão Nacional de Proteção de Dados (CNPD, www.cnpd.pt) ou à autoridade do seu país de residência."
+        ]
+      },
+      {
+        "h": "10. Crianças",
+        "p": [
+          "O Zpot não se destina a menores de 16 anos."
+        ]
+      },
+      {
+        "h": "11. Alterações",
+        "p": [
+          "Se alterarmos esta política, atualizaremos a versão acima e, quando o seu consentimento estiver em causa, voltaremos a perguntar na aplicação."
+        ]
+      }
+    ]
   }
 }

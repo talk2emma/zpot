@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Banner, ConfirmDialog, ListRow, Title, ZpotButton } from '../../components/common';
 import { toast } from '../../components/common/Toast';
 import { APP } from '../../constants/app';
 import { ENV } from '../../constants/env';
-import { systemApi } from '../../services/api';
+import { authApi, systemApi } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
 import { usePrefsStore } from '../../store/prefsStore';
 import { palette, typography, useTheme } from '../../theme';
@@ -25,10 +25,21 @@ export function ProfileScreen() {
   const extras = useProfileExtras();
   const health = useQuery({ queryKey: ['health'], queryFn: systemApi.health, staleTime: 60_000, retry: 0 });
   const authed = status === 'authenticated' && user;
+  const [refreshing, setRefreshing] = useState(false);
+  /** Pull-to-refresh: re-read the account (e.g. email verified on another device) and the API status. */
+  const pull = async () => {
+    setRefreshing(true);
+    try {
+      await health.refetch();
+      if (useAuthStore.getState().status === 'authenticated') useAuthStore.getState().setUser(await authApi.me());
+    } catch { /* status line shows the API state */ } finally { setRefreshing(false); }
+  };
   const name = authed ? (user.display_name || user.email.split('@')[0]) : t('profile.guest');
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={[styles.page, { paddingTop: insets.top + 16 }]} testID="profile-screen">
+    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={[styles.page, { paddingTop: insets.top + 16 }]} testID="profile-screen"
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void pull()} tintColor={palette.green700} colors={[palette.green700]}
+        testID="profile-screen-refresh" />}>
       <Title>{t('profile.title')}</Title>
       {sessionExpired && !authed ? <Banner tone="warn" action={{ label: t('auth.signIn'), onPress: () => navigation.navigate('SignIn') }}>{t('auth.sessionExpired')}</Banner> : null}
       <View style={[styles.card, { backgroundColor: colors.surfaceMuted }]}>

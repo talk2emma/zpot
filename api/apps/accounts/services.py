@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from apps.core.legal import version_for
 from apps.core.models import record_audit
 
 from .models import ConsentRecord, ConsentType, Role, UserPreference, UserProfile, UserRole
@@ -52,8 +53,14 @@ def register_user(*, email, password, display_name="", language="en", accepted_t
     UserRole.objects.create(user=user, role=Role.DRIVER)
     ConsentRecord.objects.bulk_create(
         [
-            ConsentRecord(user=user, consent_type=ConsentType.TERMS, granted=accepted_terms),
-            ConsentRecord(user=user, consent_type=ConsentType.PRIVACY, granted=accepted_terms),
+            ConsentRecord(
+                user=user,
+                consent_type=t,
+                granted=accepted_terms,
+                document_version=version_for(t),
+                source="registration",
+            )
+            for t in (ConsentType.TERMS, ConsentType.PRIVACY)
         ]
     )
     record_audit("account.registered", actor=user, target=user, request=request)

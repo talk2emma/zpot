@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,11 +22,17 @@ import { palette, radius, typography, useTheme } from '../../theme';
 import type { AppNotification, NotificationPrefs, SavedLocation } from '../../types/contracts';
 import { formatDate, formatTime } from '../../utils/time';
 
-function TabPage({ title, children, testID, right }: { title: string; children: React.ReactNode; testID: string; right?: React.ReactNode }) {
+function TabPage({ title, children, testID, right, onRefresh }: {
+  title: string; children: React.ReactNode; testID: string; right?: React.ReactNode; onRefresh?: () => Promise<unknown>;
+}) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = useState(false);
+  const pull = async () => { setRefreshing(true); try { await onRefresh?.(); } finally { setRefreshing(false); } };
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={[styles.page, { paddingTop: insets.top + 16 }]} testID={testID}>
+    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={[styles.page, { paddingTop: insets.top + 16 }]} testID={testID}
+      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={() => void pull()} tintColor={palette.green700}
+        colors={[palette.green700]} testID={`${testID}-refresh`} /> : undefined}>
       <Row><View style={styles.flex}><Title size="h1">{title}</Title></View>{right}</Row>
       {children}
     </ScrollView>
@@ -80,7 +86,8 @@ export function SavedScreen() {
   const recentRows = authed ? (recent.data ?? []).map(r => ({ id: String(r.id), name: r.name, subtitle: r.subtitle ?? '',
     ...(r.location as { latitude: number; longitude: number }) })) : recents;
   return (
-    <TabPage title={t('saved.title')} testID="saved-screen">
+    <TabPage title={t('saved.title')} testID="saved-screen"
+      onRefresh={authed ? () => Promise.all([locs.refetch(), dests.refetch(), recent.refetch()]) : undefined}>
       {!authed ? <Banner tone="info" action={{ label: t('p2.signIn'), onPress: () => navigation.navigate('SignIn', { context: 'saved' }) }}>{t('saved.guestNote')}</Banner> : null}
       <SectionLabel>{t('saved.locations')}</SectionLabel>
       {authed && locs.isLoading ? <LoadingState skeleton={2} /> : authed && locs.isError ? <ErrorState error={locs.error} onRetry={() => void locs.refetch()} />
@@ -179,6 +186,7 @@ export function ActivityScreen() {
   const s = active.data;
   return (
     <TabPage title={t('activity2.title')} testID="activity-screen"
+      onRefresh={authed ? () => Promise.all([active.refetch(), contrib.refetch(), notifs.refetch()]) : undefined}
       right={authed ? <ZpotButton variant="small" icon="bell" label={unread ? String(unread) : t('notif.title')} testID="activity-bell"
         onPress={() => navigation.navigate('Notifications')} /> : null}>
       {!authed ? (
@@ -232,7 +240,7 @@ export function ContributionsScreen({ navigation }: RootScreenProps<'Contributio
   const q = useContributions();
   const d = q.data;
   return (
-    <Screen testID="contributions-screen" header={<ScreenHeader title={t('activity2.contributions')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="contributions-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('activity2.contributions')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!d ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />) : (
         <>
           <Title size="h2">{t(`activity2.level_${d.level}`)}</Title>
@@ -288,7 +296,7 @@ export function NotificationsScreen({ navigation }: RootScreenProps<'Notificatio
   };
   const items = authed ? list.items : []; // never render a previous user's cached inbox
   return (
-    <Screen testID="notifications-screen" header={<ScreenHeader title={t('notif.title')} onBack={navigation.goBack} backLabel={t('common.back')}
+    <Screen testID="notifications-screen" onRefresh={() => Promise.all([list.refetch(), q.refetch()])} header={<ScreenHeader title={t('notif.title')} onBack={navigation.goBack} backLabel={t('common.back')}
       right={authed ? <ZpotButton variant="tertiary" label={t('notif.settings')} onPress={() => navigation.navigate('NotificationPrefs')} testID="notif-settings" /> : null} />}>
       {!authed ? <Banner tone="info" action={{ label: t('p2.signIn'), onPress: () => navigation.navigate('SignIn', { context: 'notifications' }) }}>{t('notif.guest')}</Banner> : null}
       {authed && perm !== 'granted' ? <Banner tone="info" testID="notif-perm-off">{t('notif.permOff')}</Banner> : null}
@@ -316,7 +324,7 @@ export function NotificationDetailScreen({ navigation, route }: RootScreenProps<
   const q = useQuery({ queryKey: ['notification', route.params.id], queryFn: () => notificationsApi.get(route.params.id) });
   const n = q.data;
   return (
-    <Screen testID="notification-detail-screen" header={<ScreenHeader title={t('notif.detailTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="notification-detail-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('notif.detailTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!n ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} />) : (
         <>
           <Text style={[typography.label, { color: colors.textMuted }]}>{t(`notif.cat_${n.category}`)}</Text>
@@ -343,7 +351,7 @@ export function NotificationPrefsScreen({ navigation }: RootScreenProps<'Notific
   const update = useMutation({ mutationFn: notificationsApi.updatePrefs, onSuccess: d => qc.setQueryData(['notif-prefs'], d) });
   const p = q.data;
   return (
-    <Screen testID="notif-prefs-screen" header={<ScreenHeader title={t('notif.prefsTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="notif-prefs-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('notif.prefsTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <SectionLabel>{t('notif.permission')}</SectionLabel>
       <ListRow icon="bell" label={t('notif.permission')} testID="notif-permission"
         sub={perm === 'granted' ? t('notif.allowed') : perm === 'denied' ? t('notif.blocked') : t('notif.notAsked')}

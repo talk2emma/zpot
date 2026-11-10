@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from apps.accounts.models import ConsentRecord, ConsentType
 from apps.core.exceptions import ZpotAPIError
+from apps.core.legal import version_for
 from apps.core.models import record_audit
 
 from .models import DataPrivacyRequest, RequestKind, RequestStatus
@@ -32,7 +33,7 @@ def current_consents(user):
 
 
 @transaction.atomic
-def update_consents(user, changes):
+def update_consents(user, changes, source="privacy_settings"):
     from apps.accounts.models import UserPreference
 
     prefs, _ = UserPreference.objects.get_or_create(user=user)
@@ -43,7 +44,9 @@ def update_consents(user, changes):
                 code="use_deletion_request",
                 status_code=400,
             )
-        ConsentRecord.objects.create(user=user, consent_type=key, granted=granted, source="privacy_settings")
+        ConsentRecord.objects.create(
+            user=user, consent_type=key, granted=granted, source=source, document_version=version_for(key)
+        )
         if key in CONSENT_TO_PREF:
             setattr(prefs, CONSENT_TO_PREF[key], granted)
     prefs.save()

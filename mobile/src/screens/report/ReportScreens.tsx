@@ -253,7 +253,7 @@ export function ReportSuccessScreen({ navigation, route }: RootScreenProps<'Repo
   const q = useQuery({ queryKey: ['report', id], queryFn: () => reportsApi.get(id) });
   const done = () => navigation.navigate('Main', { screen: 'Explore' });
   return (
-    <Screen testID="report-success-screen" header={<ScreenHeader onBack={done} close backLabel={t('common.close')} />}
+    <Screen testID="report-success-screen" onRefresh={q.refetch} header={<ScreenHeader onBack={done} close backLabel={t('common.close')} />}
       footer={<>
         <ZpotButton label={t('report.done')} onPress={done} testID="report-success-done" />
         <ZpotButton variant="tertiary" label={t('report.myReports')} onPress={() => navigation.replace('MyReports')} testID="report-success-mine" />
@@ -278,7 +278,7 @@ export function MyReportsScreen({ navigation }: RootScreenProps<'MyReports'>) {
   const q = usePaged(qk.myReports, reportsApi.mine);
   const items = q.items;
   return (
-    <Screen testID="my-reports-screen" header={<ScreenHeader title={t('report.myReports')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="my-reports-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('report.myReports')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!authed ? <Banner tone="info">{t('report.guestNote')}</Banner> : null}
       {q.isLoading ? <LoadingState skeleton={3} /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
         : items.length === 0 ? <EmptyState icon="flag" title={t('report.myReports')} body={t('report.emptyMine')} /> : null}
@@ -315,7 +315,7 @@ export function ReportDetailScreen({ navigation, route }: RootScreenProps<'Repor
   const canAppeal = authed && r.status === 'rejected' && !r.appeal;
   const canAddPhoto = authed && !EPHEMERAL.includes(r.type) && r.attachments.length === 0 && ['pending_review', 'under_review'].includes(r.status);
   return (
-    <Screen testID="report-detail-screen" header={<ScreenHeader title={t('report.detailTitle', { ref: r.reference })} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="report-detail-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('report.detailTitle', { ref: r.reference })} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <Title size="h2">{t(`report.${r.type}`)}</Title>
       <SummaryRow k={t('support.topic')} v={t(`report.st_${r.status}`)} />
       {(r.area as { name?: string } | null)?.name ? <SummaryRow k={t('report.where')} v={(r.area as { name: string }).name} /> : null}

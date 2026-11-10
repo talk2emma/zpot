@@ -21,6 +21,8 @@ appId: pt.zpot.app
 - tapOn: { id: "lang-en" }
 - takeScreenshot: 02-language
 - tapOn: { id: "language-continue" }
+- extendedWaitUntil: { visible: { id: "consent-sheet" }, timeout: 10000 }                    # first-launch GDPR consent prompt
+- tapOn: { id: "consent-reject-all" }
 - tapOn: { id: "welcome-find" }
 - tapOn: { id: "location-manual" }          # declining location must not block
 - tapOn: { id: "continue-as-guest" }

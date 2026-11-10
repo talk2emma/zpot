@@ -17,6 +17,8 @@ appId: pt.zpot.app
 - runFlow:                          # re-tap only if the first tap was swallowed (a blind retry hits the next screen)
     when: { visible: { id: "language-screen" } }
     commands: [ { tapOn: { id: "language-continue" } } ]
+- extendedWaitUntil: { visible: { id: "consent-sheet" }, timeout: 10000 }   # first-launch GDPR consent prompt
+- tapOn: { id: "consent-reject-all" }
 - extendedWaitUntil: { visible: { id: "welcome-find" }, timeout: 10000 }
 - tapOn: { id: "welcome-find" }
 - tapOn: { id: "location-manual" }

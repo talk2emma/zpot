@@ -7,7 +7,9 @@ import { ErrorBoundary, ToastHost } from '../components/common';
 import '../i18n';
 import { applyLanguage, deviceLanguage } from '../i18n';
 import { useOnline } from '../hooks/useOnline';
+import { ConsentHost } from '../components/privacy/ConsentHost';
 import { linking } from '../navigation/linking';
+import { navigationRef } from '../navigation/navigationRef';
 import { RootNavigator } from '../navigation/RootNavigator';
 import { queryClient } from '../services/queryClient';
 import { useAuthStore } from '../store/authStore';
@@ -27,8 +29,9 @@ function Shell() {
   return (
     <>
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
-      <NavigationContainer linking={linking} theme={navTheme}>
+      <NavigationContainer ref={navigationRef} linking={linking} theme={navTheme}>
         <RootNavigator />
+        <ConsentHost />
       </NavigationContainer>
       <ToastHost />
     </>

@@ -30,7 +30,11 @@ class PrivacyRequestSerializer(serializers.ModelSerializer):
 
 ConsentsOut = inline_serializer("Consents", {c.value: serializers.DictField() for c in ConsentType})
 ConsentsIn = inline_serializer(
-    "ConsentsPatch", {c.value: serializers.BooleanField(required=False) for c in ConsentType}
+    "ConsentsPatch",
+    {
+        **{c.value: serializers.BooleanField(required=False) for c in ConsentType},
+        "source": serializers.ChoiceField(choices=["consent_prompt", "privacy_settings"], required=False),
+    },
 )
 
 
@@ -48,7 +52,10 @@ class ConsentsView(GenericAPIView):
         changes = {k: v for k, v in request.data.items() if k in valid}
         if not changes or not all(isinstance(v, bool) for v in changes.values()):
             raise ZpotAPIError("Send consent types with true/false values.", code="validation_error")
-        return Response(services.update_consents(request.user, changes))
+        source = request.data.get("source", "privacy_settings")
+        if source not in ("consent_prompt", "privacy_settings"):
+            raise ZpotAPIError("Unknown consent source.", code="validation_error", details={"source": ["Invalid."]})
+        return Response(services.update_consents(request.user, changes, source=source))
 
 
 class DataExportView(GenericAPIView):

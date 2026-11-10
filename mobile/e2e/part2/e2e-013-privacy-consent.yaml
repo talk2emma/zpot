@@ -1,0 +1,52 @@
+# E2E-013 GDPR consent: read the policy from the prompt → choose per purpose → see it in Privacy → sign in →
+# the server consent ledger holds the choice against the current policy version. Also exercises pull-to-refresh.
+appId: pt.zpot.app
+---
+- launchApp: { clearState: true }
+- repeat:                          # Android 17 debug builds only (React Native dev manifest)
+    while:
+      notVisible: { id: "language-screen" }
+    times: 10
+    commands:
+      - tapOn: { text: "Allow", optional: true }
+      - waitForAnimationToEnd
+- tapOn: { id: "lang-en" }
+- waitForAnimationToEnd
+- tapOn: { id: "language-continue" }
+- extendedWaitUntil: { visible: { id: "consent-sheet" }, timeout: 10000 }
+- takeScreenshot: e2e013-prompt
+- tapOn: { id: "consent-read-policy" }
+- extendedWaitUntil: { visible: { id: "privacy-policy-screen" }, timeout: 10000 }
+- assertVisible: { id: "policy-draft" }
+- scrollUntilVisible: { element: { text: "9. Your rights" }, direction: DOWN }
+- takeScreenshot: e2e013-policy
+- tapOn: { id: "header-back" }
+- extendedWaitUntil: { visible: { id: "consent-sheet" }, timeout: 10000 }   # comes back until a choice is made
+- tapOn: { id: "consent-customise" }
+- tapOn: { id: "consent-analytics" }
+- tapOn: { id: "consent-save" }
+- extendedWaitUntil: { visible: { id: "welcome-find" }, timeout: 10000 }
+- tapOn: { id: "welcome-find" }
+- tapOn: { id: "location-manual" }
+- tapOn: { id: "continue-as-guest" }
+- extendedWaitUntil: { visible: { id: "explore-screen" }, timeout: 10000 }
+- tapOn: { id: "tab-profile", retryTapIfNoChange: true }
+- extendedWaitUntil: { visible: { id: "profile-screen" }, timeout: 10000 }
+- swipe: { start: "50%, 30%", end: "50%, 75%" }       # pull to refresh
+- assertVisible: { id: "profile-screen" }
+- scrollUntilVisible: { element: { id: "profile-privacy" }, direction: DOWN }
+- tapOn: { id: "profile-privacy" }
+- assertVisible: { text: "Analytics: on · Ads: off · Emails: off" }
+- takeScreenshot: e2e013-choices
+- tapOn: { id: "header-back" }
+- scrollUntilVisible: { element: { id: "profile-signin" }, direction: UP }
+- tapOn: { id: "profile-signin" }
+- tapOn: { id: "signin-email" }
+- inputText: ${EMAIL}
+- tapOn: { id: "signin-password" }
+- inputText: ${PASSWORD}
+- tapOn: { id: "signin-submit" }
+- tapOn: { text: "Not Now", optional: true }
+- extendedWaitUntil: { visible: { id: "profile-name" }, timeout: 15000 }
+- runScript: { file: scripts/check-consents.js }   # polls the API until the synced choice is in the ledger
+- assertTrue: ${output.analytics === true && output.ads === false && output.versionOk === true}

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Keyboard, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { typography, useTheme } from '../../theme';
+import { palette, typography, useTheme } from '../../theme';
 import { Icon } from './Icon';
 
 export function ScreenHeader({ title, onBack, close, right, backLabel = 'Back' }: {
@@ -23,8 +23,10 @@ export function ScreenHeader({ title, onBack, close, right, backLabel = 'Back' }
 }
 
 /** Standard screen: safe-area aware, keyboard avoiding, scrollable content and a sticky footer. */
-export function Screen({ children, header, footer, scroll = true, testID, padded = true }: {
+export function Screen({ children, header, footer, scroll = true, testID, padded = true, onRefresh }: {
   children: React.ReactNode; header?: React.ReactNode; footer?: React.ReactNode; scroll?: boolean; testID?: string; padded?: boolean;
+  /** Pull-to-refresh: re-fetch this screen's data (the spinner stays until the promise settles). */
+  onRefresh?: () => Promise<unknown> | unknown;
 }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -33,6 +35,12 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
   // the overlap is the keyboard height. iOS: KeyboardAvoidingView and measureInWindow mis-measure inside page sheets
   // (found by E2E-005). Android: with edge-to-edge (edgeToEdgeEnabled=true) the window no longer resizes, so
   // adjustResize has no effect (found by the Android E2E run). Android only emits the "Did" events.
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(async () => {
+    if (!onRefresh) return;
+    setRefreshing(true);
+    try { await onRefresh(); } catch { /* the screen's own error state shows failures */ } finally { setRefreshing(false); }
+  }, [onRefresh]);
   const [kb, setKb] = useState(0);
   useEffect(() => {
     const ios = Platform.OS === 'ios';
@@ -44,7 +52,11 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
     <View style={[styles.flex, { backgroundColor: colors.background, paddingBottom: kb }]} testID={testID}>
       <View style={{ paddingTop: insets.top }}>{header}</View>
       <Body style={styles.flex} contentContainerStyle={scroll ? [padded && styles.content] : undefined}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled" testID={testID ? `${testID}-scroll` : undefined}
+        refreshControl={scroll && onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} tintColor={palette.green700}
+            colors={[palette.green700]} testID={testID ? `${testID}-refresh` : 'screen-refresh'} />
+        ) : undefined}>
         {scroll ? children : <View style={[styles.flex, padded && styles.content]}>{children}</View>}
       </Body>
       {footer ? (

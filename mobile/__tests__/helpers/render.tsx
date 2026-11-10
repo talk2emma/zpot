@@ -46,4 +46,4 @@ export const ALL_ROUTES = ['Splash', 'Language', 'Welcome', 'Onboarding', 'Locat
   'NotificationsIntro', 'Part2', 'StartSession', 'Session', 'EditSession', 'EndSession', 'SessionSummary', 'SessionHistory',
   'ReportType', 'ReportLocation', 'ReportDetails', 'ReportReview', 'ReportSuccess', 'MyReports', 'ReportDetail', 'Notifications',
   'NotificationDetail', 'NotificationPrefs', 'HelpArticle', 'ContactSupport', 'SupportTickets', 'SupportTicket', 'PrivacyRequests',
-  'ScoutList', 'ScoutTask', 'ZTrigger', 'ZEvent', 'Pro', 'Contributions', 'Commute', 'Vehicles', 'Insights', 'Partner', 'ManageSubscription'];
+  'ScoutList', 'ScoutTask', 'ZTrigger', 'ZEvent', 'Pro', 'Contributions', 'Commute', 'Vehicles', 'Insights', 'Partner', 'ManageSubscription', 'PrivacyPolicy'];

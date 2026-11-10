@@ -5,7 +5,8 @@ export type Consents = Record<string, { granted: boolean; recorded_at: string | 
 
 export const privacyApi = {
   consents: () => api.get<Consents>('/privacy/consents/').then(r => r.data),
-  updateConsents: (c: Record<string, boolean>) => api.patch<Consents>('/privacy/consents/', c).then(r => r.data),
+  updateConsents: (c: Record<string, boolean>, source: 'consent_prompt' | 'privacy_settings' = 'privacy_settings') =>
+    api.patch<Consents>('/privacy/consents/', { ...c, source }).then(r => r.data),
   requestExport: () => api.post<PrivacyRequest>('/privacy/data-export/').then(r => r.data),
   requestDeletion: (confirm: string) => api.post<PrivacyRequest>('/privacy/deletion-request/', { confirm }).then(r => r.data),
   requests: () => api.get<PrivacyRequest[]>('/privacy/requests/').then(r => r.data),

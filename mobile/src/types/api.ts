@@ -170,6 +170,7 @@ export interface PublicConfig {
   map: { style_url: string; attribution: string };
   search_defaults: { radius_meters: number; max_radius_meters: number; duration_minutes: number; max_walk_minutes: number; limit: number };
   data_notice: string; features: FeatureFlag[];
+  legal?: { privacy_version: string; terms_version: string };
 }
 
 export interface ApiErrorBody {

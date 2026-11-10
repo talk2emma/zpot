@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { communityApi, notificationsApi, sessionsApi, systemApi } from '../services/api';
+import { APP } from '../constants/app';
 import { useAuthStore } from '../store/authStore';
 
 export const qk = {
@@ -42,6 +43,12 @@ export function useFeatures() {
   const map: Record<string, boolean> = {};
   q.data?.features.forEach(f => { map[f.key] = f.enabled; });
   return { on: (k: string) => !!map[k], loaded: !!q.data };
+}
+
+/** The privacy policy version consent must refer to (server value, bundled fallback when offline). */
+export function usePrivacyVersion() {
+  const q = useQuery({ queryKey: qk.config, queryFn: systemApi.config, staleTime: 5 * 60_000 });
+  return q.data?.legal?.privacy_version ?? APP.privacyPolicyVersion;
 }
 
 export function useHasRole(role: string) {

@@ -87,7 +87,7 @@ export function StartSessionScreen({ navigation, route }: RootScreenProps<'Start
   const over = deadline && deadline < end;
 
   return (
-    <Screen testID="start-session-screen" header={<ScreenHeader title={t('session.startTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}
+    <Screen testID="start-session-screen" onRefresh={area.refetch} header={<ScreenHeader title={t('session.startTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}
       footer={<ZpotButton label={start.isPending ? t('session.starting') : t('session.start')} loading={start.isPending}
         disabled={!a || a.category === 'restricted'} onPress={() => start.mutate()} testID="start-session-submit" />}>
       {!a ? (area.isLoading ? <LoadingState skeleton={2} /> : <ErrorState error={area.error} onRetry={() => void area.refetch()} />) : (
@@ -156,7 +156,7 @@ export function SessionScreen({ navigation, route }: RootScreenProps<'Session'>)
   const s = q.data;
   if (!s) {
     return (
-      <Screen testID="session-screen" header={<ScreenHeader onBack={navigation.goBack} backLabel={t('common.back')} />}>
+      <Screen testID="session-screen" onRefresh={q.refetch} header={<ScreenHeader onBack={navigation.goBack} backLabel={t('common.back')} />}>
         {q.isLoading ? <LoadingState skeleton={3} /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
       </Screen>
     );
@@ -307,7 +307,7 @@ export function SessionSummaryScreen({ navigation, route }: RootScreenProps<'Ses
   const s = q.data;
   const saving = s?.estimated_saving as null | { amount: string; compared_with: string; rate_per_hour: string; hours: number };
   return (
-    <Screen testID="session-summary-screen" header={<ScreenHeader title={t('session.summaryTitle')} onBack={done} close backLabel={t('common.close')} />}
+    <Screen testID="session-summary-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('session.summaryTitle')} onBack={done} close backLabel={t('common.close')} />}
       footer={<ZpotButton label={t('report.done')} onPress={done} testID="session-summary-done" />}>
       {!s ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />) : (
         <>
@@ -338,7 +338,7 @@ export function SessionHistoryScreen({ navigation }: RootScreenProps<'SessionHis
   const q = usePaged(qk.sessions, () => sessionsApi.list());
   const items = q.items;
   return (
-    <Screen testID="session-history-screen" header={<ScreenHeader title={t('session.historyTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="session-history-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('session.historyTitle')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {q.isLoading ? <LoadingState skeleton={3} /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
         : items.length === 0 ? <EmptyState icon="clock" title={t('session.historyTitle')} body={t('session.historyEmpty')} /> : null}
       {items.map(s => (

@@ -14,6 +14,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Notifications: 'notifications',
       SupportTicket: 'support/:id',
       PrivacyRequests: 'privacy/requests',
+      PrivacyPolicy: 'privacy/policy',
       Main: { screens: { Explore: 'explore', Saved: 'saved', Activity: 'activity', Profile: 'profile' } },
     },
   },

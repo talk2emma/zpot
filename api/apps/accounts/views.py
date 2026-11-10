@@ -10,6 +10,7 @@ from rest_framework_simplejwt.exceptions import TokenError as JWTTokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 from apps.core.exceptions import ZpotAPIError
+from apps.core.legal import version_for
 
 from . import services
 from .models import ConsentRecord, ConsentType, UserPreference
@@ -228,5 +229,11 @@ class PreferencesView(GenericAPIView):
             ("ads", ConsentType.PERSONALISED_ADS, "personalised_ads"),
         ):
             if getattr(obj, field) != before[key]:
-                ConsentRecord.objects.create(user=request.user, consent_type=ctype, granted=getattr(obj, field))
+                ConsentRecord.objects.create(
+                    user=request.user,
+                    consent_type=ctype,
+                    granted=getattr(obj, field),
+                    document_version=version_for(ctype),
+                    source="preferences",
+                )
         return Response(self.get_serializer(obj).data)

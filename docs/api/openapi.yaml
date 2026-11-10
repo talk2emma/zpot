@@ -3518,6 +3518,14 @@ components:
       - personalised_ads
       - privacy
       - terms
+    ConsentsPatchSourceEnum:
+      enum:
+      - consent_prompt
+      - privacy_settings
+      type: string
+      description: |-
+        * `consent_prompt` - consent_prompt
+        * `privacy_settings` - privacy_settings
     Contributions:
       type: object
       properties:
@@ -3629,12 +3637,22 @@ components:
           format: date-time
         source:
           allOf:
-          - $ref: '#/components/schemas/SourceEnum'
+          - $ref: '#/components/schemas/CreateEventSourceEnum'
           default: bluetooth_disconnect
       required:
       - detected_at
       - latitude
       - longitude
+    CreateEventSourceEnum:
+      enum:
+      - bluetooth_disconnect
+      - motion
+      - manual_test
+      type: string
+      description: |-
+        * `bluetooth_disconnect` - bluetooth_disconnect
+        * `motion` - motion
+        * `manual_test` - manual_test
     CreateObservationKindEnum:
       enum:
       - available
@@ -5242,6 +5260,8 @@ components:
           type: boolean
         marketing:
           type: boolean
+        source:
+          $ref: '#/components/schemas/ConsentsPatchSourceEnum'
     PatchedNotificationPreferenceRequest:
       type: object
       properties:
@@ -5513,11 +5533,15 @@ components:
         features:
           type: array
           items: {}
+        legal:
+          type: object
+          additionalProperties: {}
       required:
       - api_version
       - data_notice
       - default_city
       - features
+      - legal
       - map
       - min_supported_app_version
       - search_defaults
@@ -6344,16 +6368,6 @@ components:
       - is_development_fixture
       - kind
       - name
-    SourceEnum:
-      enum:
-      - bluetooth_disconnect
-      - motion
-      - manual_test
-      type: string
-      description: |-
-        * `bluetooth_disconnect` - bluetooth_disconnect
-        * `motion` - motion
-        * `manual_test` - manual_test
     SourceMini:
       type: object
       properties:

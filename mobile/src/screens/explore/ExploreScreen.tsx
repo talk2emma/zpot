@@ -198,6 +198,7 @@ export function ExploreScreen() {
             : <LoadingState skeleton={1} />
         ) : (
           <ResultsPanel data={options.data} loading={options.isFetching} error={options.error} onRetry={() => void options.refetch()}
+            onRefresh={() => Promise.all([options.refetch(), layersQ.refetch(), vacancies.refetch()])}
             placeName={placeName} bottomPad={tabBar + 24} />
         )}
       </ExploreSheet>

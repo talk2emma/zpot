@@ -45,7 +45,7 @@ export function CommuteScreen({ navigation }: RootScreenProps<'Commute'>) {
   const err = !dest ? t('commute.pickDest') : !days.length ? t('commute.pickDay') : null;
   const list = plans.data ?? [];
   return (
-    <Screen testID="commute-screen" header={<ScreenHeader title={t('commute.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}
+    <Screen testID="commute-screen" onRefresh={() => Promise.all([plans.refetch(), qc.invalidateQueries({ queryKey: ['commute-check'] })])} header={<ScreenHeader title={t('commute.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}
       footer={creating ? <ZpotButton label={t('commute.save')} loading={create.isPending} testID="commute-save"
         onPress={() => (err ? setTouched(true) : create.mutate())} /> : <ZpotButton variant="secondary" label={t('commute.new')} onPress={() => setCreating(true)} testID="commute-new" />}>
       <Body muted>{t('commute.intro')}</Body>
@@ -152,7 +152,7 @@ export function VehiclesScreen({ navigation }: RootScreenProps<'Vehicles'>) {
   const items = q.data ?? [];
   const max = (ent.data?.limits as { vehicles?: number } | undefined)?.vehicles ?? 1;
   return (
-    <Screen testID="vehicles-screen" header={<ScreenHeader title={t('vehicles.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="vehicles-screen" onRefresh={() => Promise.all([q.refetch(), ent.refetch()])} header={<ScreenHeader title={t('vehicles.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       <Body muted>{t('vehicles.intro')}</Body>
       {q.isLoading ? <LoadingState /> : q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : null}
       {items.map(v => edit?.id === v.id ? (
@@ -190,7 +190,7 @@ export function InsightsScreen({ navigation }: RootScreenProps<'Insights'>) {
   const q = useQuery({ queryKey: ['insights'], queryFn: insightsApi.get });
   const d = q.data;
   return (
-    <Screen testID="insights-screen" header={<ScreenHeader title={t('insights.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="insights-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('insights.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!d ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />) : d.sessions === 0 ? (
         <EmptyState icon="clock" title={t('insights.empty')} body={t('insights.emptySub')} testID="insights-empty" />
       ) : (
@@ -234,7 +234,7 @@ export function PartnerScreen({ navigation, route }: RootScreenProps<'Partner'>)
   const q = useAreaDetail(route.params.areaId, { duration_minutes: plan.durationHours * 60 });
   const a = q.data;
   return (
-    <Screen testID="partner-screen" header={<ScreenHeader title={t('partner.title')} onBack={navigation.goBack} close backLabel={t('common.close')} />}
+    <Screen testID="partner-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('partner.title')} onBack={navigation.goBack} close backLabel={t('common.close')} />}
       footer={<>
         <ZpotButton label={t('partner.cta')} disabled testID="partner-cta" />
         <ZpotButton variant="tertiary" label={t('partner.notNow')} onPress={navigation.goBack} testID="partner-not-now" />
@@ -264,7 +264,7 @@ export function ManageSubscriptionScreen({ navigation }: RootScreenProps<'Manage
   const [restored, setRestored] = useState(false);
   const e = q.data;
   return (
-    <Screen testID="manage-sub-screen" header={<ScreenHeader title={t('sub.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
+    <Screen testID="manage-sub-screen" onRefresh={q.refetch} header={<ScreenHeader title={t('sub.title')} onBack={navigation.goBack} backLabel={t('common.back')} />}>
       {!e ? (q.isLoading ? <LoadingState /> : <ErrorState error={q.error} onRetry={() => void q.refetch()} />) : (
         <>
           <SummaryRow k={t('sub.plan')} v={t('sub.free')} />
