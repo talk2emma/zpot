@@ -21,7 +21,7 @@ env: { AREA: "2" }
 - extendedWaitUntil: { visible: { id: "report-reference" }, timeout: 15000 }
 - takeScreenshot: e2e005-success
 - tapOn: { id: "report-success-mine" }
-- tapOn: { text: "Parking information is incorrect" }
+- tapOn: { text: "Parking information is incorrect.*", index: 0 }
 - extendedWaitUntil: { visible: { id: "report-detail-screen" }, timeout: 10000 }
 - assertVisible: { text: "Submitted" }
 - takeScreenshot: e2e005-history

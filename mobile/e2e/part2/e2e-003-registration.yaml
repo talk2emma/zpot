@@ -3,7 +3,8 @@ appId: pt.zpot.app
 ---
 - runScript: { file: scripts/new-email.js }
 - runFlow: _common/guest.yaml
-- tapOn: { id: "tab-profile" }
+- tapOn: { id: "tab-profile", retryTapIfNoChange: true }
+- extendedWaitUntil: { visible: { id: "profile-screen" }, timeout: 10000 }
 - runFlow:                       # iOS keeps Keychain tokens across clearState: start signed out
     when: { notVisible: { id: "profile-signin" } }
     commands:
@@ -15,8 +16,11 @@ appId: pt.zpot.app
 - tapOn: { id: "signin-to-register" }
 - tapOn: { id: "register-email" }
 - inputText: ${output.email}
+# iOS simulator: "Strong Password" AutoFill replaces typed text in secure new-password fields; reveal first
+- tapOn: { id: "register-password-toggle", optional: true }
 - tapOn: { id: "register-password" }
 - inputText: ${PASSWORD}
+- tapOn: { id: "register-password2-toggle", optional: true }
 - tapOn: { id: "register-password2" }
 - inputText: ${PASSWORD}
 - tapOn: { text: "Confirm password" }

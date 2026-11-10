@@ -95,6 +95,14 @@ describe('email verification', () => {
     expect(await screen.findByText('Email verified')).toBeTruthy();
     expect(authApi.verifyEmail).toHaveBeenCalledWith('tok-123');
   });
+  it('after verifying, Continue resumes the journey instead of returning to the sign-up form', async () => {
+    jest.spyOn(authApi, 'verifyEmail').mockResolvedValue({ ...USER, is_email_verified: true });
+    useAuthStore.setState({ pendingReturn: { route: 'ParkingDetails', params: { id: 2 } } });
+    await renderScreen('VerifyEmail', VerifyEmailScreen, { token: 'tok-123' }, ALL_ROUTES);
+    await fireEvent.press(await screen.findByTestId('verify-continue'));
+    expect(await screen.findByTestId('stub-ParkingDetails')).toBeTruthy();
+    expect(useAuthStore.getState().pendingReturn).toBeNull();
+  });
   it('explains an expired link', async () => {
     jest.spyOn(authApi, 'verifyEmail').mockRejectedValue(new ApiError({ kind: 'http', status: 400, code: 'token_expired', message: 'expired' }));
     await renderScreen('VerifyEmail', VerifyEmailScreen, { token: 'old' }, ALL_ROUTES);

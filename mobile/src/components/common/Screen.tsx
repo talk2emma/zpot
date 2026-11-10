@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { typography, useTheme } from '../../theme';
 import { Icon } from './Icon';
@@ -29,28 +29,29 @@ export function Screen({ children, header, footer, scroll = true, testID, padded
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const Body = scroll ? ScrollView : View;
-  // In iOS page sheets the view doesn't start at the window top; KeyboardAvoidingView needs that offset or the
-  // keyboard covers the footer buttons.
-  const wrapRef = useRef<React.ComponentRef<typeof View>>(null);
-  const [offset, setOffset] = useState(0);
-  const measure = useCallback(() => {
-    if (Platform.OS === 'ios') wrapRef.current?.measureInWindow((_x: number, y: number) => { if (Number.isFinite(y)) setOffset(Math.max(0, Math.round(y))); });
+  // iOS keyboard avoidance. Every Zpot screen (full screen or page sheet) is anchored to the bottom of the display,
+  // so the overlap is the keyboard height. KeyboardAvoidingView and measureInWindow both mis-measure inside page
+  // sheets (coordinates are relative to the sheet), which let the keyboard cover footer buttons (found by E2E-005).
+  // Android relies on windowSoftInputMode=adjustResize.
+  const [kb, setKb] = useState(0);
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return undefined;
+    const show = Keyboard.addListener('keyboardWillShow', e => setKb(Math.round(e.endCoordinates.height)));
+    const hide = Keyboard.addListener('keyboardWillHide', () => setKb(0));
+    return () => { show.remove(); hide.remove(); };
   }, []);
   return (
-    <View ref={wrapRef} onLayout={measure} style={styles.flex}>
-    <KeyboardAvoidingView keyboardVerticalOffset={offset}
-      style={[styles.flex, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined} testID={testID}>
+    <View style={[styles.flex, { backgroundColor: colors.background, paddingBottom: kb }]} testID={testID}>
       <View style={{ paddingTop: insets.top }}>{header}</View>
       <Body style={styles.flex} contentContainerStyle={scroll ? [padded && styles.content] : undefined}
         keyboardShouldPersistTaps="handled">
         {scroll ? children : <View style={[styles.flex, padded && styles.content]}>{children}</View>}
       </Body>
       {footer ? (
-        <View style={[styles.foot, { borderTopColor: colors.divider, backgroundColor: colors.background, paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
+        <View style={[styles.foot, { borderTopColor: colors.divider, backgroundColor: colors.background, paddingBottom: kb ? 12 : Math.max(insets.bottom, 16) + 8 }]}>
           {footer}
         </View>
-      ) : <View style={{ height: insets.bottom }} />}
-    </KeyboardAvoidingView>
+      ) : <View style={{ height: kb ? 0 : insets.bottom }} />}
     </View>
   );
 }

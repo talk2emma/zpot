@@ -7,3 +7,4 @@ const r = http.post(api + '/reports/', {
 const rep = json(r.body);
 if (!rep.observation) throw new Error('report not published: ' + r.body);
 output.obsId = String(rep.observation.id);
+output.conf0 = rep.observation.confirmations; // a new observation already counts its reporter

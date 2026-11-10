@@ -2,7 +2,8 @@
 appId: pt.zpot.app
 ---
 - runFlow: guest.yaml
-- tapOn: { id: "tab-profile" }
+- tapOn: { id: "tab-profile", retryTapIfNoChange: true }
+- extendedWaitUntil: { visible: { id: "profile-screen" }, timeout: 10000 }
 - runFlow:                       # iOS keeps Keychain tokens across clearState: start signed out
     when: { notVisible: { id: "profile-signin" } }
     commands:

@@ -61,10 +61,17 @@ export function VerifyEmailScreen({ navigation, route }: RootScreenProps<'Verify
   };
   const leave = () => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Main'));
   const done = state === 'done';
+  /** After verifying, continue the journey the user started (not back into the completed sign-up form). */
+  const finish = () => {
+    const ret = useAuthStore.getState().pendingReturn;
+    useAuthStore.getState().setPendingReturn(null);
+    if (ret) (navigation.navigate as unknown as (r: string, p?: object) => void)(ret.route, ret.params);
+    else navigation.navigate('Main');
+  };
 
   return (
     <Screen testID="verify-email-screen" header={<ScreenHeader title={t('auth.verifyTitle')} onBack={leave} backLabel={t('common.back')} />}
-      footer={done ? <ZpotButton label={t('common.continue')} onPress={leave} testID="verify-continue" /> : <>
+      footer={done ? <ZpotButton label={t('common.continue')} onPress={finish} testID="verify-continue" /> : <>
         {user ? <ZpotButton label={t('auth.iVerified')} onPress={checkNow} loading={busy} testID="verify-check" /> : null}
         <ZpotButton variant="tertiary" style={{ alignSelf: 'center' }} label={t('auth.later')} onPress={leave} testID="verify-later" />
       </>}>

@@ -26,6 +26,8 @@ from apps.saved.models import SavedParkingLocation
 from apps.reports.models import CommunityReport
 ParkingSession.objects.filter(user__email='driver@zpot.dev', status='active').update(status='ended', ended_at=timezone.now())
 SavedParkingLocation.objects.filter(user__email='driver@zpot.dev').delete()
+from apps.notifications.models import Notification
+Notification.objects.filter(user__email='driver@zpot.dev').delete()
 for r in CommunityReport.objects.filter(client_token__startswith='e2e-'):
     o = r.observation; r.delete(); o and o.delete()
 CommunityReport.objects.filter(reporter__email='driver@zpot.dev', description__startswith='E2E').delete()

@@ -10,5 +10,5 @@ env: { AREA: "7" }
 - tapOn: { id: "${'details-vacancy-' + output.obsId + '-yes'}" }
 - extendedWaitUntil: { visible: { id: "${'details-vacancy-' + output.obsId + '-thanks'}" }, timeout: 10000 }
 - runScript: { file: scripts/check-observation.js }
-- assertTrue: ${output.confirmations == 1}
+- assertTrue: ${output.confirmations == output.conf0 + 1}
 - takeScreenshot: e2e006-confirmed

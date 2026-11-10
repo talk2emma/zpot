@@ -15,6 +15,7 @@ export function useFinishAuth() {
     const ret = store.pendingReturn;
     store.setPendingReturn(null);
     if (opts.verifyNext) {
+      store.setPendingReturn(ret); // keep the journey for after verification
       navigation.navigate('VerifyEmail', { email: res.user.email });
       return;
     }
